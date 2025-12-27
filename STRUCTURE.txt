@@ -1,0 +1,42 @@
+electronics-store/
+├── index.html                      # Homepage
+├── products.html                   # Products listing page
+├── cart.html                       # Shopping cart page
+├── contact.html                    # Contact us page
+├── about.html                      # About us page
+├── README.md                       # Project documentation
+├── .htaccess                       # Apache configuration
+│
+├── css/
+│   ├── style.css                   # Main stylesheet
+│   └── admin.css                   # Admin panel styles
+│
+├── js/
+│   ├── main.js                     # Main JavaScript
+│   ├── cart.js                     # Cart functionality
+│   └── admin.js                    # Admin panel scripts
+│
+├── images/
+│   ├── products/                   # Product images
+│   ├── icons/                      # UI icons
+│   └── banners/                    # Banner images
+│
+├── admin/
+│   ├── index.html                  # Admin redirect
+│   ├── login.html                  # Admin login page
+│   ├── dashboard.html              # Admin dashboard
+│   ├── manage-products.html        # Product management
+│   └── manage-announcements.html   # Announcements management
+│
+├── includes/
+│   ├── functions.php               # Helper functions
+│   └── auth.php                    # Authentication functions
+│
+├── config/
+│   └── db.php                      # Database configuration
+│
+└── api/
+    ├── products.php                # Products API endpoint
+    ├── cart.php                    # Cart API endpoint
+    ├── announcements.php           # Announcements API endpoint
+    └── contact.php                 # Contact form handler

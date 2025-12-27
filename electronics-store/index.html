@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machpelah Electronics - Quality Home Appliances</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="images/icons/Machpelahtshirt.png" alt="Machpelah Electronics Logo" onerror="this.src='https://via.placeholder.com/50x50/FFD700/000000?text=ME'">
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="announcements.html">Announcements</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="cart.html" class="cart-link">
+                    Cart <span id="cart-count" class="cart-badge">0</span>
+                </a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <h2>Quality Electronics for Your Home</h2>
+            <p>PCs, Smart Watches, Kettles, Hotplates, Rice Cookers & More</p>
+        </div>
+    </header>
+
+    <!-- Products Section -->
+    <main class="container">
+        <section class="products-section">
+            <h2>Our Products</h2>
+            
+            <!-- Loading State -->
+            <div id="loading-state" style="text-align: center; padding: 3rem;">
+                <p style="font-size: 1.2rem; color: #667eea;">Loading products...</p>
+            </div>
+
+            <div class="filter-buttons" id="filter-buttons" style="display: none;">
+                <button class="filter-btn active" data-category="all">All Products</button>
+                <button class="filter-btn" data-category="PC">PCs</button>
+                <button class="filter-btn" data-category="Smart Watch">Smart Watches</button>
+                <button class="filter-btn" data-category="Kettle">Kettles</button>
+                <button class="filter-btn" data-category="Hotplate">Hotplates</button>
+                <button class="filter-btn" data-category="Rice Cooker">Rice Cookers</button>
+                <button class="filter-btn" data-category="Others">Others</button>
+            </div>
+            <div id="products-grid" class="products-grid">
+                <!-- Products will be loaded here dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Machpelah Electronics</h3>
+                    <p>Your trusted source for quality home appliances</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="announcements.html">Announcements</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="admin/index.html">Admin</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <div class="contact-item">
+                        <svg class="contact-icon" viewBox="0 0 20 20">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                        </svg>
+                        <a href="mailto:machpelah@gmail.com">machpelah@gmail.com</a>
+                    </div>
+                    <div class="contact-item">
+                        <svg class="contact-icon" viewBox="0 0 20 20">
+                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                        </svg>
+                        <a href="https://wa.me/265991765645" target="_blank">+265 991 765 645</a>
+                    </div>
+                </div>
+            </div>
+            <p class="footer-bottom">&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/cart.js"></script>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
+        
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        class ProductManager {
+            constructor() {
+                this.products = [];
+                this.selectedSizes = {};
+            }
+
+            async loadProductsFromDB() {
+                try {
+                    console.log('Fetching products from Supabase...');
+                    
+                    const { data, error } = await supabase
+                        .from('products')
+                        .select('*')
+                        .order('id', { ascending: false });
+
+                    if (error) {
+                        console.error('Error fetching products:', error);
+                        throw error;
+                    }
+
+                    console.log('Products fetched:', data);
+
+                    if (data && data.length > 0) {
+                        this.products = data;
+                    } else {
+                        // Use default products if database is empty
+                        this.products = this.getDefaultProducts();
+                        console.log('Using default products');
+                    }
+
+                    return this.products;
+                } catch (error) {
+                    console.error('Error loading products:', error);
+                    // Fallback to default products
+                    this.products = this.getDefaultProducts();
+                    return this.products;
+                }
+            }
+
+            
+
+            getProductsByCategory(category) {
+                if (category === 'all') return this.products;
+                return this.products.filter(p => p.category === category);
+            }
+
+            getAllCategories() {
+                const categories = ['all'];
+                const uniqueCategories = [...new Set(this.products.map(p => p.category))];
+                return categories.concat(uniqueCategories.sort());
+            }
+
+            formatPrice(price) {
+                return 'MWK ' + price.toLocaleString();
+            }
+
+            selectSize(productId, size) {
+                this.selectedSizes[productId] = size;
+            }
+
+            getSelectedSize(productId) {
+                return this.selectedSizes[productId] || null;
+            }
+
+            getProductById(productId) {
+                return this.products.find(p => p.id === productId);
+            }
+        }
+
+        const productManager = new ProductManager();
+
+        function displayProducts(products) {
+            const grid = document.getElementById('products-grid');
+            const loadingState = document.getElementById('loading-state');
+            
+            if (!grid) return;
+
+            // Hide loading state
+            if (loadingState) {
+                loadingState.style.display = 'none';
+            }
+            
+            if (!products || products.length === 0) {
+                grid.innerHTML = '<div style="text-align: center; padding: 3rem; grid-column: 1/-1;"><h2>📦 No Products Yet</h2><p>Products will appear here once added by the admin.</p></div>';
+                return;
+            }
+            
+            grid.innerHTML = products.map(product => {
+                let sizeSection = '';
+                if (product.sizes) {
+                    const sizeButtons = product.sizes.map(size => {
+                        return '<button class="size-btn" onclick="selectSize(' + product.id + ', \'' + size + '\')" data-product="' + product.id + '" data-size="' + size + '">' + size + '</button>';
+                    }).join('');
+                    
+                    sizeSection = '<div class="size-options">' + sizeButtons + '</div><p class="product-details">Gender: ' + (product.gender || 'Unisex') + '</p>';
+                }
+
+                const stockClass = product.stock > 0 ? 'in-stock' : 'out-of-stock';
+                const stockText = product.stock > 0 ? product.stock + ' in stock' : 'Out of stock';
+                const buttonText = product.stock > 0 ? 'Add to Cart' : 'Out of Stock';
+                const buttonDisabled = product.stock === 0 ? 'disabled' : '';
+                
+                // Add description if available
+                const descriptionSection = product.description ? '<p class="product-description">' + product.description + '</p>' : '';
+
+                return '<div class="product-card"><img src="' + product.image + '" alt="' + product.name + '" class="product-image" loading="lazy" onerror="this.onerror=null; this.src=\'https://via.placeholder.com/400x300/f5f5f5/666666?text=' + encodeURIComponent(product.name) + '\'"><div class="product-info"><h3 class="product-name">' + product.name + '</h3><p class="product-price">' + productManager.formatPrice(product.price) + '</p>' + descriptionSection + sizeSection + '<p class="product-stock ' + stockClass + '">' + stockText + '</p><button class="add-to-cart-btn" onclick="addToCart(' + product.id + ')" ' + buttonDisabled + '>' + buttonText + '</button></div></div>';
+            }).join('');
+        }
+
+        function updateFilterButtons() {
+            const categories = productManager.getAllCategories();
+            const filterContainer = document.getElementById('filter-buttons');
+            
+            if (!filterContainer) return;
+
+            // Clear existing buttons
+            filterContainer.innerHTML = '';
+
+            // Create buttons for each category
+            categories.forEach((category, index) => {
+                const button = document.createElement('button');
+                button.className = 'filter-btn' + (index === 0 ? ' active' : '');
+                button.dataset.category = category;
+                button.textContent = category === 'all' ? 'All Products' : category + 's';
+                
+                button.addEventListener('click', () => {
+                    filterProducts(category);
+                });
+                
+                filterContainer.appendChild(button);
+            });
+
+            // Show filter buttons
+            filterContainer.style.display = 'flex';
+        }
+
+        function selectSize(productId, size) {
+            productManager.selectSize(productId, size);
+            
+            document.querySelectorAll('[data-product="' + productId + '"]').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        }
+
+        function filterProducts(category) {
+            const products = productManager.getProductsByCategory(category);
+            const grid = document.getElementById('products-grid');
+            
+            grid.style.opacity = '0';
+            grid.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                displayProducts(products);
+                grid.style.transition = 'all 0.5s ease';
+                grid.style.opacity = '1';
+                grid.style.transform = 'translateY(0)';
+            }, 300);
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.category === category) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function addToCart(productId) {
+            const product = productManager.getProductById(productId);
+            if (product && product.stock > 0) {
+                if (product.sizes) {
+                    const selectedSize = productManager.getSelectedSize(productId);
+                    if (!selectedSize) {
+                        alert('Please select a size first!');
+                        return;
+                    }
+                }
+
+                if (typeof cart !== 'undefined') {
+                    cart.addItem(productId);
+                }
+                
+                const btn = event.target;
+                const originalText = btn.textContent;
+                
+                btn.textContent = '✓ Added!';
+                btn.style.background = '#10b981';
+                btn.style.transform = 'scale(1.1)';
+                
+                setTimeout(() => {
+                    btn.style.transform = 'scale(1)';
+                }, 200);
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 1500);
+
+                const cartBadge = document.getElementById('cart-count');
+                if (cartBadge) {
+                    cartBadge.style.transform = 'scale(1.5)';
+                    cartBadge.style.transition = 'transform 0.3s ease';
+                    setTimeout(() => {
+                        cartBadge.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            }
+        }
+
+        // Initialize page - Load products from Supabase
+        async function initializePage() {
+            console.log('Initializing products page...');
+            
+            // Load products from database
+            await productManager.loadProductsFromDB();
+            
+            // Display all products
+            displayProducts(productManager.products);
+            
+            // Update filter buttons based on available categories
+            updateFilterButtons();
+            
+            console.log('Page initialized with', productManager.products.length, 'products');
+        }
+
+        // Run on page load
+        initializePage();
+    </script>
+</body>
+</html>

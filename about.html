@@ -206,7 +206,7 @@
                     <p>WhatsApp: +265 991765645</p>
                 </div>
             </div>
-            <p class="footer-bottom">&copy; 2025 Mach-Pelah Electronics. All rights reserved.</p>
+            <p class="footer-bottom">&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
         </div>
     </footer>
 
@@ -242,6 +242,7 @@
         if (whyChooseSection) {
             observer.observe(whyChooseSection);
         }
+        document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
 </body>
 </html>

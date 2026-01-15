@@ -91,7 +91,7 @@
                     <p>WhatsApp: +265 991765645</p>
                 </div>
             </div>
-            <p class="footer-bottom">&copy; 2025 Machpelah Electronics. All rights reserved.</p>
+            <p style="text-align: center;">&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
         </div>
     </footer>
 
@@ -467,6 +467,7 @@
             displayAnnouncements();
             updateBanner();
         }
+        document.getElementById('current-year').textContent = new Date().getFullYear();
 
         // Run on page load
         initializePage();

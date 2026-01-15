@@ -15,9 +15,24 @@ class ShoppingCart {
         this.updateCartCount();
     }
 
-    addItem(productId) {
-        const product = productManager.getProductById(productId);
-        if (!product || product.stock === 0) {
+    // FIXED: Now accepts product object directly instead of looking it up
+    addItem(productId, product) {
+        // If product object not provided, try to get it from window.allProducts
+        if (!product) {
+            if (window.allProducts && Array.isArray(window.allProducts)) {
+                product = window.allProducts.find(p => p.id === productId);
+            } else if (window.productsData) {
+                product = window.productsData[productId];
+            }
+        }
+
+        if (!product) {
+            console.error('Product not found:', productId);
+            alert('Product not found!');
+            return;
+        }
+
+        if (product.stock === 0) {
             alert('Product is out of stock!');
             return;
         }
@@ -37,6 +52,8 @@ class ShoppingCart {
                 name: product.name,
                 price: product.price,
                 image: product.image,
+                category: product.category || 'General',
+                description: product.description || '',
                 quantity: 1,
                 maxStock: product.stock
             });
@@ -80,8 +97,12 @@ class ShoppingCart {
         if (badge) {
             const count = this.getItemCount();
             badge.textContent = count;
-            badge.style.display = count > 0 ? 'flex' : 'none';
+            badge.style.display = count > 0 ? 'inline-block' : 'none';
         }
+    }
+
+    formatPrice(price) {
+        return 'MWK ' + price.toLocaleString();
     }
 
     displayCart() {
@@ -105,10 +126,11 @@ class ShoppingCart {
         cartItemsContainer.innerHTML = this.items.map(item => `
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}" class="cart-item-image"
-                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'%3E%3Crect fill=\\'%23e5e7eb\\' width=\\'100\\' height=\\'100\\'/%3E%3C/svg%3E'">
+                     onerror="this.src='https://via.placeholder.com/120x120/f5f5f5/666?text=Product'">
                 <div class="cart-item-details">
                     <h3 class="cart-item-name">${item.name}</h3>
-                    <p class="cart-item-price">${productManager.formatPrice(item.price)}</p>
+                    <p class="cart-item-price">${this.formatPrice(item.price)}</p>
+                    ${item.category ? `<p style="font-size: 0.85rem; color: #6b7280;">Category: ${item.category}</p>` : ''}
                 </div>
                 <div class="cart-item-actions">
                     <div class="quantity-control">
@@ -123,47 +145,47 @@ class ShoppingCart {
 
         if (cartSummary) {
             cartSummary.style.display = 'block';
-            document.getElementById('cart-total').textContent = productManager.formatPrice(this.getTotal());
+            document.getElementById('cart-total').textContent = this.formatPrice(this.getTotal());
         }
     }
 
     generateEmailBody() {
-        let body = 'New Order from Mach-Pelah Electronics Website\n\n';
+        let body = 'New Order from Machpelah Electronics Website\n\n';
         body += 'ORDER DETAILS:\n';
         body += '=' .repeat(50) + '\n\n';
         
         this.items.forEach(item => {
             body += `Product: ${item.name}\n`;
-            body += `Price: ${productManager.formatPrice(item.price)}\n`;
+            body += `Price: ${this.formatPrice(item.price)}\n`;
             body += `Quantity: ${item.quantity}\n`;
-            body += `Subtotal: ${productManager.formatPrice(item.price * item.quantity)}\n`;
+            body += `Subtotal: ${this.formatPrice(item.price * item.quantity)}\n`;
             body += '-'.repeat(50) + '\n';
         });
         
-        body += `\nTOTAL: ${productManager.formatPrice(this.getTotal())}\n\n`;
+        body += `\nTOTAL: ${this.formatPrice(this.getTotal())}\n\n`;
         body += 'Please contact the customer to confirm the order.';
         
         return encodeURIComponent(body);
     }
 
     generateWhatsAppMessage() {
-        let message = '*New Order - Mach-Pelah Electronics*\n\n';
+        let message = '*New Order - Machpelah Electronics*\n\n';
         
         this.items.forEach(item => {
             message += `📦 *${item.name}*\n`;
-            message += `   Price: ${productManager.formatPrice(item.price)}\n`;
+            message += `   Price: ${this.formatPrice(item.price)}\n`;
             message += `   Qty: ${item.quantity}\n`;
-            message += `   Subtotal: ${productManager.formatPrice(item.price * item.quantity)}\n\n`;
+            message += `   Subtotal: ${this.formatPrice(item.price * item.quantity)}\n\n`;
         });
         
-        message += `*TOTAL: ${productManager.formatPrice(this.getTotal())}*\n\n`;
+        message += `*TOTAL: ${this.formatPrice(this.getTotal())}*\n\n`;
         message += 'I would like to place this order. Please confirm availability.';
         
         return encodeURIComponent(message);
     }
 
     sendToEmail() {
-        const email = 'info@machpelah.com'; // Change to your email
+        const email = 'machpelah@gmail.com';
         const subject = 'New Order from Website';
         const body = this.generateEmailBody();
         
@@ -171,7 +193,7 @@ class ShoppingCart {
     }
 
     sendToWhatsApp() {
-        const phone = '265999999999'; // Change to your WhatsApp number (with country code, no + or spaces)
+        const phone = '265991765645'; // Your WhatsApp number
         const message = this.generateWhatsAppMessage();
         
         window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
@@ -215,8 +237,8 @@ class ShoppingCart {
 const cart = new ShoppingCart();
 
 // Add to cart function (called from product cards)
-function addToCart(productId) {
-    cart.addItem(productId);
+function addToCart(productId, product) {
+    cart.addItem(productId, product);
 }
 
 // Initialize cart page if on cart.html

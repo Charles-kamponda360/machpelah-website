@@ -21,6 +21,13 @@
             opacity: 1 !important;
             animation: none !important;
         }
+        
+        /* Keep category badge gold on hover */
+        .product-card:hover .product-category {
+            background: #FFD700 !important;
+            color: #000 !important;
+            transform: none !important;
+        }
     </style>
     
     <!-- Supabase CDN -->
@@ -159,6 +166,21 @@
                     allProducts = data || [];
                     window.allProducts = allProducts;
                     
+                    // Make products globally accessible for cart
+                    if (!window.productsData) {
+                        window.productsData = {};
+                    }
+                    allProducts.forEach(function(p) {
+                        window.productsData[p.id] = p;
+                    });
+                    console.log('Products stored globally:', Object.keys(window.productsData).length);
+                    
+                    // Log stock info
+                    console.log('Product stock check:');
+                    allProducts.forEach(function(p) {
+                        console.log(`- ${p.name}: Stock = ${p.stock}, ID = ${p.id}`);
+                    });
+                    
                     // Hide loading
                     document.getElementById('loading-state').style.display = 'none';
                     
@@ -205,17 +227,75 @@
                 
                 // Add click handlers
                 document.querySelectorAll('.add-to-cart-btn').forEach(function(btn) {
-                    btn.addEventListener('click', function() {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
                         const id = parseInt(this.dataset.id);
                         const product = allProducts.find(function(p) { return p.id === id; });
-                        if (product && typeof cart !== 'undefined') {
+                        
+                        console.log('Button clicked - Product ID:', id);
+                        console.log('Product found:', product);
+                        console.log('Product stock:', product ? product.stock : 'N/A');
+                        
+                        if (!product) {
+                            console.error('Product not found in allProducts array');
+                            alert('Error: Product not found');
+                            return;
+                        }
+                        
+                        if (product.stock <= 0) {
+                            alert('This product is out of stock');
+                            return;
+                        }
+                        
+                        // Check if cart is available
+                        if (typeof cart === 'undefined') {
+                            console.error('Cart not initialized');
+                            alert('Cart system not ready. Please refresh the page.');
+                            return;
+                        }
+                        
+                        // Add to cart
+                        try {
+                            // Pass the complete product object
                             cart.addItem(id, product);
+                            
+                            // Also store in a backup location
+                            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+                            const existingIndex = cartItems.findIndex(function(item) { return item.id === id; });
+                            
+                            if (existingIndex >= 0) {
+                                cartItems[existingIndex].quantity += 1;
+                            } else {
+                                cartItems.push({
+                                    id: product.id,
+                                    name: product.name,
+                                    price: product.price,
+                                    image: product.image,
+                                    category: product.category,
+                                    description: product.description,
+                                    stock: product.stock,
+                                    quantity: 1
+                                });
+                            }
+                            
+                            localStorage.setItem('cart', JSON.stringify(cartItems));
+                            console.log('Product added to cart successfully');
+                            console.log('Cart items:', cartItems);
+                            
+                            // Visual feedback
+                            const originalText = this.textContent;
+                            const originalBg = this.style.background;
+                            
                             this.textContent = '✓ Added!';
                             this.style.background = '#10b981';
+                            
                             setTimeout(() => {
-                                this.textContent = 'Add to Cart';
-                                this.style.background = '';
+                                this.textContent = originalText;
+                                this.style.background = originalBg;
                             }, 1500);
+                        } catch (error) {
+                            console.error('Error adding to cart:', error);
+                            alert('Error adding product to cart');
                         }
                     });
                 });

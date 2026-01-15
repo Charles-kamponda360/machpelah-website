@@ -6,9 +6,25 @@
     <title>Machpelah Electronics - Quality Home Appliances</title>
     <link rel="stylesheet" href="css/style.css">
     
+    <!-- Fix for animation conflicts -->
+    <style>
+        /* Override CSS animations that hide products */
+        .product-card {
+            opacity: 1 !important;
+            animation: none !important;
+        }
+        .filter-buttons {
+            opacity: 1 !important;
+            animation: none !important;
+        }
+        .footer {
+            opacity: 1 !important;
+            animation: none !important;
+        }
+    </style>
+    
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1"></script>
-    
 </head>
 <body>
     <!-- Navigation -->
@@ -44,7 +60,7 @@
             
             <!-- Loading State -->
             <div id="loading-state">
-                <p style="font-size: 1.2rem; color: #667eea;">Loading products...</p>
+                <p style="font-size: 1.2rem; color: #667eea; text-align: center; padding: 2rem;">Loading products...</p>
             </div>
 
             <div class="filter-buttons" id="filter-buttons" style="display: none;">
@@ -95,238 +111,143 @@
             <p class="footer-bottom">&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
         </div>
     </footer>
+
     <script src="js/cart.js"></script>
     <script src="js/products.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
             document.getElementById('current-year').textContent = new Date().getFullYear();
 
-            // ⚠️ CRITICAL FIX: Using EXACT SAME configuration as admin dashboard
+            // Configuration
             const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';
             const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
 
-            console.log('🚀 Initializing Machpelah Electronics...');
-            console.log('📍 Supabase URL:', SUPABASE_URL);
-            console.log('🔑 API Key prefix:', SUPABASE_ANON_KEY.substring(0, 20) + '...');
+            console.log('Initializing Supabase...');
 
-            // Initialize Supabase client - EXACT SAME WAY as admin dashboard
+            // Check if Supabase loaded
+            if (typeof window.supabase === 'undefined') {
+                console.error('Supabase not loaded');
+                document.getElementById('loading-state').innerHTML = '<p style="color: red; text-align: center;">Error: Could not load database connection</p>';
+                return;
+            }
+
+            // Initialize Supabase
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('✅ Supabase client initialized');
-
-            // Products Database Functions - EXACT SAME as admin dashboard
-            const ProductsDB = {
-                async getAll() {
-                    try {
-                        console.log('📦 Fetching all products...');
-                        const { data, error } = await supabase
-                            .from('products')
-                            .select('*')
-                            .order('id', { ascending: false });
-                        
-                        if (error) {
-                            console.error('❌ Supabase error:', error);
-                            throw error;
-                        }
-                        
-                        console.log(`✅ Products fetched successfully: ${data?.length || 0} items`);
-                        if (data && data.length > 0) {
-                            console.log('📋 First product sample:', data[0]);
-                        }
-                        return data || [];
-                    } catch (error) {
-                        console.error('💥 Exception in getAll():', error);
-                        return [];
-                    }
-                }
-            };
+            console.log('Supabase initialized');
 
             let allProducts = [];
-
-            // Make allProducts globally accessible for cart.js
             window.allProducts = allProducts;
 
-            // Load products from Supabase
+            // Load products
             async function loadProducts() {
                 try {
-                    console.log('🔄 Starting product load sequence...');
-                    const products = await ProductsDB.getAll();
-                    allProducts = products;
-                    window.allProducts = allProducts; // Update global reference
+                    console.log('Fetching products...');
                     
-                    console.log(`📊 Total products in memory: ${allProducts.length}`);
+                    const { data, error } = await supabase
+                        .from('products')
+                        .select('*')
+                        .order('id', { ascending: false });
                     
-                    const loadingState = document.getElementById('loading-state');
-                    const grid = document.getElementById('products-grid');
-                    
-                    // Hide loading state
-                    if (loadingState) {
-                        loadingState.style.display = 'none';
-                        console.log('✅ Loading indicator hidden');
+                    if (error) {
+                        console.error('Database error:', error);
+                        throw error;
                     }
                     
-                    if (products.length === 0) {
-                        console.log('⚠️ No products found - showing empty message');
-                        grid.innerHTML = '<div style="text-align: center; padding: 2rem; grid-column: 1/-1; font-size: 1.2rem; color: #667eea;">📦 No products available yet. Check back soon!</div>';
-                    } else {
-                        console.log('🎨 Rendering products to page...');
-                        displayProducts(products);
-                        updateFilterButtons();
-                        console.log('✅ Products displayed successfully!');
+                    console.log('Products fetched:', data.length);
+                    allProducts = data || [];
+                    window.allProducts = allProducts;
+                    
+                    // Hide loading
+                    document.getElementById('loading-state').style.display = 'none';
+                    
+                    if (allProducts.length === 0) {
+                        document.getElementById('products-grid').innerHTML = '<p style="text-align: center; padding: 2rem;">No products available</p>';
+                        return;
                     }
+                    
+                    displayProducts(allProducts);
+                    updateFilterButtons();
+                    
                 } catch (error) {
-                    console.error('💥 Fatal error in loadProducts():', error);
-                    const grid = document.getElementById('products-grid');
-                    if (grid) {
-                        grid.innerHTML = '<div style="text-align: center; padding: 2rem; grid-column: 1/-1; color: #ef4444;">❌ Error loading products. Please refresh the page or contact support.</div>';
-                    }
+                    console.error('Error loading products:', error);
+                    document.getElementById('loading-state').innerHTML = '<p style="color: red; text-align: center;">Error loading products. Please refresh.</p>';
                 }
             }
 
+            // Display products
             function displayProducts(products) {
                 const grid = document.getElementById('products-grid');
+                console.log('Displaying', products.length, 'products');
                 
-                console.log(`🎨 Displaying ${products.length} products`);
-                
-                if (!grid) {
-                    console.error('❌ Grid element not found!');
-                    return;
-                }
-                
-                grid.innerHTML = products.map(product => {
-                    let sizeSection = '';
-                    if (product.sizes && Array.isArray(product.sizes) && product.sizes.length > 0) {
-                        const sizeButtons = product.sizes.map(size => {
-                            return `<button class="size-btn" data-product="${product.id}" data-size="${size}">${size}</button>`;
-                        }).join('');
-                        
-                        sizeSection = `<div class="size-options">${sizeButtons}</div><p class="product-details">Gender: ${product.gender || 'Unisex'}</p>`;
-                    }
-
-                    const stockClass = product.stock > 0 ? 'in-stock' : 'out-of-stock';
-                    const stockText = product.stock > 0 ? `${product.stock} in stock` : 'Out of stock';
-                    const buttonText = product.stock > 0 ? 'Add to Cart' : 'Out of Stock';
-                    const buttonDisabled = product.stock === 0 ? 'disabled' : '';
-                    
-                    const descriptionSection = product.description ? `<p class="product-description">${product.description}</p>` : '';
-
+                grid.innerHTML = products.map(function(p) {
                     return `
                         <div class="product-card">
-                            <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300/f5f5f5/666666?text=${encodeURIComponent(product.name)}'">
+                            <img src="${p.image}" alt="${p.name}" class="product-image" onerror="this.src='https://via.placeholder.com/300x300/f5f5f5/666?text=Product'">
                             <div class="product-info">
-                                <h3 class="product-name">${product.name}</h3>
-                                <p class="product-price">MWK ${product.price.toLocaleString()}</p>
-                                ${descriptionSection}
-                                ${sizeSection}
-                                <p class="product-stock ${stockClass}">${stockText}</p>
-                                <button class="add-to-cart-btn" data-product-id="${product.id}" ${buttonDisabled}>${buttonText}</button>
+                                <span class="product-category">${p.category || 'General'}</span>
+                                <h3 class="product-name">${p.name}</h3>
+                                <p class="product-price">MWK ${p.price.toLocaleString()}</p>
+                                ${p.description ? `<p class="product-description">${p.description}</p>` : ''}
+                                <p class="product-stock ${p.stock > 0 ? 'in-stock' : 'out-of-stock'}">
+                                    ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}
+                                </p>
+                                <button class="add-to-cart-btn" data-id="${p.id}" ${p.stock === 0 ? 'disabled' : ''}>
+                                    ${p.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                                </button>
                             </div>
                         </div>
                     `;
                 }).join('');
                 
-                console.log('✅ HTML rendered to grid');
+                console.log('Products rendered');
                 
-                // Add event listeners to add-to-cart buttons
-                const cartButtons = document.querySelectorAll('.add-to-cart-btn');
-                console.log(`🔘 Attaching ${cartButtons.length} cart button listeners`);
-                
-                cartButtons.forEach(btn => {
+                // Add click handlers
+                document.querySelectorAll('.add-to-cart-btn').forEach(function(btn) {
                     btn.addEventListener('click', function() {
-                        const productId = parseInt(this.getAttribute('data-product-id'));
-                        addToCart(productId);
+                        const id = parseInt(this.dataset.id);
+                        const product = allProducts.find(function(p) { return p.id === id; });
+                        if (product && typeof cart !== 'undefined') {
+                            cart.addItem(id, product);
+                            this.textContent = '✓ Added!';
+                            this.style.background = '#10b981';
+                            setTimeout(() => {
+                                this.textContent = 'Add to Cart';
+                                this.style.background = '';
+                            }, 1500);
+                        }
                     });
                 });
             }
 
+            // Filter buttons
             function updateFilterButtons() {
-                const categories = ['all'];
-                const uniqueCategories = [...new Set(allProducts.map(p => p.category))];
-                const allCategories = categories.concat(uniqueCategories.sort());
+                const categories = ['all'].concat([...new Set(allProducts.map(p => p.category))].sort());
+                const container = document.getElementById('filter-buttons');
                 
-                const filterContainer = document.getElementById('filter-buttons');
+                container.innerHTML = categories.map((cat, i) => 
+                    `<button class="filter-btn ${i === 0 ? 'active' : ''}" data-cat="${cat}">
+                        ${cat === 'all' ? 'All Products' : cat + 's'}
+                    </button>`
+                ).join('');
                 
-                if (!filterContainer) {
-                    console.warn('⚠️ Filter container not found');
-                    return;
-                }
-
-                filterContainer.innerHTML = '';
-
-                allCategories.forEach((category, index) => {
-                    const button = document.createElement('button');
-                    button.className = 'filter-btn' + (index === 0 ? ' active' : '');
-                    button.dataset.category = category;
-                    button.textContent = category === 'all' ? 'All Products' : category + 's';
-                    
-                    button.addEventListener('click', () => {
-                        filterProducts(category);
+                container.style.display = 'flex';
+                
+                // Add filter click handlers
+                document.querySelectorAll('.filter-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        const cat = this.dataset.cat;
+                        const filtered = cat === 'all' ? allProducts : allProducts.filter(p => p.category === cat);
+                        displayProducts(filtered);
                     });
-                    
-                    filterContainer.appendChild(button);
-                });
-
-                filterContainer.style.display = 'flex';
-                console.log(`✅ ${allCategories.length} filter buttons created`);
-            }
-
-            function filterProducts(category) {
-                console.log(`🔍 Filtering: ${category}`);
-                const products = category === 'all' ? allProducts : allProducts.filter(p => p.category === category);
-                displayProducts(products);
-                
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.dataset.category === category) {
-                        btn.classList.add('active');
-                    }
                 });
             }
 
-            // FIXED: Updated addToCart function to properly integrate with cart.js
-            function addToCart(productId) {
-                const product = allProducts.find(p => p.id === productId);
-                if (!product) {
-                    console.error('❌ Product not found:', productId);
-                    return;
-                }
-
-                if (product.stock === 0) {
-                    alert('Product is out of stock!');
-                    return;
-                }
-
-                console.log(`🛒 Adding to cart: ${product.name}`);
-                
-                // Add to cart using the cart.js function
-                // Pass the full product data to ensure cart.js has all info
-                if (typeof cart !== 'undefined') {
-                    cart.addItem(productId, product);
-                } else {
-                    console.error('❌ Cart not initialized!');
-                    return;
-                }
-
-                // Visual feedback
-                const btn = event.target;
-                const originalText = btn.textContent;
-                
-                btn.textContent = '✓ Added!';
-                btn.style.background = '#10b981';
-                btn.style.transform = 'scale(1.1)';
-                
-                setTimeout(() => {
-                    btn.style.transform = 'scale(1)';
-                }, 200);
-                
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '';
-                }, 1500);
-            }
-
-            // Initialize on page load
-            console.log('🎬 Starting page initialization...');
+            // Start loading
             loadProducts();
         });
     </script>

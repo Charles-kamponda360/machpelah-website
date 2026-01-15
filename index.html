@@ -28,6 +28,21 @@
             transform: none !important;
         }
         
+        /* Fixed Navigation Bar */
+        .navbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 1000 !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+        }
+        
+        /* Add padding to body to prevent content from hiding under fixed navbar */
+        body {
+            padding-top: 70px !important;
+        }
+        
         /* Hamburger Menu Styles */
         .hamburger {
             display: none;
@@ -65,6 +80,7 @@
             /* Tablet styles */
             body {
                 font-size: 16px;
+                padding-top: 75px !important;
             }
             
             .hero h2 {
@@ -93,6 +109,7 @@
             /* Mobile styles */
             body {
                 font-size: 16px;
+                padding-top: 65px !important;
             }
             
             .container {
@@ -101,7 +118,6 @@
             
             .navbar {
                 padding: 0.75rem 0 !important;
-                position: relative;
             }
             
             .navbar .container {
@@ -123,18 +139,16 @@
             /* Hide menu by default on mobile */
             .nav-menu {
                 position: fixed !important;
-                top: 60px !important;
+                top: 65px !important;
                 left: 0 !important;
                 right: 0 !important;
-                background: rgba(17, 24, 39, 0.98) !important;
-                backdrop-filter: blur(10px) !important;
                 flex-direction: column !important;
                 width: 100% !important;
                 max-height: 0 !important;
                 overflow: hidden !important;
                 transition: max-height 0.3s ease !important;
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-                z-index: 1000 !important;
+                z-index: 999 !important;
                 padding: 0 !important;
             }
             

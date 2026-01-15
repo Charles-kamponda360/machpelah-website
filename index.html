@@ -6,7 +6,6 @@
     <title>Machpelah Electronics - Quality Home Appliances</title>
     <link rel="stylesheet" href="css/style.css">
     
-    <!-- Fix for animation conflicts -->
     <style>
         /* Override CSS animations that hide products */
         .product-card {
@@ -27,6 +26,38 @@
             background: #FFD700 !important;
             color: #000 !important;
             transform: none !important;
+        }
+        
+        /* Hamburger Menu Styles */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #FFD700;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
         }
         
         /* Enhanced Mobile & Tablet Responsiveness */
@@ -69,29 +100,64 @@
             }
             
             .navbar {
-                padding: 0.5rem 0 !important;
+                padding: 0.75rem 0 !important;
+                position: relative;
             }
             
             .navbar .container {
-                flex-direction: column !important;
-                gap: 0.75rem !important;
-                padding: 0.75rem 1rem !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 0 1rem !important;
             }
             
             .nav-brand img {
-                height: 45px !important;
+                height: 40px !important;
             }
             
+            /* Show hamburger on mobile */
+            .hamburger {
+                display: flex !important;
+            }
+            
+            /* Hide menu by default on mobile */
             .nav-menu {
+                position: fixed !important;
+                top: 60px !important;
+                left: 0 !important;
+                right: 0 !important;
+                background: rgba(17, 24, 39, 0.98) !important;
+                backdrop-filter: blur(10px) !important;
+                flex-direction: column !important;
                 width: 100% !important;
-                justify-content: space-evenly !important;
-                gap: 0.5rem !important;
-                flex-wrap: wrap !important;
+                max-height: 0 !important;
+                overflow: hidden !important;
+                transition: max-height 0.3s ease !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+                z-index: 1000 !important;
+                padding: 0 !important;
+            }
+            
+            .nav-menu.active {
+                max-height: 400px !important;
+                padding: 1rem 0 !important;
+            }
+            
+            .nav-menu li {
+                width: 100% !important;
+                text-align: center !important;
+                border-bottom: 1px solid rgba(255, 215, 0, 0.1) !important;
+            }
+            
+            .nav-menu li:last-child {
+                border-bottom: none !important;
             }
             
             .nav-menu a {
-                font-size: 0.85rem !important;
-                padding: 0.5rem 0.75rem !important;
+                display: block !important;
+                font-size: 1rem !important;
+                padding: 1rem 1.5rem !important;
+                width: 100% !important;
             }
             
             .cart-badge {
@@ -254,8 +320,8 @@
             }
             
             .nav-menu a {
-                font-size: 0.75rem !important;
-                padding: 0.4rem 0.5rem !important;
+                font-size: 0.95rem !important;
+                padding: 0.9rem 1.2rem !important;
             }
             
             .filter-btn {
@@ -292,7 +358,15 @@
             <div class="nav-brand">
                 <img src="images/icons/Machpelahtshirt.png" alt="Machpelah Electronics Logo" onerror="this.src='https://via.placeholder.com/50x50/FFD700/000000?text=ME'">
             </div>
-            <ul class="nav-menu">
+            
+            <!-- Hamburger Menu Button (Mobile Only) -->
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu" id="nav-menu">
                 <li><a href="index.html" class="active">Home</a></li>
                 <li><a href="announcements.html">Announcements</a></li>
                 <li><a href="contact.html">Contact</a></li>
@@ -378,6 +452,31 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Page loaded');
             document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            // Hamburger menu toggle
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            
+            hamburger.addEventListener('click', function() {
+                this.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+            
+            // Close menu when clicking a link
+            document.querySelectorAll('.nav-menu a').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }
+            });
 
             // Configuration
             const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';

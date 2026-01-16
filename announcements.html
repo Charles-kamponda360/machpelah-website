@@ -4,35 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Announcements - Machpelah Electronics</title>
-    <link rel="stylesheet" href="css/style.css">
     
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1"></script>
     
     <style>
-        /* Fixed Navigation Bar - BLACK */
-        .navbar {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            background: #000000 !important;
-            z-index: 1000 !important;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        /* GOLD for brand/logo text */
-        .nav-brand {
-            color: #FFD700 !important;
-        }
-        
-        /* Add padding to body to prevent content from hiding under fixed navbar */
+
         body {
-            padding-top: 70px !important;
-            background: #ffffff !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #ffffff;
+            color: #1f2937;
+            line-height: 1.6;
+            padding-top: 70px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        /* Navigation Bar - BLACK */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #000000;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            padding: 1rem 0;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        /* Hamburger Menu Styles */
+        .nav-brand {
+            color: #FFD700;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-brand img {
+            height: 50px;
+            width: auto;
+        }
+        
         .hamburger {
             display: none;
             flex-direction: column;
@@ -64,339 +90,519 @@
             transform: rotate(-45deg) translate(6px, -6px);
         }
 
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #FFD700;
+        }
+
+        .cart-badge {
+            background: #FFD700;
+            color: #000000;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: 0.25rem;
+        }
+
         /* Hero Section - BLACK background with GOLD title */
         .hero {
-            background: #000000 !important;
-            color: white !important;
+            background: #000000;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
         }
 
         .hero h2 {
-            color: #FFD700 !important;
+            color: #FFD700;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Announcements Section */
+        .announcements-section {
+            padding: 3rem 0;
+        }
+
+        .announcement-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid #FFD700;
+            border-top: 1px solid #f0f0f0;
+            border-right: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .announcement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .featured-announcement {
+            background: linear-gradient(135deg, #fdfbf7 0%, #f8f6f0 100%);
+            position: relative;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #FFD700;
+            color: #000000;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .announcement-type {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .type-promotion {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        .type-price-change {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        .type-new-stock {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        .type-general {
+            background: #e0e7ff;
+            color: #3730a3;
+            border: 1px solid #a5b4fc;
+        }
+
+        .announcement-date {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .announcement-title {
+            color: #1f2937;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .announcement-content {
+            color: #4b5563;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+
+        .announcement-actions {
+            display: flex;
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border: 1.5px solid #e5e7eb;
+            background: #f9fafb;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            font-weight: 500;
+            color: #4b5563;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            background: white;
+        }
+
+        .action-btn.active {
+            background: #FFD700;
+            color: #000000;
+            border-color: #FFD700;
+        }
+
+        .comments-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .comment-form {
+            margin-bottom: 2rem;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: #fafafa;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+            background: white;
+        }
+
+        .submit-comment-btn {
+            margin-top: 12px;
+            padding: 10px 24px;
+            background: #000000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .submit-comment-btn:hover {
+            background: rgba(59, 130, 246, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .comment-item {
+            padding: 14px 16px;
+            background: #f9fafb;
+            border-left: 3px solid #FFD700;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #FFD700;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .comment-text {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .comment-date {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 6px;
         }
 
         /* Subscription Box - BLACK background */
         .subscription-box {
-            background: #000000 !important;
-            color: white !important;
+            background: #000000;
+            color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            margin-top: 3rem;
         }
 
         .subscription-box h3 {
-            color: #FFD700 !important;
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .subscription-box p {
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+
+        .subscription-form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .subscription-form input {
-            background: #1a1a1a !important;
-            color: white !important;
-            border: 1px solid #333 !important;
+            flex: 1;
+            min-width: 200px;
+            padding: 11px 18px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #1a1a1a;
+            color: white;
         }
 
         .subscription-form input::placeholder {
-            color: #999 !important;
+            color: #999;
         }
 
-        /* Subscribe Button - GOLD with BLUE glass hover */
+        .subscription-form input:focus {
+            outline: none;
+            background: #2a2a2a;
+            border-color: #FFD700;
+        }
+
         .subscribe-btn {
-            background: #FFD700 !important;
-            color: #000000 !important;
-            transition: all 0.3s !important;
+            padding: 11px 28px;
+            background: #FFD700;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
         }
 
         .subscribe-btn:hover {
-            background: rgba(59, 130, 246, 0.9) !important;
-            color: white !important;
-            backdrop-filter: blur(10px) !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+            background: rgba(59, 130, 246, 0.9);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
-        /* Submit Comment Button - same style */
-        .submit-comment-btn {
-            background: #000000 !important;
-            color: white !important;
-            transition: all 0.3s !important;
+        .success-message {
+            background: #10b981;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            font-weight: 600;
         }
 
-        .submit-comment-btn:hover {
-            background: rgba(59, 130, 246, 0.9) !important;
-            backdrop-filter: blur(10px) !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+        .no-announcements {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 12px;
         }
 
-        /* Featured badge - GOLD */
-        .featured-badge {
-            background: #FFD700 !important;
-            color: #000000 !important;
-        }
-
-        /* Active action buttons - GOLD */
-        .action-btn.active {
-            background: #FFD700 !important;
-            color: #000000 !important;
-            border-color: #FFD700 !important;
-        }
-
-        /* Comment author - GOLD */
-        .comment-author {
-            color: #FFD700 !important;
+        .no-announcements h2 {
+            color: #1f2937;
+            margin-bottom: 1rem;
         }
 
         /* Footer - BLACK background */
         .footer {
-            background: #000000 !important;
-            color: white !important;
-            padding: 3rem 0 1.5rem !important;
-            margin-top: 4rem !important;
-            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            background: #000000;
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 4rem;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
         }
 
         .footer-content {
-            display: grid !important;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
-            gap: 2rem !important;
-            margin-bottom: 2rem !important;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
         }
 
         .footer-section h3 {
-            color: #FFD700 !important;
-            margin-bottom: 1rem !important;
-            font-size: 1.1rem !important;
-            font-weight: 700 !important;
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
         }
 
         .footer-section p {
-            color: #d1d5db !important;
-            font-size: 0.9rem !important;
-            line-height: 1.8 !important;
+            color: #d1d5db;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin: 0.5rem 0;
         }
 
         .footer-section ul {
-            list-style: none !important;
+            list-style: none;
         }
 
         .footer-section ul li {
-            margin-bottom: 0.625rem !important;
+            margin-bottom: 0.625rem;
         }
 
         .footer-section a {
-            color: #d1d5db !important;
-            text-decoration: none !important;
-            font-size: 0.9rem !important;
-            display: inline-block !important;
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-block;
+            transition: all 0.3s ease;
         }
 
         .footer-section a:hover {
-            color: #FFD700 !important;
-            padding-left: 5px !important;
+            color: #FFD700;
+            padding-left: 5px;
         }
 
-        .footer p[style*="text-align: center"] {
-            text-align: center !important;
-            padding-top: 2rem !important;
-            border-top: 1px solid #374151 !important;
-            color: #9ca3af !important;
-            font-size: 0.9rem !important;
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-top: 2rem;
         }
-        
-        /* Enhanced Mobile & Tablet Responsiveness */
-        @media (max-width: 1024px) {
-            /* Tablet styles */
-            body {
-                font-size: 16px;
-                padding-top: 75px !important;
-            }
-            
-            .hero h2 {
-                font-size: 2rem !important;
-            }
-            
-            .hero p {
-                font-size: 1rem !important;
-            }
-        }
-        
+
+        /* Mobile Responsiveness */
         @media (max-width: 768px) {
-            /* Mobile styles */
             body {
-                font-size: 16px;
-                padding-top: 65px !important;
+                padding-top: 65px;
             }
-            
-            .container {
-                padding: 0 1rem !important;
-            }
-            
-            .navbar {
-                padding: 0.75rem 0 !important;
-            }
-            
+
             .navbar .container {
-                flex-direction: row !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                padding: 0 1rem !important;
+                padding: 0 1rem;
             }
-            
+
             .nav-brand img {
-                height: 40px !important;
+                height: 40px;
             }
             
-            /* Show hamburger on mobile */
             .hamburger {
-                display: flex !important;
+                display: flex;
             }
             
-            /* Hide menu by default on mobile */
             .nav-menu {
-                position: fixed !important;
-                top: 65px !important;
-                left: 0 !important;
-                right: 0 !important;
-                background: #000000 !important;
-                flex-direction: column !important;
-                width: 100% !important;
-                max-height: 0 !important;
-                overflow: hidden !important;
-                transition: max-height 0.3s ease !important;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
-                z-index: 999 !important;
-                padding: 0 !important;
-                display: flex !important;
+                position: fixed;
+                top: 65px;
+                left: 0;
+                right: 0;
+                background: #000000;
+                flex-direction: column;
+                width: 100%;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                padding: 0;
+                gap: 0;
             }
             
             .nav-menu.active {
-                max-height: 400px !important;
-                padding: 1rem 0 !important;
+                max-height: 400px;
+                padding: 1rem 0;
             }
             
             .nav-menu li {
-                width: 100% !important;
-                text-align: center !important;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-                display: block !important;
-                list-style: none !important;
+                width: 100%;
+                text-align: center;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             }
             
             .nav-menu li:last-child {
-                border-bottom: none !important;
+                border-bottom: none;
             }
             
             .nav-menu a {
-                display: block !important;
-                font-size: 1rem !important;
-                padding: 1rem 1.5rem !important;
-                width: 100% !important;
-                color: #ffffff !important;
-                text-decoration: none !important;
-            }
-            
-            .nav-menu a:hover,
-            .nav-menu a.active {
-                background: rgba(255, 215, 0, 0.1) !important;
-                color: #FFD700 !important;
-            }
-            
-            .cart-badge {
-                font-size: 0.7rem !important;
-                padding: 0.15rem 0.4rem !important;
-            }
-            
-            .hero {
-                padding: 2rem 0 !important;
-            }
-            
-            .hero h2 {
-                font-size: 1.75rem !important;
-                margin-bottom: 0.75rem !important;
-            }
-            
-            .hero p {
-                font-size: 0.95rem !important;
+                display: block;
+                font-size: 1rem;
+                padding: 1rem 1.5rem;
+                width: 100%;
             }
 
-            .announcements-section {
-                padding: 2rem 0 !important;
+            .hero h2 {
+                font-size: 1.75rem;
+            }
+
+            .hero p {
+                font-size: 0.95rem;
             }
 
             .announcement-card {
-                padding: 1rem !important;
-                margin-bottom: 1.25rem !important;
+                padding: 1.5rem;
             }
 
             .announcement-title {
-                font-size: 1.2rem !important;
+                font-size: 1.3rem;
             }
 
             .subscription-box {
-                padding: 1.5rem !important;
+                padding: 1.5rem;
             }
 
-            .subscription-box h3 {
-                font-size: 1.3rem !important;
+            .subscription-form {
+                flex-direction: column;
             }
-            
-            .footer {
-                padding: 2rem 0 1rem !important;
-                margin-top: 2rem !important;
+
+            .subscription-form input {
+                width: 100%;
             }
-            
+
             .footer-content {
-                grid-template-columns: 1fr !important;
-                gap: 1.5rem !important;
-                text-align: center !important;
-            }
-            
-            .footer-section h3 {
-                font-size: 1rem !important;
-            }
-            
-            .footer-section p,
-            .footer-section a {
-                font-size: 0.85rem !important;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            /* Small mobile styles */
-            .hero h2 {
-                font-size: 1.4rem !important;
-            }
-            
-            .hero p {
-                font-size: 0.9rem !important;
-            }
-
-            .announcement-title {
-                font-size: 1.1rem !important;
-            }
-
-            .announcement-header {
-                flex-direction: column !important;
-                align-items: flex-start !important;
-            }
-
-            .action-btn {
-                padding: 0.5rem 0.8rem !important;
-                font-size: 0.85rem !important;
-            }
-            
-            .nav-menu a {
-                font-size: 0.95rem !important;
-                padding: 0.9rem 1.2rem !important;
-            }
-        }
-        
-        /* Touch-friendly improvements */
-        @media (hover: none) and (pointer: coarse) {
-            /* For touchscreen devices */
-            .nav-menu a,
-            .action-btn,
-            .subscribe-btn,
-            .submit-comment-btn {
-                min-height: 44px !important;
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                text-align: center;
             }
         }
     </style>
@@ -419,9 +625,7 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="announcements.html" class="active">Announcements</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li><a href="cart.html" class="cart-link">
-                    Cart <span id="cart-count" class="cart-badge">0</span>
-                </a></li>
+                <li><a href="cart.html">Cart <span id="cart-count" class="cart-badge">0</span></a></li>
                 <li><a href="about.html">About</a></li>
             </ul>
         </div>
@@ -487,12 +691,12 @@
                     <p>WhatsApp: +265 991765645</p>
                 </div>
             </div>
-            <p style="text-align: center;">&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
+            <div class="footer-bottom">
+                <p>&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
-    <script src="js/products.js"></script>
-    <script src="js/cart.js"></script>
     <script>
         // Hamburger Menu Toggle
         const hamburger = document.getElementById('hamburger');
@@ -521,12 +725,10 @@
         const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
         
-        // Initialize Supabase client
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let storedAnnouncements = [];
 
-        // Fetch announcements from Supabase
         async function loadAnnouncementsFromDB() {
             try {
                 console.log('Fetching announcements from Supabase...');
@@ -543,7 +745,6 @@
 
                 console.log('Announcements fetched:', data);
 
-                // Transform Supabase data to match the expected format
                 if (data && data.length > 0) {
                     storedAnnouncements = data.map(announcement => ({
                         id: announcement.id,
@@ -597,7 +798,6 @@
             const container = document.getElementById('announcements-list');
             const loadingState = document.getElementById('loading-state');
             
-            // Hide loading state
             if (loadingState) {
                 loadingState.style.display = 'none';
             }
@@ -650,7 +850,6 @@
             loadUserReactions();
         }
 
-        // Update likes in Supabase
         async function updateAnnouncementInDB(announcementId, updates) {
             try {
                 const { error } = await supabase
@@ -689,7 +888,6 @@
 
             localStorage.setItem('userReactions', JSON.stringify(userReactions));
             
-            // Update in Supabase
             updateAnnouncementInDB(announcementId, {
                 likes: announcement.likes,
                 dislikes: announcement.dislikes
@@ -721,7 +919,6 @@
 
             localStorage.setItem('userReactions', JSON.stringify(userReactions));
             
-            // Update in Supabase
             updateAnnouncementInDB(announcementId, {
                 likes: announcement.likes,
                 dislikes: announcement.dislikes
@@ -771,7 +968,6 @@
 
             announcement.comments.push(newComment);
 
-            // Update in Supabase
             await updateAnnouncementInDB(announcementId, {
                 comments: announcement.comments
             });
@@ -779,7 +975,6 @@
             textarea.value = '';
             displayAnnouncements();
             
-            // Re-open comments section
             setTimeout(() => {
                 const commentsSection = document.getElementById(`comments-${announcementId}`);
                 if (commentsSection) {
@@ -788,7 +983,6 @@
             }, 100);
         }
 
-        // Subscription form handler
         document.getElementById('subscription-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -820,7 +1014,6 @@
             }, 5000);
         });
 
-        // Initialize page - Load from Supabase
         async function initializePage() {
             console.log('Initializing announcements page...');
             await loadAnnouncementsFromDB();
@@ -829,7 +1022,6 @@
         
         document.getElementById('current-year').textContent = new Date().getFullYear();
 
-        // Run on page load
         initializePage();
     </script>
 </body>

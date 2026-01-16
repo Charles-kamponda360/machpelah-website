@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - Machpelah Electronics</title>
-    <link rel="stylesheet" href="css/style.css">
     <style>
         :root {
             --gold: #FFD700;
@@ -31,25 +30,27 @@
             line-height: 1.6;
             color: #333;
             padding-top: 70px;
+            background: #f3f4f6;
         }
-
-
 
         /* Navigation */
         .navbar {
             background: var(--black);
             color: var(--white);
             padding: 1rem 0;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 1.5rem;
+            width: 100%;
         }
 
         .navbar .container {
@@ -131,10 +132,11 @@
 
         /* Hero Section */
         .hero {
-            background: var(--white);
-            color: var(--black);
-            padding: 4rem 0;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            color: var(--white);
+            padding: 3rem 0;
             text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
         .hero h2 {
@@ -144,23 +146,25 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
-            color: var(--black);
+            color: var(--white);
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .hero-icon {
             width: 50px;
             height: 50px;
-            filter: brightness(0);
+            filter: brightness(0) invert(1);
         }
 
         .hero p {
-            font-size: 1.2rem;
-            color: #555;
+            font-size: 1.1rem;
+            opacity: 0.95;
         }
 
         /* Contact Section */
         .contact-section {
-            padding: 3rem 0;
+            padding: 4rem 0;
         }
 
         .contact-content {
@@ -173,9 +177,16 @@
         .contact-form-wrapper,
         .contact-info-wrapper {
             background: var(--white);
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 12px;
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .contact-form-wrapper:hover,
+        .contact-info-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
         }
 
         .contact-form-wrapper h2,
@@ -205,50 +216,58 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
+            background: #fafafa;
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--blue);
+            border-color: var(--gold);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.15);
         }
 
         .form-group textarea {
             min-height: 150px;
             resize: vertical;
+            font-family: inherit;
         }
 
         .btn {
             color: var(--white) !important;
-            font-weight: 600;
+            font-weight: 700;
             background: var(--black);
             border: none;
-            padding: 12px 32px;
-            border-radius: 8px;
+            padding: 14px 32px;
+            border-radius: 10px;
             box-shadow: var(--shadow-md);
             transition: all 0.3s ease;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 16px;
         }
 
         .btn:hover {
-            background: var(--blue);
+            background: var(--gold);
+            color: var(--black) !important;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
         }
 
         .btn:active {
-            background: var(--green);
             transform: translateY(0);
         }
 
         .success-message {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 2px solid #10b981;
-            font-weight: 600;
+            background: #10b981;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #059669;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         /* Contact Info */
@@ -261,6 +280,14 @@
             display: flex;
             gap: 1rem;
             align-items: flex-start;
+            padding: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .info-item:hover {
+            background: #f9fafb;
+            transform: translateX(6px);
         }
 
         .info-icon img {
@@ -280,6 +307,7 @@
         .info-content p {
             font-weight: 500;
             color: #555;
+            font-size: 15px;
         }
 
         .info-content a {
@@ -302,6 +330,7 @@
         .social-section h3 {
             margin-bottom: 1rem;
             font-weight: 700;
+            font-size: 1.1rem;
         }
 
         .social-links {
@@ -315,29 +344,26 @@
             font-weight: 600;
             background: var(--black);
             padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: var(--shadow-md);
             transition: all 0.3s ease;
             text-decoration: none;
         }
 
         .social-link:hover {
-            background: var(--blue);
+            background: var(--gold);
+            color: var(--black) !important;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .social-link:active {
-            background: var(--green);
-            transform: translateY(0);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
         }
 
         /* FAQ Section */
         .faq-section {
-            background: #f9fafb;
-            padding: 3rem 2rem;
+            background: var(--white);
+            padding: 3rem 2.5rem;
             border-radius: 12px;
             margin-bottom: 3rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
 
         .faq-section h2 {
@@ -345,6 +371,7 @@
             font-weight: 700;
             text-align: center;
             margin-bottom: 2rem;
+            color: var(--black);
         }
 
         .faq-grid {
@@ -354,20 +381,28 @@
         }
 
         .faq-item {
-            background: var(--white);
+            background: #f9fafb;
             padding: 1.5rem;
             border-radius: 8px;
-            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--gold);
+            transition: all 0.3s;
+        }
+
+        .faq-item:hover {
+            transform: translateX(6px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
         .faq-item h3 {
             color: var(--black);
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            font-weight: 700;
         }
 
         .faq-item p {
             color: #666;
+            line-height: 1.7;
         }
 
         /* Map Section */
@@ -381,7 +416,7 @@
             font-weight: 700;
             text-align: center;
             margin-bottom: 1.5rem;
-            margin-top: 1.5rem;
+            color: var(--black);
         }
 
         .map-overlay {
@@ -412,9 +447,10 @@
         .footer {
             background: var(--black);
             color: var(--white);
-            padding: 3rem 0 1rem;
-            margin-top: 4rem;
+            padding: 3rem 0 1.5rem;
+            margin-top: 5rem;
             box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
         }
 
         .footer-content {
@@ -451,7 +487,7 @@
         .footer-section a {
             color: #d1d5db;
             text-decoration: none;
-            transition: color 0.3s;
+            transition: all 0.3s;
             font-size: 0.9rem;
             display: inline-block;
         }
@@ -461,15 +497,16 @@
             padding-left: 5px;
         }
 
-        .footer p[style*="text-align: center"] {
-            color: #9ca3af;
-            font-size: 0.9rem;
+        .footer-bottom {
+            text-align: center;
             padding-top: 2rem;
             border-top: 1px solid #374151;
+            color: #9ca3af;
+            font-size: 0.9rem;
             margin-top: 2rem;
         }
 
-        /* Tablet View */
+        /* Tablet View (768px - 968px) */
         @media (max-width: 968px) {
             .contact-content {
                 grid-template-columns: 1fr;
@@ -481,107 +518,30 @@
             }
 
             .footer-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             }
 
             .hero h2 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
 
             .hero-icon {
-                width: 40px;
-                height: 40px;
-            }
-        }
-
-        /* Mobile View */
-        @media (max-width: 768px) {
-            .hamburger {
-                display: flex;
-            }
-
-            .nav-menu {
-                position: fixed;
-                left: -100%;
-                top: 70px;
-                flex-direction: column;
-                background-color: var(--black);
-                width: 100%;
-                text-align: center;
-                transition: left 0.3s;
-                box-shadow: var(--shadow-lg);
-                padding: 2rem 0;
-                gap: 1.5rem;
-            }
-
-            .nav-menu.active {
-                left: 0;
-            }
-
-
-
-            .hero {
-                padding: 2rem 0;
-            }
-
-            .hero h2 {
-                font-size: 1.5rem;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .hero-icon {
-                width: 35px;
-                height: 35px;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .contact-section {
-                padding: 2rem 0;
+                width: 45px;
+                height: 45px;
             }
 
             .contact-form-wrapper,
             .contact-info-wrapper {
-                padding: 1.5rem;
-            }
-
-            .contact-form-wrapper h2,
-            .contact-info-wrapper h2 {
-                font-size: 1.5rem;
+                padding: 2rem;
             }
 
             .faq-section {
-                padding: 2rem 1rem;
-            }
-
-            .faq-section h2 {
-                font-size: 1.5rem;
-            }
-
-            .social-links {
-                flex-direction: column;
-            }
-
-            .social-link {
-                text-align: center;
-            }
-
-            .map-container h2 {
-                font-size: 1.5rem;
-            }
-
-            .map-overlay p {
-                font-size: 14px;
-                flex-wrap: wrap;
+                padding: 2.5rem 2rem;
             }
         }
 
-        /* Small Mobile */
-        @media (max-width: 480px) {
+        /* Mobile View (481px - 768px) */
+        @media (max-width: 768px) {
             body {
                 padding-top: 65px;
             }
@@ -594,18 +554,126 @@
                 height: 40px;
             }
 
+            .hamburger {
+                display: flex;
+            }
+
             .nav-menu {
+                position: fixed;
                 top: 65px;
+                left: 0;
+                right: 0;
+                background: var(--black);
+                flex-direction: column;
+                width: 100%;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                z-index: 999;
+                padding: 0;
+                gap: 0;
+            }
+
+            .nav-menu.active {
+                max-height: 400px;
+                padding: 1rem 0;
+            }
+
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .nav-menu li:last-child {
+                border-bottom: none;
+            }
+
+            .nav-menu a {
+                display: block;
+                font-size: 1rem;
+                padding: 1rem 1.5rem;
+                width: 100%;
+            }
+
+            .hero {
+                padding: 3rem 0;
             }
 
             .hero h2 {
-                font-size: 1.3rem;
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hero-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .hero p {
+                font-size: 1.05rem;
+            }
+
+            .contact-section {
+                padding: 3rem 0;
+            }
+
+            .contact-form-wrapper,
+            .contact-info-wrapper {
+                padding: 1.8rem;
+            }
+
+            .contact-form-wrapper h2,
+            .contact-info-wrapper h2 {
+                font-size: 1.6rem;
+            }
+
+            .faq-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .faq-section h2,
+            .map-container h2 {
+                font-size: 1.7rem;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                text-align: center;
+            }
+        }
+
+        /* Small Mobile (up to 480px) */
+        @media (max-width: 480px) {
+            .hero h2 {
+                font-size: 1.5rem;
+            }
+
+            .hero-icon {
+                width: 35px;
+                height: 35px;
+            }
+
+            .hero p {
+                font-size: 1rem;
             }
 
             .contact-form-wrapper,
             .contact-info-wrapper,
             .faq-item {
-                padding: 1rem;
+                padding: 1.5rem;
+            }
+
+            .contact-form-wrapper h2,
+            .contact-info-wrapper h2 {
+                font-size: 1.4rem;
             }
 
             .btn {
@@ -622,6 +690,29 @@
                 width: 32px;
                 height: 32px;
             }
+
+            .faq-section h2,
+            .map-container h2 {
+                font-size: 1.5rem;
+            }
+
+            .faq-section {
+                padding: 1.5rem 1rem;
+            }
+
+            .social-links {
+                flex-direction: column;
+            }
+
+            .social-link {
+                text-align: center;
+                width: 100%;
+            }
+
+            .map-overlay p {
+                font-size: 14px;
+                flex-wrap: wrap;
+            }
         }
     </style>
 </head>
@@ -632,11 +723,11 @@
             <div class="nav-brand">
                 <img src="images/icons/Machpelahtshirt.png" alt="Machpelah Electronics Logo" onerror="this.src='https://via.placeholder.com/50x50/667eea/ffffff?text=ME'">
             </div>
-            <div class="hamburger" id="hamburger">
+            <button class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
+            </button>
             <ul class="nav-menu" id="nav-menu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="announcements.html">Announcements</a></li>
@@ -844,12 +935,12 @@
                     <p>WhatsApp: +265 991765645</p>
                 </div>
             </div>
-            <p style="text-align: center;">&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
+            <div class="footer-bottom">
+                <p>&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
-    <script src="js/products.js"></script>
-    <script src="js/cart.js"></script>
     <script>
         // Hamburger Menu Toggle
         const hamburger = document.getElementById('hamburger');
@@ -897,7 +988,7 @@
 
             // Show success message
             document.getElementById('contact-form').style.display = 'none';
-            document.getElementById('form-success').style.display = 'block';
+            document.getElementById('form-success').style.display = 'flex';
 
             // Reset form after 3 seconds
             setTimeout(() => {
@@ -907,6 +998,7 @@
             }, 3000);
         });
 
+        // Set current year
         document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
 </body>

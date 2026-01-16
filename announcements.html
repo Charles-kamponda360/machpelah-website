@@ -4,623 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Announcements - Machpelah Electronics</title>
-    
-    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1"></script>
-    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #ffffff;
-            color: #1f2937;
-            line-height: 1.6;
-            padding-top: 70px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            width: 100%;
-        }
-
-        /* Navigation Bar - BLACK */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #000000;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            padding: 1rem 0;
-        }
-
-        .navbar .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .nav-brand {
-            color: #FFD700;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .nav-brand img {
-            height: 50px;
-            width: auto;
-        }
-        
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 4px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            z-index: 1001;
-        }
-        
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background: #FFD700;
-            border-radius: 3px;
-            transition: all 0.3s ease;
-        }
-        
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
-        }
-        
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-        
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-menu a {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-menu a:hover,
-        .nav-menu a.active {
-            color: #FFD700;
-        }
-
-        .cart-badge {
-            background: #FFD700;
-            color: #000000;
-            padding: 0.2rem 0.5rem;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            margin-left: 0.25rem;
-        }
-
-        /* Hero Section - BLACK background with GOLD title */
-        .hero {
-            background: #000000;
-            color: white;
-            padding: 3rem 0;
-            text-align: center;
-        }
-
-        .hero h2 {
-            color: #FFD700;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        /* Announcements Section */
-        .announcements-section {
-            padding: 3rem 0;
-        }
-
-        .announcement-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            border-left: 4px solid #FFD700;
-            border-top: 1px solid #f0f0f0;
-            border-right: 1px solid #f0f0f0;
-            border-bottom: 1px solid #f0f0f0;
-            transition: all 0.3s ease;
-        }
-
-        .announcement-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-        }
-
-        .featured-announcement {
-            background: linear-gradient(135deg, #fdfbf7 0%, #f8f6f0 100%);
-            position: relative;
-        }
-
-        .featured-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #FFD700;
-            color: #000000;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .announcement-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .announcement-type {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-
-        .type-promotion {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fcd34d;
-        }
-
-        .type-price-change {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #93c5fd;
-        }
-
-        .type-new-stock {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #6ee7b7;
-        }
-
-        .type-general {
-            background: #e0e7ff;
-            color: #3730a3;
-            border: 1px solid #a5b4fc;
-        }
-
-        .announcement-date {
-            color: #6b7280;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .announcement-title {
-            color: #1f2937;
-            font-size: 1.75rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-            line-height: 1.3;
-        }
-
-        .announcement-content {
-            color: #4b5563;
-            line-height: 1.8;
-            margin-bottom: 2rem;
-            font-size: 1.05rem;
-        }
-
-        .announcement-actions {
-            display: flex;
-            gap: 1rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e5e7eb;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 18px;
-            border: 1.5px solid #e5e7eb;
-            background: #f9fafb;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 13px;
-            font-weight: 500;
-            color: #4b5563;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            background: white;
-        }
-
-        .action-btn.active {
-            background: #FFD700;
-            color: #000000;
-            border-color: #FFD700;
-        }
-
-        .comments-section {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 2px solid #e5e7eb;
-        }
-
-        .comment-form {
-            margin-bottom: 2rem;
-        }
-
-        .comment-input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 14px;
-            resize: vertical;
-            min-height: 100px;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            background: #fafafa;
-        }
-
-        .comment-input:focus {
-            outline: none;
-            border-color: #FFD700;
-            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
-            background: white;
-        }
-
-        .submit-comment-btn {
-            margin-top: 12px;
-            padding: 10px 24px;
-            background: #000000;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-
-        .submit-comment-btn:hover {
-            background: rgba(59, 130, 246, 0.9);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .comment-item {
-            padding: 14px 16px;
-            background: #f9fafb;
-            border-left: 3px solid #FFD700;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .comment-item:hover {
-            transform: translateX(4px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .comment-author {
-            font-weight: 600;
-            color: #FFD700;
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
-
-        .comment-text {
-            color: #4b5563;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .comment-date {
-            color: #9ca3af;
-            font-size: 12px;
-            margin-top: 6px;
-        }
-
-        /* Subscription Box - BLACK background */
-        .subscription-box {
-            background: #000000;
-            color: white;
-            padding: 2.5rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            margin-top: 3rem;
-        }
-
-        .subscription-box h3 {
-            color: #FFD700;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .subscription-box p {
-            margin-bottom: 1.5rem;
-            opacity: 0.95;
-        }
-
-        .subscription-form {
-            max-width: 600px;
-            margin: 0 auto;
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .subscription-form input {
-            flex: 1;
-            min-width: 200px;
-            padding: 11px 18px;
-            border: 1px solid #333;
-            border-radius: 8px;
-            font-size: 14px;
-            background: #1a1a1a;
-            color: white;
-        }
-
-        .subscription-form input::placeholder {
-            color: #999;
-        }
-
-        .subscription-form input:focus {
-            outline: none;
-            background: #2a2a2a;
-            border-color: #FFD700;
-        }
-
-        .subscribe-btn {
-            padding: 11px 28px;
-            background: #FFD700;
-            color: #000000;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
-
-        .subscribe-btn:hover {
-            background: rgba(59, 130, 246, 0.9);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-        }
-
-        .success-message {
-            background: #10b981;
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            display: none;
-            font-weight: 600;
-        }
-
-        .no-announcements {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 12px;
-        }
-
-        .no-announcements h2 {
-            color: #1f2937;
-            margin-bottom: 1rem;
-        }
-
-        /* Footer - BLACK background */
-        .footer {
-            background: #000000;
-            color: white;
-            padding: 3rem 0 1.5rem;
-            margin-top: 4rem;
-            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
-            width: 100%;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h3 {
-            color: #FFD700;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .footer-section p {
-            color: #d1d5db;
-            font-size: 0.9rem;
-            line-height: 1.8;
-            margin: 0.5rem 0;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 0.625rem;
-        }
-
-        .footer-section a {
-            color: #d1d5db;
-            text-decoration: none;
-            font-size: 0.9rem;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-
-        .footer-section a:hover {
-            color: #FFD700;
-            padding-left: 5px;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #374151;
-            color: #9ca3af;
-            font-size: 0.9rem;
-            margin-top: 2rem;
-        }
-
-        /* Mobile Responsiveness */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f4f6; color: #1f2937; line-height: 1.6; padding-top: 70px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; width: 100%; }
+        .icon { width: 20px; height: 20px; vertical-align: middle; margin-right: 6px; }
+        .icon-large { width: 80px; height: 80px; vertical-align: middle; margin-right: 8px; border: 3px solid #FFD700; border-radius: 50%; padding: 10px; background: transparent; }
+        .icon-small { width: 16px; height: 16px; vertical-align: middle; margin-right: 4px; }
+        .navbar { position: fixed; top: 0; left: 0; right: 0; background: #000; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.3); padding: 1rem 0; }
+        .navbar .container { display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { color: #FFD700; font-size: 1.5rem; font-weight: bold; }
+        .nav-brand img { height: 50px; width: auto; }
+        .hamburger { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: 8px; z-index: 1001; }
+        .hamburger span { width: 25px; height: 3px; background: #FFD700; border-radius: 3px; transition: all 0.3s ease; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; align-items: center; }
+        .nav-menu a { color: #fff; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .nav-menu a:hover, .nav-menu a.active { color: #FFD700; }
+        .cart-badge { background: #FFD700; color: #000; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.75rem; margin-left: 0.25rem; }
+        .hero { background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); color: white; padding: 3rem 0; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .hero h2 { color: #FFD700; font-size: 2.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 4px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .hero p { font-size: 1.1rem; opacity: 0.9; }
+        .announcements-section { padding: 4rem 0; }
+        .announcement-card { background: white; border-radius: 12px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-left: 4px solid #FFD700; transition: all 0.3s ease; }
+        .announcement-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+        .featured-announcement { background: linear-gradient(135deg, #fffbf0 0%, #fff9e6 100%); border-left: 8px solid #ff6b35; }
+        .featured-badge { position: absolute; top: 25px; right: 25px; background: linear-gradient(135deg, #FFD700 0%, #ffc107 100%); color: #000; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(255,215,0,0.4); text-transform: uppercase; letter-spacing: 1px; }
+        .announcement-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem; }
+        .announcement-type { display: inline-block; padding: 10px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .type-promotion { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
+        .type-price-change { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
+        .type-new-stock { background: #d1fae5; color: #065f46; border: 2px solid #6ee7b7; }
+        .type-general { background: #e0e7ff; color: #3730a3; border: 2px solid #a5b4fc; }
+        .announcement-date { color: #6b7280; font-size: 16px; font-weight: 600; }
+        .announcement-title { color: #1f2937; font-size: 1.75rem; margin-bottom: 1.5rem; font-weight: 700; line-height: 1.2; }
+        .announcement-content { color: #4b5563; line-height: 1.8; margin-bottom: 2rem; font-size: 1.05rem; }
+        .announcement-actions { display: flex; gap: 1.5rem; padding-top: 2rem; border-top: 2px solid #e5e7eb; flex-wrap: wrap; }
+        .action-btn { display: flex; align-items: center; gap: 10px; padding: 12px 26px; border: 2px solid #e5e7eb; background: #f9fafb; border-radius: 30px; cursor: pointer; transition: all 0.3s; font-size: 16px; font-weight: 600; color: #4b5563; }
+        .action-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); background: white; border-color: #FFD700; }
+        .action-btn.active { background: #FFD700; color: #000; border-color: #FFD700; box-shadow: 0 4px 15px rgba(255,215,0,0.3); }
+        .comments-section { margin-top: 3rem; padding-top: 3rem; border-top: 3px solid #e5e7eb; }
+        .comment-form { margin-bottom: 2.5rem; }
+        .comment-input { width: 100%; padding: 18px 20px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; resize: vertical; min-height: 120px; transition: all 0.3s; font-family: inherit; background: #fafafa; }
+        .comment-input:focus { outline: none; border-color: #FFD700; box-shadow: 0 0 0 4px rgba(255,215,0,0.15); background: white; }
+        .submit-comment-btn { margin-top: 15px; padding: 14px 32px; background: #000; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 16px; }
+        .submit-comment-btn:hover { background: #FFD700; color: #000; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,215,0,0.4); }
+        .comment-item { padding: 18px 20px; background: #f9fafb; border-left: 4px solid #FFD700; border-radius: 10px; margin-bottom: 15px; transition: all 0.3s; }
+        .comment-item:hover { transform: translateX(6px); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .comment-author { font-weight: 700; color: #FFD700; margin-bottom: 8px; font-size: 16px; }
+        .comment-text { color: #4b5563; font-size: 15px; line-height: 1.7; }
+        .comment-date { color: #9ca3af; font-size: 13px; margin-top: 8px; }
+        .subscription-box { background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); color: white; padding: 4rem; border-radius: 20px; text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,0.3); margin-top: 4rem; }
+        .subscription-box h3 { color: #FFD700; margin-bottom: 1.5rem; font-size: 2.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subscription-box p { margin-bottom: 2rem; opacity: 0.95; font-size: 1.2rem; }
+        .subscription-form { max-width: 700px; margin: 0 auto; display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
+        .subscription-form input { flex: 1; min-width: 220px; padding: 15px 22px; border: 2px solid #333; border-radius: 10px; font-size: 16px; background: #1a1a1a; color: white; }
+        .subscription-form input::placeholder { color: #999; }
+        .subscription-form input:focus { outline: none; background: #2a2a2a; border-color: #FFD700; }
+        .subscribe-btn { padding: 15px 36px; background: #FFD700; color: #000; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 16px; }
+        .subscribe-btn:hover { background: #ffc107; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255,215,0,0.5); }
+        .success-message { background: #10b981; color: white; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; display: none; font-weight: 700; align-items: center; justify-content: center; gap: 10px; font-size: 16px; }
+        .no-announcements { text-align: center; padding: 5rem 2rem; background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .no-announcements h2 { color: #1f2937; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 2.5rem; font-weight: 800; }
+        .no-announcements p { font-size: 1.2rem; color: #6b7280; }
+        .footer { background: #000; color: white; padding: 3rem 0 1.5rem; margin-top: 5rem; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.1); width: 100%; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-section h3 { color: #FFD700; margin-bottom: 1rem; font-size: 1.1rem; font-weight: 700; }
+        .footer-section p { color: #d1d5db; font-size: 0.9rem; line-height: 1.8; margin: 0.5rem 0; }
+        .footer-section ul { list-style: none; }
+        .footer-section ul li { margin-bottom: 0.625rem; }
+        .footer-section a { color: #d1d5db; text-decoration: none; font-size: 0.9rem; display: inline-block; transition: all 0.3s; }
+        .footer-section a:hover { color: #FFD700; padding-left: 5px; }
+        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid #374151; color: #9ca3af; font-size: 0.9rem; margin-top: 2rem; }
         @media (max-width: 768px) {
-            body {
-                padding-top: 65px;
-            }
-
-            .navbar .container {
-                padding: 0 1rem;
-            }
-
-            .nav-brand img {
-                height: 40px;
-            }
-            
-            .hamburger {
-                display: flex;
-            }
-            
-            .nav-menu {
-                position: fixed;
-                top: 65px;
-                left: 0;
-                right: 0;
-                background: #000000;
-                flex-direction: column;
-                width: 100%;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.3s ease;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-                z-index: 999;
-                padding: 0;
-                gap: 0;
-            }
-            
-            .nav-menu.active {
-                max-height: 400px;
-                padding: 1rem 0;
-            }
-            
-            .nav-menu li {
-                width: 100%;
-                text-align: center;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            .nav-menu li:last-child {
-                border-bottom: none;
-            }
-            
-            .nav-menu a {
-                display: block;
-                font-size: 1rem;
-                padding: 1rem 1.5rem;
-                width: 100%;
-            }
-
-            .hero h2 {
-                font-size: 1.75rem;
-            }
-
-            .hero p {
-                font-size: 0.95rem;
-            }
-
-            .announcement-card {
-                padding: 1.5rem;
-            }
-
-            .announcement-title {
-                font-size: 1.3rem;
-            }
-
-            .subscription-box {
-                padding: 1.5rem;
-            }
-
-            .subscription-form {
-                flex-direction: column;
-            }
-
-            .subscription-form input {
-                width: 100%;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                text-align: center;
-            }
+            body { padding-top: 65px; }
+            .navbar .container { padding: 0 1rem; }
+            .nav-brand img { height: 40px; }
+            .hamburger { display: flex; }
+            .nav-menu { position: fixed; top: 65px; left: 0; right: 0; background: #000; flex-direction: column; width: 100%; max-height: 0; overflow: hidden; transition: max-height 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 999; padding: 0; gap: 0; }
+            .nav-menu.active { max-height: 400px; padding: 1rem 0; }
+            .nav-menu li { width: 100%; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+            .nav-menu li:last-child { border-bottom: none; }
+            .nav-menu a { display: block; font-size: 1rem; padding: 1rem 1.5rem; width: 100%; }
+            .hero { padding: 3rem 0; }
+            .hero h2 { font-size: 2.2rem; flex-direction: column; }
+            .hero p { font-size: 1.1rem; }
+            .announcement-card { padding: 2rem; margin-bottom: 2rem; }
+            .announcement-title { font-size: 1.8rem; }
+            .announcement-content { font-size: 1.1rem; }
+            .subscription-box { padding: 2rem; }
+            .subscription-box h3 { flex-direction: column; font-size: 1.8rem; }
+            .subscription-form { flex-direction: column; }
+            .subscription-form input { width: 100%; }
+            .footer-content { grid-template-columns: 1fr; gap: 1.5rem; text-align: center; }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
-            <div class="nav-brand">
-                <img src="images/icons/Machpelahtshirt.png" alt="Machpelah Electronics Logo" onerror="this.src='https://via.placeholder.com/50x50/FFD700/000000?text=ME'">
-            </div>
-            
-            <button class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            
+            <div class="nav-brand"><img src="images/icons/Machpelahtshirt.png" alt="Logo" onerror="this.src='https://via.placeholder.com/50x50/FFD700/000000?text=ME'"></div>
+            <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="announcements.html" class="active">Announcements</a></li>
@@ -630,29 +117,18 @@
             </ul>
         </div>
     </nav>
-
-    <!-- Hero Section -->
     <header class="hero">
         <div class="container">
-            <h2>📢 Latest Announcements & Updates</h2>
+            <h2><img src="images/icons/announcement icon.png" alt="Announcement" class="icon-large">Latest Announcements & Updates</h2>
             <p>Stay informed with our latest promotions, price changes, and important news</p>
         </div>
     </header>
-
-    <!-- Main Content -->
     <main class="container">
         <section class="announcements-section">
-            <!-- Loading State -->
-            <div id="loading-state" style="text-align: center; padding: 3rem;">
-                <p style="font-size: 1.2rem; color: #FFD700;">Loading announcements...</p>
-            </div>
-
-            <!-- Announcements List -->
+            <div id="loading-state" style="text-align: center; padding: 4rem;"><p style="font-size: 1.5rem; color: #FFD700; font-weight: 700;">Loading announcements...</p></div>
             <div id="announcements-list"></div>
-
-            <!-- Subscription Box -->
             <div class="subscription-box">
-                <h3>📬 Subscribe for Instant Updates</h3>
+                <h3><img src="https://cdn-icons-png.flaticon.com/512/2549/2549900.png" alt="Subscribe" class="icon-large" style="filter: brightness(0) saturate(100%) invert(85%) sepia(48%) saturate(1077%) hue-rotate(359deg) brightness(102%) contrast(101%);">Subscribe for Instant Updates</h3>
                 <p>Never miss a promotion! Get notifications via WhatsApp or Email</p>
                 <form class="subscription-form" id="subscription-form">
                     <input type="text" id="sub-name" required placeholder="Your Name">
@@ -661,367 +137,138 @@
                     <button type="submit" class="subscribe-btn">Subscribe</button>
                 </form>
                 <div class="success-message" id="sub-success">
-                    ✓ Successfully subscribed! You'll receive updates soon.
+                    <img src="https://cdn-icons-png.flaticon.com/512/5610/5610944.png" alt="Success" class="icon-small" style="filter: brightness(0) invert(1);">Successfully subscribed! You'll receive updates soon.
                 </div>
             </div>
         </section>
     </main>
-
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Machpelah Electronics</h3>
-                    <p>Your trusted source for quality home appliances</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="announcements.html">Announcements</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                        <li><a href="admin/index.html">Admin</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <p>Email: machpelah@gmail.com</p>
-                    <p>WhatsApp: +265 991765645</p>
-                </div>
+                <div class="footer-section"><h3>Machpelah Electronics</h3><p>Your trusted source for quality home appliances</p></div>
+                <div class="footer-section"><h3>Quick Links</h3><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="announcements.html">Announcements</a></li><li><a href="contact.html">Contact</a></li><li><a href="admin/index.html">Admin</a></li></ul></div>
+                <div class="footer-section"><h3>Contact Us</h3><p>Email: machpelah@gmail.com</p><p>WhatsApp: +265 991765645</p></div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
-            </div>
+            <div class="footer-bottom"><p>&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p></div>
         </div>
     </footer>
-
     <script>
-        // Hamburger Menu Toggle
+        const ICONS = {
+            star: 'https://cdn-icons-png.flaticon.com/512/1828/1828884.png',
+            thumbsUp: 'https://cdn-icons-png.flaticon.com/512/456/456115.png',
+            thumbsDown: 'https://cdn-icons-png.flaticon.com/512/456/456116.png',
+            comment: 'https://cdn-icons-png.flaticon.com/512/2593/2593491.png',
+            announcement: 'https://cdn-icons-png.flaticon.com/512/3687/3687412.png',
+            noContent: 'https://cdn-icons-png.flaticon.com/512/7486/7486754.png'
+        };
         const hamburger = document.getElementById('hamburger');
         const navMenu = document.getElementById('navMenu');
-
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-            }
-        });
-
-        navMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-            });
-        });
-
-        // Supabase Configuration
+        hamburger.addEventListener('click', () => { hamburger.classList.toggle('active'); navMenu.classList.toggle('active'); });
+        document.addEventListener('click', (e) => { if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) { hamburger.classList.remove('active'); navMenu.classList.remove('active'); } });
+        navMenu.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { hamburger.classList.remove('active'); navMenu.classList.remove('active'); }); });
         const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
-        
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         let storedAnnouncements = [];
-
         async function loadAnnouncementsFromDB() {
             try {
-                console.log('Fetching announcements from Supabase...');
-                
-                const { data, error } = await supabase
-                    .from('announcements')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) {
-                    console.error('Error fetching announcements:', error);
-                    throw error;
-                }
-
-                console.log('Announcements fetched:', data);
-
+                const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
                 if (data && data.length > 0) {
-                    storedAnnouncements = data.map(announcement => ({
-                        id: announcement.id,
-                        type: announcement.type || 'general',
-                        title: announcement.text || 'Announcement',
-                        content: announcement.text || '',
-                        date: announcement.created_at || new Date().toISOString(),
-                        likes: announcement.likes || 0,
-                        dislikes: announcement.dislikes || 0,
-                        comments: announcement.comments || [],
-                        featured: announcement.featured || false
-                    }));
-                } else {
-                    storedAnnouncements = [];
-                }
-
+                    storedAnnouncements = data.map(a => ({ id: a.id, type: a.type || 'general', title: a.text || 'Announcement', content: a.text || '', date: a.created_at || new Date().toISOString(), likes: a.likes || 0, dislikes: a.dislikes || 0, comments: a.comments || [], featured: a.featured || false }));
+                } else { storedAnnouncements = []; }
                 return storedAnnouncements;
-            } catch (error) {
-                console.error('Error loading announcements:', error);
-                storedAnnouncements = [];
-                return storedAnnouncements;
-            }
+            } catch (error) { console.error('Error:', error); storedAnnouncements = []; return storedAnnouncements; }
         }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        }
-
+        function formatDate(dateString) { return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); }
         function displayComments(comments) {
-            if (!comments || comments.length === 0) {
-                return '<p style="color: #9ca3af; text-align: center; font-style: italic;">No comments yet. Be the first to comment!</p>';
-            }
-            
-            return comments.map(comment => `
-                <div class="comment-item">
-                    <div class="comment-author">${escapeHtml(comment.author)}</div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                    <div class="comment-date">${formatDate(comment.date)}</div>
-                </div>
-            `).join('');
+            if (!comments || comments.length === 0) return '<p style="color: #9ca3af; text-align: center; font-style: italic; font-size: 15px;">No comments yet. Be the first to comment!</p>';
+            return comments.map(c => `<div class="comment-item"><div class="comment-author">${escapeHtml(c.author)}</div><div class="comment-text">${escapeHtml(c.text)}</div><div class="comment-date">${formatDate(c.date)}</div></div>`).join('');
         }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
+        function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
         function displayAnnouncements() {
             const container = document.getElementById('announcements-list');
             const loadingState = document.getElementById('loading-state');
-            
-            if (loadingState) {
-                loadingState.style.display = 'none';
-            }
-            
+            if (loadingState) loadingState.style.display = 'none';
             if (!storedAnnouncements || storedAnnouncements.length === 0) {
-                container.innerHTML = `
-                    <div class="no-announcements">
-                        <h2>📢 No Announcements Yet</h2>
-                        <p>Check back soon for updates, promotions, and important news!</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="no-announcements"><h2><img src="${ICONS.announcement}" alt="No" class="icon-large">No Announcements Yet</h2><p>Check back soon for updates!</p></div>`;
                 return;
             }
-
-            const html = storedAnnouncements.map(announcement => `
-                <div class="announcement-card ${announcement.featured ? 'featured-announcement' : ''}" data-id="${announcement.id}">
-                    ${announcement.featured ? '<div class="featured-badge">⭐ FEATURED</div>' : ''}
-                    <div class="announcement-header">
-                        <span class="announcement-type type-${announcement.type}">${announcement.type.replace('-', ' ')}</span>
-                        <span class="announcement-date">${formatDate(announcement.date)}</span>
-                    </div>
-                    <h2 class="announcement-title">${escapeHtml(announcement.title)}</h2>
-                    <div class="announcement-content">${escapeHtml(announcement.content)}</div>
-                    
-                    <div class="announcement-actions">
-                        <button class="action-btn like-btn" onclick="toggleLike(${announcement.id})">
-                            👍 <span id="like-count-${announcement.id}">${announcement.likes || 0}</span>
-                        </button>
-                        <button class="action-btn dislike-btn" onclick="toggleDislike(${announcement.id})">
-                            👎 <span id="dislike-count-${announcement.id}">${announcement.dislikes || 0}</span>
-                        </button>
-                        <button class="action-btn comment-btn" onclick="toggleComments(${announcement.id})">
-                            💬 <span id="comment-count-${announcement.id}">${(announcement.comments || []).length}</span> Comments
-                        </button>
-                    </div>
-
-                    <div class="comments-section" id="comments-${announcement.id}" style="display: none;">
-                        <form class="comment-form" onsubmit="addComment(event, ${announcement.id})">
-                            <textarea class="comment-input" placeholder="Share your thoughts..." required></textarea>
-                            <button type="submit" class="submit-comment-btn">Post Comment</button>
-                        </form>
-                        <div id="comment-list-${announcement.id}">
-                            ${displayComments(announcement.comments || [])}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            
+            const html = storedAnnouncements.map(a => `<div class="announcement-card ${a.featured ? 'featured-announcement' : ''}" data-id="${a.id}">${a.featured ? `<div class="featured-badge"><img src="${ICONS.star}" alt="Featured" class="icon-small"> FEATURED</div>` : ''}<div class="announcement-header"><span class="announcement-type type-${a.type}">${a.type.replace('-', ' ')}</span><span class="announcement-date">${formatDate(a.date)}</span></div><h2 class="announcement-title">${escapeHtml(a.title)}</h2><div class="announcement-content">${escapeHtml(a.content)}</div><div class="announcement-actions"><button class="action-btn like-btn" onclick="toggleLike(${a.id})"><img src="${ICONS.thumbsUp}" alt="Like" class="icon-small"><span id="like-count-${a.id}">${a.likes || 0}</span></button><button class="action-btn dislike-btn" onclick="toggleDislike(${a.id})"><img src="${ICONS.thumbsDown}" alt="Dislike" class="icon-small"><span id="dislike-count-${a.id}">${a.dislikes || 0}</span></button><button class="action-btn comment-btn" onclick="toggleComments(${a.id})"><img src="${ICONS.comment}" alt="Comment" class="icon-small"><span id="comment-count-${a.id}">${(a.comments || []).length}</span> Comments</button></div><div class="comments-section" id="comments-${a.id}" style="display: none;"><form class="comment-form" onsubmit="addComment(event, ${a.id})"><textarea class="comment-input" placeholder="Share your thoughts..." required></textarea><button type="submit" class="submit-comment-btn">Post Comment</button></form><div id="comment-list-${a.id}">${displayComments(a.comments || [])}</div></div></div>`).join('');
             container.innerHTML = html;
             loadUserReactions();
         }
-
-        async function updateAnnouncementInDB(announcementId, updates) {
-            try {
-                const { error } = await supabase
-                    .from('announcements')
-                    .update(updates)
-                    .eq('id', announcementId);
-
-                if (error) {
-                    console.error('Error updating announcement:', error);
-                }
-            } catch (error) {
-                console.error('Error updating announcement:', error);
-            }
-        }
-
-        function toggleLike(announcementId) {
-            const announcement = storedAnnouncements.find(a => a.id === announcementId);
-            if (!announcement) return;
-
+        async function updateAnnouncementInDB(id, updates) { try { await supabase.from('announcements').update(updates).eq('id', id); } catch (error) { console.error('Error:', error); } }
+        function toggleLike(id) {
+            const a = storedAnnouncements.find(x => x.id === id);
+            if (!a) return;
             const userReactions = JSON.parse(localStorage.getItem('userReactions')) || {};
-            const key = `announcement-${announcementId}`;
-
-            if (!announcement.likes) announcement.likes = 0;
-            if (!announcement.dislikes) announcement.dislikes = 0;
-
-            if (userReactions[key] === 'like') {
-                announcement.likes--;
-                delete userReactions[key];
-            } else {
-                if (userReactions[key] === 'dislike') {
-                    announcement.dislikes--;
-                }
-                announcement.likes++;
-                userReactions[key] = 'like';
-            }
-
+            const key = `announcement-${id}`;
+            if (!a.likes) a.likes = 0;
+            if (!a.dislikes) a.dislikes = 0;
+            if (userReactions[key] === 'like') { a.likes--; delete userReactions[key]; } else { if (userReactions[key] === 'dislike') a.dislikes--; a.likes++; userReactions[key] = 'like'; }
             localStorage.setItem('userReactions', JSON.stringify(userReactions));
-            
-            updateAnnouncementInDB(announcementId, {
-                likes: announcement.likes,
-                dislikes: announcement.dislikes
-            });
-            
+            updateAnnouncementInDB(id, { likes: a.likes, dislikes: a.dislikes });
             displayAnnouncements();
         }
-
-        function toggleDislike(announcementId) {
-            const announcement = storedAnnouncements.find(a => a.id === announcementId);
-            if (!announcement) return;
-
+        function toggleDislike(id) {
+            const a = storedAnnouncements.find(x => x.id === id);
+            if (!a) return;
             const userReactions = JSON.parse(localStorage.getItem('userReactions')) || {};
-            const key = `announcement-${announcementId}`;
-
-            if (!announcement.likes) announcement.likes = 0;
-            if (!announcement.dislikes) announcement.dislikes = 0;
-
-            if (userReactions[key] === 'dislike') {
-                announcement.dislikes--;
-                delete userReactions[key];
-            } else {
-                if (userReactions[key] === 'like') {
-                    announcement.likes--;
-                }
-                announcement.dislikes++;
-                userReactions[key] = 'dislike';
-            }
-
+            const key = `announcement-${id}`;
+            if (!a.likes) a.likes = 0;
+            if (!a.dislikes) a.dislikes = 0;
+            if (userReactions[key] === 'dislike') { a.dislikes--; delete userReactions[key]; } else { if (userReactions[key] === 'like') a.likes--; a.dislikes++; userReactions[key] = 'dislike'; }
             localStorage.setItem('userReactions', JSON.stringify(userReactions));
-            
-            updateAnnouncementInDB(announcementId, {
-                likes: announcement.likes,
-                dislikes: announcement.dislikes
-            });
-            
+            updateAnnouncementInDB(id, { likes: a.likes, dislikes: a.dislikes });
             displayAnnouncements();
         }
-
         function loadUserReactions() {
             const userReactions = JSON.parse(localStorage.getItem('userReactions')) || {};
-            
             Object.keys(userReactions).forEach(key => {
-                const announcementId = key.split('-')[1];
+                const id = key.split('-')[1];
                 const reaction = userReactions[key];
-                const btn = document.querySelector(`[data-id="${announcementId}"] .${reaction}-btn`);
+                const btn = document.querySelector(`[data-id="${id}"] .${reaction}-btn`);
                 if (btn) btn.classList.add('active');
             });
         }
-
-        function toggleComments(announcementId) {
-            const commentsSection = document.getElementById(`comments-${announcementId}`);
-            if (commentsSection) {
-                commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
-            }
+        function toggleComments(id) {
+            const commentsSection = document.getElementById(`comments-${id}`);
+            if (commentsSection) commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
         }
-
-        async function addComment(event, announcementId) {
+        async function addComment(event, id) {
             event.preventDefault();
-            
             const textarea = event.target.querySelector('.comment-input');
             const commentText = textarea.value.trim();
-            
             if (!commentText) return;
-
-            const announcement = storedAnnouncements.find(a => a.id === announcementId);
-            if (!announcement) return;
-
+            const a = storedAnnouncements.find(x => x.id === id);
+            if (!a) return;
             const userName = prompt('Enter your name:') || 'Anonymous';
-            
-            if (!announcement.comments) announcement.comments = [];
-            
-            const newComment = {
-                author: userName,
-                text: commentText,
-                date: new Date().toISOString().split('T')[0]
-            };
-
-            announcement.comments.push(newComment);
-
-            await updateAnnouncementInDB(announcementId, {
-                comments: announcement.comments
-            });
-            
+            if (!a.comments) a.comments = [];
+            const newComment = { author: userName, text: commentText, date: new Date().toISOString().split('T')[0] };
+            a.comments.push(newComment);
+            await updateAnnouncementInDB(id, { comments: a.comments });
             textarea.value = '';
             displayAnnouncements();
-            
-            setTimeout(() => {
-                const commentsSection = document.getElementById(`comments-${announcementId}`);
-                if (commentsSection) {
-                    commentsSection.style.display = 'block';
-                }
-            }, 100);
+            setTimeout(() => { const commentsSection = document.getElementById(`comments-${id}`); if (commentsSection) commentsSection.style.display = 'block'; }, 100);
         }
-
         document.getElementById('subscription-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const name = document.getElementById('sub-name').value;
             const email = document.getElementById('sub-email').value;
             const whatsapp = document.getElementById('sub-whatsapp').value;
-
-            if (!email && !whatsapp) {
-                alert('Please provide at least an email address or WhatsApp number');
-                return;
-            }
-
-            const subscription = {
-                name: name,
-                email: email,
-                whatsapp: whatsapp,
-                date: new Date().toISOString()
-            };
-
+            if (!email && !whatsapp) { alert('Please provide at least an email or WhatsApp'); return; }
+            const subscription = { name: name, email: email, whatsapp: whatsapp, date: new Date().toISOString() };
             const subscriptions = JSON.parse(localStorage.getItem('subscriptions')) || [];
             subscriptions.push(subscription);
             localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
-
-            document.getElementById('sub-success').style.display = 'block';
+            const successMsg = document.getElementById('sub-success');
+            successMsg.style.display = 'flex';
             this.reset();
-
-            setTimeout(() => {
-                document.getElementById('sub-success').style.display = 'none';
-            }, 5000);
+            setTimeout(() => { successMsg.style.display = 'none'; }, 5000);
         });
-
-        async function initializePage() {
-            console.log('Initializing announcements page...');
-            await loadAnnouncementsFromDB();
-            displayAnnouncements();
-        }
-        
+        async function initializePage() { await loadAnnouncementsFromDB(); displayAnnouncements(); }
         document.getElementById('current-year').textContent = new Date().getFullYear();
-
         initializePage();
     </script>
 </body>

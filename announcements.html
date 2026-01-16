@@ -8,18 +8,371 @@
     
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1"></script>
+    
+    <style>
+        /* Fixed Navigation Bar - BLACK */
+        .navbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            background: #000000 !important;
+            z-index: 1000 !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+        }
+        
+        /* GOLD for brand/logo text */
+        .nav-brand {
+            color: #FFD700 !important;
+        }
+        
+        /* Add padding to body to prevent content from hiding under fixed navbar */
+        body {
+            padding-top: 70px !important;
+            background: #ffffff !important;
+        }
+        
+        /* Hamburger Menu Styles */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #FFD700;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Hero Section - BLACK background with GOLD title */
+        .hero {
+            background: #000000 !important;
+            color: white !important;
+        }
+
+        .hero h2 {
+            color: #FFD700 !important;
+        }
+
+        /* Subscription Box - BLACK background */
+        .subscription-box {
+            background: #000000 !important;
+            color: white !important;
+        }
+
+        .subscription-box h3 {
+            color: #FFD700 !important;
+        }
+
+        .subscription-form input {
+            background: #1a1a1a !important;
+            color: white !important;
+            border: 1px solid #333 !important;
+        }
+
+        .subscription-form input::placeholder {
+            color: #999 !important;
+        }
+
+        /* Subscribe Button - GOLD with BLUE glass hover */
+        .subscribe-btn {
+            background: #FFD700 !important;
+            color: #000000 !important;
+            transition: all 0.3s !important;
+        }
+
+        .subscribe-btn:hover {
+            background: rgba(59, 130, 246, 0.9) !important;
+            color: white !important;
+            backdrop-filter: blur(10px) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+        }
+
+        /* Submit Comment Button - same style */
+        .submit-comment-btn {
+            background: #000000 !important;
+            color: white !important;
+            transition: all 0.3s !important;
+        }
+
+        .submit-comment-btn:hover {
+            background: rgba(59, 130, 246, 0.9) !important;
+            backdrop-filter: blur(10px) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+        }
+
+        /* Featured badge - GOLD */
+        .featured-badge {
+            background: #FFD700 !important;
+            color: #000000 !important;
+        }
+
+        /* Active action buttons - GOLD */
+        .action-btn.active {
+            background: #FFD700 !important;
+            color: #000000 !important;
+            border-color: #FFD700 !important;
+        }
+
+        /* Comment author - GOLD */
+        .comment-author {
+            color: #FFD700 !important;
+        }
+
+        /* Footer - BLACK background */
+        .footer {
+            background: #000000 !important;
+            color: white !important;
+        }
+
+        .footer-section h3 {
+            color: #FFD700 !important;
+        }
+
+        .footer-section a:hover {
+            color: #FFD700 !important;
+        }
+        
+        /* Enhanced Mobile & Tablet Responsiveness */
+        @media (max-width: 1024px) {
+            /* Tablet styles */
+            body {
+                font-size: 16px;
+                padding-top: 75px !important;
+            }
+            
+            .hero h2 {
+                font-size: 2rem !important;
+            }
+            
+            .hero p {
+                font-size: 1rem !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile styles */
+            body {
+                font-size: 16px;
+                padding-top: 65px !important;
+            }
+            
+            .container {
+                padding: 0 1rem !important;
+            }
+            
+            .navbar {
+                padding: 0.75rem 0 !important;
+            }
+            
+            .navbar .container {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 0 1rem !important;
+            }
+            
+            .nav-brand img {
+                height: 40px !important;
+            }
+            
+            /* Show hamburger on mobile */
+            .hamburger {
+                display: flex !important;
+            }
+            
+            /* Hide menu by default on mobile */
+            .nav-menu {
+                position: fixed !important;
+                top: 65px !important;
+                left: 0 !important;
+                right: 0 !important;
+                background: #000000 !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                max-height: 0 !important;
+                overflow: hidden !important;
+                transition: max-height 0.3s ease !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+                z-index: 999 !important;
+                padding: 0 !important;
+                display: flex !important;
+            }
+            
+            .nav-menu.active {
+                max-height: 400px !important;
+                padding: 1rem 0 !important;
+            }
+            
+            .nav-menu li {
+                width: 100% !important;
+                text-align: center !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+                display: block !important;
+                list-style: none !important;
+            }
+            
+            .nav-menu li:last-child {
+                border-bottom: none !important;
+            }
+            
+            .nav-menu a {
+                display: block !important;
+                font-size: 1rem !important;
+                padding: 1rem 1.5rem !important;
+                width: 100% !important;
+                color: #ffffff !important;
+                text-decoration: none !important;
+            }
+            
+            .nav-menu a:hover,
+            .nav-menu a.active {
+                background: rgba(255, 215, 0, 0.1) !important;
+                color: #FFD700 !important;
+            }
+            
+            .cart-badge {
+                font-size: 0.7rem !important;
+                padding: 0.15rem 0.4rem !important;
+            }
+            
+            .hero {
+                padding: 2rem 0 !important;
+            }
+            
+            .hero h2 {
+                font-size: 1.75rem !important;
+                margin-bottom: 0.75rem !important;
+            }
+            
+            .hero p {
+                font-size: 0.95rem !important;
+            }
+
+            .announcements-section {
+                padding: 2rem 0 !important;
+            }
+
+            .announcement-card {
+                padding: 1rem !important;
+                margin-bottom: 1.25rem !important;
+            }
+
+            .announcement-title {
+                font-size: 1.2rem !important;
+            }
+
+            .subscription-box {
+                padding: 1.5rem !important;
+            }
+
+            .subscription-box h3 {
+                font-size: 1.3rem !important;
+            }
+            
+            .footer {
+                padding: 2rem 0 1rem !important;
+                margin-top: 2rem !important;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+                text-align: center !important;
+            }
+            
+            .footer-section h3 {
+                font-size: 1rem !important;
+            }
+            
+            .footer-section p,
+            .footer-section a {
+                font-size: 0.85rem !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Small mobile styles */
+            .hero h2 {
+                font-size: 1.4rem !important;
+            }
+            
+            .hero p {
+                font-size: 0.9rem !important;
+            }
+
+            .announcement-title {
+                font-size: 1.1rem !important;
+            }
+
+            .announcement-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+
+            .action-btn {
+                padding: 0.5rem 0.8rem !important;
+                font-size: 0.85rem !important;
+            }
+            
+            .nav-menu a {
+                font-size: 0.95rem !important;
+                padding: 0.9rem 1.2rem !important;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            /* For touchscreen devices */
+            .nav-menu a,
+            .action-btn,
+            .subscribe-btn,
+            .submit-comment-btn {
+                min-height: 44px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Announcement Banner -->
-    <div id="announcement-banner" class="announcement-banner"></div>
-
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <img src="images/icons/Machpelahtshirt.png" alt="Machpelah Electronics Logo" onerror="this.src='https://via.placeholder.com/50x50/667eea/ffffff?text=ME'">
+                <img src="images/icons/Machpelahtshirt.png" alt="Machpelah Electronics Logo" onerror="this.src='https://via.placeholder.com/50x50/FFD700/000000?text=ME'">
             </div>
-            <ul class="nav-menu">
+            
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="announcements.html" class="active">Announcements</a></li>
                 <li><a href="contact.html">Contact</a></li>
@@ -44,7 +397,7 @@
         <section class="announcements-section">
             <!-- Loading State -->
             <div id="loading-state" style="text-align: center; padding: 3rem;">
-                <p style="font-size: 1.2rem; color: #667eea;">Loading announcements...</p>
+                <p style="font-size: 1.2rem; color: #FFD700;">Loading announcements...</p>
             </div>
 
             <!-- Announcements List -->
@@ -98,6 +451,29 @@
     <script src="js/products.js"></script>
     <script src="js/cart.js"></script>
     <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
         // Supabase Configuration
         const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
@@ -138,54 +514,15 @@
                         featured: announcement.featured || false
                     }));
                 } else {
-                    // Use default announcements if database is empty
-                    storedAnnouncements = getDefaultAnnouncements();
+                    storedAnnouncements = [];
                 }
 
                 return storedAnnouncements;
             } catch (error) {
                 console.error('Error loading announcements:', error);
-                // Fallback to default announcements
-                storedAnnouncements = getDefaultAnnouncements();
+                storedAnnouncements = [];
                 return storedAnnouncements;
             }
-        }
-
-        // Default announcements as fallback
-        function getDefaultAnnouncements() {
-            return [
-                {
-                    id: 1,
-                    type: 'promotion',
-                    title: '🎄 Christmas Mega Sale - Up to 50% OFF!',
-                    content: 'This Christmas season, enjoy massive discounts across our entire store! Get up to 50% OFF on Smart Watches, 40% OFF on Gaming PCs, 35% OFF on Kitchen Appliances including Kettles, Hotplates, and Rice Cookers. Plus, special bundle deals available! Visit us in-store or shop online. Sale ends December 31st. Limited stock available - first come, first served!',
-                    date: new Date().toISOString(),
-                    likes: 0,
-                    dislikes: 0,
-                    comments: [],
-                    featured: true
-                },
-                {
-                    id: 2,
-                    type: 'new-stock',
-                    title: '📦 New Stock Alert: Latest Smart Watches Arrived!',
-                    content: 'Exciting news! We just received a fresh shipment of the latest smart watches. Check out our updated collection with advanced fitness tracking, heart rate monitoring, and long battery life. Limited quantities available.',
-                    date: new Date().toISOString(),
-                    likes: 0,
-                    dislikes: 0,
-                    comments: []
-                },
-                {
-                    id: 3,
-                    type: 'price-change',
-                    title: '📊 Price Reduction: Gaming PCs Now More Affordable',
-                    content: 'Great news for gamers! We have reduced prices on our Gaming PC lineup. Intel Core i7 Gaming PC now available at MWK 850,000 (down from MWK 950,000). Intel Core i5 Office PC now at MWK 550,000. These new prices are permanent!',
-                    date: new Date().toISOString(),
-                    likes: 0,
-                    dislikes: 0,
-                    comments: []
-                }
-            ];
         }
 
         function formatDate(dateString) {
@@ -440,33 +777,13 @@
             }, 5000);
         });
 
-        // Update banner with latest announcement
-        async function updateBanner() {
-            if (storedAnnouncements && storedAnnouncements.length > 0) {
-                const latest = storedAnnouncements[0];
-                const banner = document.getElementById('announcement-banner');
-                
-                // Check if announcement has type for styling
-                const icon = latest.type === 'positive' ? '🎉' : latest.type === 'negative' ? '⚠️' : '📢';
-                banner.textContent = `${icon} ${latest.title}`;
-                banner.style.display = 'block';
-                
-                // Add styling based on type
-                if (latest.type === 'positive') {
-                    banner.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-                } else if (latest.type === 'negative') {
-                    banner.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-                }
-            }
-        }
-
         // Initialize page - Load from Supabase
         async function initializePage() {
             console.log('Initializing announcements page...');
             await loadAnnouncementsFromDB();
             displayAnnouncements();
-            updateBanner();
         }
+        
         document.getElementById('current-year').textContent = new Date().getFullYear();
 
         // Run on page load

@@ -3,13 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - Mach-Pelah Electronics</title>
+    <title>Contact Us - Machpelah Electronics</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --gold: #FFD700;
+            --black: #000000;
+            --white: #FFFFFF;
+            --blue: #1e40af;
+            --blue-hover: #1e3a8a;
+            --green: #10b981;
+            --green-hover: #059669;
+            --border: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .info-icon img, .announcement-icon {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            filter: brightness(0);
+        }
+        .announcement-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .map-overlay p {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .map-overlay img {
+            width: 24px;
+            height: 24px;
+            filter: brightness(0) saturate(100%) invert(27%) sepia(98%) saturate(7463%) hue-rotate(357deg) brightness(97%) contrast(115%);
+        }
+        .contact-section a {
+            color: #000 !important;
+            text-decoration: none;
+        }
+        .contact-section a:hover {
+            color: #FFD700 !important;
+        }
+        .contact-section h3 {
+            color: #000 !important;
+        }
+        .info-content h3 {
+            color: #000 !important;
+            font-weight: 700;
+        }
+        .hero h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .hero-icon {
+            width: 50px;
+            height: 50px;
+        }
+        .contact-form-wrapper h2,
+        .contact-info-wrapper h2,
+        .faq-section h2 {
+            font-weight: 700;
+        }
+        .info-content p {
+            font-weight: 500;
+        }
+        .social-links .social-link {
+            color: var(--white) !important;
+            font-weight: 600;
+            background: var(--black);
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .social-links .social-link:hover {
+            background: var(--blue);
+            color: var(--white) !important;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .social-links .social-link:active {
+            background: var(--green);
+            color: var(--white) !important;
+            transform: translateY(0);
+        }
+        .btn {
+            color: var(--white) !important;
+            font-weight: 600;
+            background: var(--black);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: var(--blue);
+            color: var(--white) !important;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .btn:active {
+            background: var(--green);
+            color: var(--white) !important;
+            transform: translateY(0);
+        }
+        .footer h3 {
+            color: #FFD700 !important;
+        }
+        .footer a:hover {
+            color: #FFD700 !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Announcement Banner -->
     <div id="announcement-banner" class="announcement-banner">
-        🎉 New Stock Alert! Check out our latest Smart Watches - Limited Time Offer!
+        <img src="https://cdn-icons-png.flaticon.com/512/3143/3143609.png" alt="Party" class="announcement-icon">
+        New Stock Alert! Check out our latest Smart Watches - Limited Time Offer!
     </div>
 
     <!-- Navigation -->
@@ -33,7 +152,10 @@
     <!-- Hero Section -->
     <header class="hero">
         <div class="container">
-            <h2>Get in Touch</h2>
+            <h2>
+                <img src="images/icons/get_intouch_icon.png" alt="Handshake" class="hero-icon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3588/3588356.png'">
+                Get in Touch
+            </h2>
             <p>We're here to help! Reach out to us with any questions or concerns</p>
         </div>
     </header>
@@ -44,8 +166,8 @@
             <div class="contact-content">
                 <!-- Contact Form -->
                 <div class="contact-form-wrapper">
-                    <h2>Send Us a Message</h2>
-                    <p style="color: #666; margin-bottom: 1.5rem;">Fill out the form below and we'll get back to you as soon as possible.</p>
+                    <h2><strong>Send Us a Message</strong></h2>
+                    <p style="color: #666; margin-bottom: 1.5rem;"><strong>Fill out the form below and we'll get back to you as soon as possible.</strong></p>
                     
                     <form id="contact-form" class="contact-form">
                         <div class="form-group">
@@ -83,12 +205,14 @@
 
                 <!-- Contact Information -->
                 <div class="contact-info-wrapper">
-                    <h2>Contact Information</h2>
-                    <p style="color: #666; margin-bottom: 2rem;">You can also reach us through the following channels:</p>
+                    <h2><strong>Contact Information</strong></h2>
+                    <p style="color: #666; margin-bottom: 2rem;"><strong>You can also reach us through the following channels:</strong></p>
 
                     <div class="contact-info">
                         <div class="info-item">
-                            <div class="info-icon">📍</div>
+                            <div class="info-icon">
+                                <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="Location">
+                            </div>
                             <div class="info-content">
                                 <h3>Visit Our Store</h3>
                                 <p>Blantyre, Malawi<br> Nandos, CBD</p>
@@ -96,7 +220,9 @@
                         </div>
 
                         <div class="info-item">
-                            <div class="info-icon">📧</div>
+                            <div class="info-icon">
+                                <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="Email">
+                            </div>
                             <div class="info-content">
                                 <h3>Email Us</h3>
                                 <p><a href="mailto:machpelah@gmail.com">machpelah@gmail.com</a><br>
@@ -105,7 +231,9 @@
                         </div>
 
                         <div class="info-item">
-                            <div class="info-icon">📱</div>
+                            <div class="info-icon">
+                                <img src="images/icons/whatsapp_phone icon.png" alt="Phone" onerror="this.src='https://cdn-icons-png.flaticon.com/512/733/733585.png'">
+                            </div>
                             <div class="info-content">
                                 <h3>Call or WhatsApp</h3>
                                 <p><a href="tel:+265991765645">+265 991 765 645</a><br>
@@ -114,7 +242,9 @@
                         </div>
 
                         <div class="info-item">
-                            <div class="info-icon">⏰</div>
+                            <div class="info-icon">
+                                <img src="https://cdn-icons-png.flaticon.com/512/2838/2838779.png" alt="Clock">
+                            </div>
                             <div class="info-content">
                                 <h3>Business Hours</h3>
                                 <p>Monday - Friday: 8:00 AM - 6:00 PM<br>
@@ -139,7 +269,7 @@
 
             <!-- FAQ Section -->
             <div class="faq-section">
-                <h2 style="text-align: center; margin-bottom: 2rem;">Frequently Asked Questions</h2>
+                <h2 style="text-align: center; margin-bottom: 2rem;"><strong>Frequently Asked Questions</strong></h2>
                 <div class="faq-grid">
                     <div class="faq-item">
                         <h3>Do you offer delivery services?</h3>
@@ -171,7 +301,7 @@
             <!-- Map Section -->
             <div class="map-container">
                 
-                <h2 style="text-align: center; margin-bottom: 1.5rem; margin-top: 1.5rem;">Find Us</h2>
+                <h2 style="text-align: center; margin-bottom: 1.5rem; margin-top: 1.5rem;"><strong>Find Us</strong></h2>
                 <iframe 
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15357.225418100667!2d34.98661105098589!3d-15.787792273100562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18d845a8131adb6b%3A0x67a9cd5cef325f5b!2sVictoria%20Ave%2C%20Blantyre!5e0!3m2!1sen!2smw!4v1766416390430!5m2!1sen!2smw"
                     width="100%" 
@@ -182,7 +312,10 @@
                     referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
                 <div class="map-overlay">
-                    <p>📍 Mach-Pelah Electronics, Blantyre Town, Blantyre</p>
+                    <p>
+                        <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="Location">
+                        Machpelah Electronics, Blantyre Town, Blantyre
+                    </p>
                 </div>
             </div>
         </section>

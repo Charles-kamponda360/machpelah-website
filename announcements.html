@@ -3,911 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - Machpelah Electronics</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Announcements - Machpelah Electronics</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1"></script>
     <style>
-        :root {
-            --gold: #FFD700;
-            --black: #000000;
-            --white: #FFFFFF;
-            --blue: #1e40af;
-            --blue-hover: #1e3a8a;
-            --green: #10b981;
-            --green-hover: #059669;
-            --border: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            padding-top: 70px;
-        }
-
-
-
-        /* Navigation */
-        .navbar {
-            background: var(--black);
-            color: var(--white);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: var(--shadow-md);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .navbar .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-brand img {
-            height: 50px;
-            width: auto;
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-menu a {
-            color: var(--white);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-            text-transform: capitalize;
-        }
-
-        .nav-menu a:hover,
-        .nav-menu a.active {
-            color: var(--gold);
-        }
-
-        .cart-link {
-            position: relative;
-        }
-
-        .cart-badge {
-            background: var(--gold);
-            color: var(--black);
-            padding: 2px 6px;
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 4px;
-        }
-
-        /* Hamburger Menu */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 4px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            z-index: 1001;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background: var(--gold);
-            border-radius: 3px;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
-        }
-
-        /* Hero Section */
-        .hero {
-            background: var(--white);
-            color: var(--black);
-            padding: 4rem 0;
-            text-align: center;
-        }
-
-        .hero h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            color: var(--black);
-        }
-
-        .hero-icon {
-            width: 50px;
-            height: 50px;
-            filter: brightness(0);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: #555;
-        }
-
-        /* Contact Section */
-        .contact-section {
-            padding: 3rem 0;
-        }
-
-        .contact-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-
-        .contact-form-wrapper,
-        .contact-info-wrapper {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
-        }
-
-        .contact-form-wrapper h2,
-        .contact-info-wrapper h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: var(--black);
-            font-weight: 700;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--blue);
-        }
-
-        .form-group textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-
-        .btn {
-            color: var(--white) !important;
-            font-weight: 600;
-            background: var(--black);
-            border: none;
-            padding: 12px 32px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-md);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .btn:hover {
-            background: var(--blue);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn:active {
-            background: var(--green);
-            transform: translateY(0);
-        }
-
-        .success-message {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 2px solid #10b981;
-            font-weight: 600;
-        }
-
-        /* Contact Info */
-        .contact-info {
-            display: grid;
-            gap: 1.5rem;
-        }
-
-        .info-item {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-
-        .info-icon img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            filter: brightness(0);
-        }
-
-        .info-content h3 {
-            color: var(--black);
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .info-content p {
-            font-weight: 500;
-            color: #555;
-        }
-
-        .info-content a {
-            color: var(--black);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .info-content a:hover {
-            color: var(--gold);
-        }
-
-        /* Social Section */
-        .social-section {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 2px solid var(--border);
-        }
-
-        .social-section h3 {
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .social-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .social-link {
-            color: var(--white) !important;
-            font-weight: 600;
-            background: var(--black);
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-md);
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .social-link:hover {
-            background: var(--blue);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .social-link:active {
-            background: var(--green);
-            transform: translateY(0);
-        }
-
-        /* FAQ Section */
-        .faq-section {
-            background: #f9fafb;
-            padding: 3rem 2rem;
-            border-radius: 12px;
-            margin-bottom: 3rem;
-        }
-
-        .faq-section h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .faq-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-        }
-
-        .faq-item {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .faq-item h3 {
-            color: var(--black);
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .faq-item p {
-            color: #666;
-        }
-
-        /* Map Section */
-        .map-container {
-            position: relative;
-            margin-bottom: 3rem;
-        }
-
-        .map-container h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .map-overlay {
-            background: var(--white);
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow-md);
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        .map-overlay p {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .map-overlay img {
-            width: 24px;
-            height: 24px;
-            filter: brightness(0) saturate(100%) invert(27%) sepia(98%) saturate(7463%) hue-rotate(357deg) brightness(97%) contrast(115%);
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--black);
-            color: var(--white);
-            padding: 3rem 0 1rem;
-            margin-top: 4rem;
-            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h3 {
-            color: var(--gold) !important;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .footer-section p {
-            color: #d1d5db;
-            font-size: 0.9rem;
-            line-height: 1.8;
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-section ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 0.625rem;
-        }
-
-        .footer-section a {
-            color: #d1d5db;
-            text-decoration: none;
-            transition: color 0.3s;
-            font-size: 0.9rem;
-            display: inline-block;
-        }
-
-        .footer-section a:hover {
-            color: var(--gold) !important;
-            padding-left: 5px;
-        }
-
-        .footer p[style*="text-align: center"] {
-            color: #9ca3af;
-            font-size: 0.9rem;
-            padding-top: 2rem;
-            border-top: 1px solid #374151;
-            margin-top: 2rem;
-        }
-
-        /* Tablet View */
-        @media (max-width: 968px) {
-            .contact-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .faq-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .hero h2 {
-                font-size: 2rem;
-            }
-
-            .hero-icon {
-                width: 40px;
-                height: 40px;
-            }
-        }
-
-        /* Mobile View */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f4f6; color: #1f2937; line-height: 1.6; padding-top: 70px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; width: 100%; }
+        .icon { width: 20px; height: 20px; vertical-align: middle; margin-right: 6px; }
+        .icon-large { width: 80px; height: 80px; vertical-align: middle; margin-right: 8px; border: 3px solid #ffffff; border-radius: 50%; padding: 10px; background: transparent; }
+        .icon-small { width: 16px; height: 16px; vertical-align: middle; margin-right: 4px; }
+        .navbar { position: fixed; top: 0; left: 0; right: 0; background: #000; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.3); padding: 1rem 0; }
+        .navbar .container { display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { color: #FFD700; font-size: 1.5rem; font-weight: bold; }
+        .nav-brand img { height: 50px; width: auto; }
+        .hamburger { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: 8px; z-index: 1001; }
+        .hamburger span { width: 25px; height: 3px; background: #FFD700; border-radius: 3px; transition: all 0.3s ease; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; align-items: center; }
+        .nav-menu a { color: #fff; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .nav-menu a:hover, .nav-menu a.active { color: #FFD700; }
+        .cart-badge { background: #FFD700; color: #000; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.75rem; margin-left: 0.25rem; }
+        .hero { background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); color: white; padding: 3rem 0; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .hero h2 { color: #ffffff; font-size: 2.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 4px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .hero p { font-size: 1.1rem; opacity: 0.9; }
+        .announcements-section { padding: 4rem 0; }
+        .announcement-card { background: white; border-radius: 12px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-left: 4px solid #FFD700; transition: all 0.3s ease; }
+        .announcement-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+        .featured-announcement { background: linear-gradient(135deg, #fffbf0 0%, #fff9e6 100%); border-left: 8px solid #ff6b35; }
+        .featured-badge { position: absolute; top: 25px; right: 25px; background: linear-gradient(135deg, #FFD700 0%, #ffc107 100%); color: #000; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(255,215,0,0.4); text-transform: uppercase; letter-spacing: 1px; }
+        .announcement-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem; }
+        .announcement-type { display: inline-block; padding: 10px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .type-promotion { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
+        .type-price-change { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
+        .type-new-stock { background: #d1fae5; color: #065f46; border: 2px solid #6ee7b7; }
+        .type-general { background: #e0e7ff; color: #3730a3; border: 2px solid #a5b4fc; }
+        .announcement-date { color: #6b7280; font-size: 16px; font-weight: 600; }
+        .announcement-title { color: #1f2937; font-size: 1.75rem; margin-bottom: 1.5rem; font-weight: 700; line-height: 1.2; }
+        .announcement-content { color: #4b5563; line-height: 1.8; margin-bottom: 2rem; font-size: 1.05rem; }
+        .announcement-actions { display: flex; gap: 1.5rem; padding-top: 2rem; border-top: 2px solid #e5e7eb; flex-wrap: wrap; }
+        .action-btn { display: flex; align-items: center; gap: 10px; padding: 12px 26px; border: 2px solid #e5e7eb; background: #f9fafb; border-radius: 30px; cursor: pointer; transition: all 0.3s; font-size: 16px; font-weight: 600; color: #4b5563; }
+        .action-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); background: white; border-color: #FFD700; }
+        .action-btn.active { background: #FFD700; color: #000; border-color: #FFD700; box-shadow: 0 4px 15px rgba(255,215,0,0.3); }
+        .comments-section { margin-top: 3rem; padding-top: 3rem; border-top: 3px solid #e5e7eb; }
+        .comment-form { margin-bottom: 2.5rem; }
+        .comment-input { width: 100%; padding: 18px 20px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; resize: vertical; min-height: 120px; transition: all 0.3s; font-family: inherit; background: #fafafa; }
+        .comment-input:focus { outline: none; border-color: #FFD700; box-shadow: 0 0 0 4px rgba(255,215,0,0.15); background: white; }
+        .submit-comment-btn { margin-top: 15px; padding: 14px 32px; background: #000; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 16px; }
+        .submit-comment-btn:hover { background: #FFD700; color: #000; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,215,0,0.4); }
+        .comment-item { padding: 18px 20px; background: #f9fafb; border-left: 4px solid #FFD700; border-radius: 10px; margin-bottom: 15px; transition: all 0.3s; }
+        .comment-item:hover { transform: translateX(6px); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .comment-author { font-weight: 700; color: #FFD700; margin-bottom: 8px; font-size: 16px; }
+        .comment-text { color: #4b5563; font-size: 15px; line-height: 1.7; }
+        .comment-date { color: #9ca3af; font-size: 13px; margin-top: 8px; }
+        .subscription-box { background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); color: white; padding: 4rem; border-radius: 20px; text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,0.3); margin-top: 4rem; }
+        .subscription-box h3 { color: #ffffff; margin-bottom: 1.5rem; font-size: 2.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subscription-box p { margin-bottom: 2rem; opacity: 0.95; font-size: 1.2rem; }
+        .subscription-form { max-width: 700px; margin: 0 auto; display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
+        .subscription-form input { flex: 1; min-width: 220px; padding: 15px 22px; border: 2px solid #333; border-radius: 10px; font-size: 16px; background: #1a1a1a; color: white; }
+        .subscription-form input::placeholder { color: #999; }
+        .subscription-form input:focus { outline: none; background: #2a2a2a; border-color: #FFD700; }
+        .subscribe-btn { padding: 15px 36px; background: #FFD700; color: #000; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 16px; }
+        .subscribe-btn:hover { background: #ffc107; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255,215,0,0.5); }
+        .success-message { background: #10b981; color: white; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; display: none; font-weight: 700; align-items: center; justify-content: center; gap: 10px; font-size: 16px; }
+        .no-announcements { text-align: center; padding: 5rem 2rem; background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .no-announcements h2 { color: #1f2937; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 2.5rem; font-weight: 800; }
+        .no-announcements p { font-size: 1.2rem; color: #6b7280; }
+        .footer { background: #000; color: white; padding: 3rem 0 1.5rem; margin-top: 5rem; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.1); width: 100%; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-section h3 { color: #FFD700; margin-bottom: 1rem; font-size: 1.1rem; font-weight: 700; }
+        .footer-section p { color: #d1d5db; font-size: 0.9rem; line-height: 1.8; margin: 0.5rem 0; }
+        .footer-section ul { list-style: none; }
+        .footer-section ul li { margin-bottom: 0.625rem; }
+        .footer-section a { color: #d1d5db; text-decoration: none; font-size: 0.9rem; display: inline-block; transition: all 0.3s; }
+        .footer-section a:hover { color: #FFD700; padding-left: 5px; }
+        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid #374151; color: #9ca3af; font-size: 0.9rem; margin-top: 2rem; }
         @media (max-width: 768px) {
-            .hamburger {
-                display: flex;
-            }
-
-            .nav-menu {
-                position: fixed;
-                left: -100%;
-                top: 70px;
-                flex-direction: column;
-                background-color: var(--black);
-                width: 100%;
-                text-align: center;
-                transition: left 0.3s;
-                box-shadow: var(--shadow-lg);
-                padding: 2rem 0;
-                gap: 1.5rem;
-            }
-
-            .nav-menu.active {
-                left: 0;
-            }
-
-
-
-            .hero {
-                padding: 2rem 0;
-            }
-
-            .hero h2 {
-                font-size: 1.5rem;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .hero-icon {
-                width: 35px;
-                height: 35px;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .contact-section {
-                padding: 2rem 0;
-            }
-
-            .contact-form-wrapper,
-            .contact-info-wrapper {
-                padding: 1.5rem;
-            }
-
-            .contact-form-wrapper h2,
-            .contact-info-wrapper h2 {
-                font-size: 1.5rem;
-            }
-
-            .faq-section {
-                padding: 2rem 1rem;
-            }
-
-            .faq-section h2 {
-                font-size: 1.5rem;
-            }
-
-            .social-links {
-                flex-direction: column;
-            }
-
-            .social-link {
-                text-align: center;
-            }
-
-            .map-container h2 {
-                font-size: 1.5rem;
-            }
-
-            .map-overlay p {
-                font-size: 14px;
-                flex-wrap: wrap;
-            }
-        }
-
-        /* Small Mobile */
-        @media (max-width: 480px) {
-            body {
-                padding-top: 65px;
-            }
-
-            .navbar .container {
-                padding: 0 1rem;
-            }
-
-            .nav-brand img {
-                height: 40px;
-            }
-
-            .nav-menu {
-                top: 65px;
-            }
-
-            .hero h2 {
-                font-size: 1.3rem;
-            }
-
-            .contact-form-wrapper,
-            .contact-info-wrapper,
-            .faq-item {
-                padding: 1rem;
-            }
-
-            .btn {
-                width: 100%;
-                padding: 14px;
-            }
-
-            .form-group input,
-            .form-group textarea {
-                font-size: 16px; /* Prevents zoom on iOS */
-            }
-
-            .info-icon img {
-                width: 32px;
-                height: 32px;
-            }
+            body { padding-top: 65px; }
+            .navbar .container { padding: 0 1rem; }
+            .nav-brand img { height: 40px; }
+            .hamburger { display: flex; }
+            .nav-menu { position: fixed; top: 65px; left: 0; right: 0; background: #000; flex-direction: column; width: 100%; max-height: 0; overflow: hidden; transition: max-height 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 999; padding: 0; gap: 0; }
+            .nav-menu.active { max-height: 400px; padding: 1rem 0; }
+            .nav-menu li { width: 100%; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+            .nav-menu li:last-child { border-bottom: none; }
+            .nav-menu a { display: block; font-size: 1rem; padding: 1rem 1.5rem; width: 100%; }
+            .hero { padding: 3rem 0; }
+            .hero h2 { font-size: 2.2rem; flex-direction: column; }
+            .hero p { font-size: 1.1rem; }
+            .announcement-card { padding: 2rem; margin-bottom: 2rem; }
+            .announcement-title { font-size: 1.8rem; }
+            .announcement-content { font-size: 1.1rem; }
+            .subscription-box { padding: 2rem; }
+            .subscription-box h3 { flex-direction: column; font-size: 1.8rem; }
+            .subscription-form { flex-direction: column; }
+            .subscription-form input { width: 100%; }
+            .footer-content { grid-template-columns: 1fr; gap: 1.5rem; text-align: center; }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
-            <div class="nav-brand">
-                <img src="images/icons/Machpelahtshirt.png" alt="Machpelah Electronics Logo" onerror="this.src='https://via.placeholder.com/50x50/667eea/ffffff?text=ME'">
-            </div>
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <ul class="nav-menu" id="nav-menu">
+            <div class="nav-brand"><img src="images/icons/Machpelahtshirt.png" alt="Logo" onerror="this.src='https://via.placeholder.com/50x50/FFD700/000000?text=ME'"></div>
+            <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+            <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="announcements.html">Announcements</a></li>
-                <li><a href="contact.html" class="active">Contact</a></li>
-                <li><a href="cart.html" class="cart-link">
-                    Cart <span id="cart-count" class="cart-badge">0</span>
-                </a></li>
+                <li><a href="announcements.html" class="active">Announcements</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="cart.html">Cart <span id="cart-count" class="cart-badge">0</span></a></li>
                 <li><a href="about.html">About</a></li>
             </ul>
         </div>
     </nav>
-
-    <!-- Hero Section -->
     <header class="hero">
         <div class="container">
-            <h2>
-                <img src="images/icons/get_intouch_icon.png" alt="Handshake" class="hero-icon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3588/3588356.png'">
-                Get in Touch
-            </h2>
-            <p>We're here to help! Reach out to us with any questions or concerns</p>
+            <h2><img src="images/icons/announcement icon.png" alt="Announcement" class="icon-large">Latest Announcements & Updates</h2>
+            <p>Stay informed with our latest promotions, price changes, and important news</p>
         </div>
     </header>
-
-    <!-- Contact Content -->
     <main class="container">
-        <section class="contact-section">
-            <div class="contact-content">
-                <!-- Contact Form -->
-                <div class="contact-form-wrapper">
-                    <h2><strong>Send Us a Message</strong></h2>
-                    <p style="color: #666; margin-bottom: 1.5rem;"><strong>Fill out the form below and we'll get back to you as soon as possible.</strong></p>
-                    
-                    <form id="contact-form" class="contact-form">
-                        <div class="form-group">
-                            <label for="name">Full Name *</label>
-                            <input type="text" id="name" name="name" required placeholder="Enter your full name">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email Address *</label>
-                            <input type="email" id="email" name="email" required placeholder="your.email@example.com">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" placeholder="+265 XXX XXX XXX">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="subject">Subject *</label>
-                            <input type="text" id="subject" name="subject" required placeholder="What is this regarding?">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="message">Message *</label>
-                            <textarea id="message" name="message" required placeholder="Tell us how we can help you..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-success">Send Message</button>
-                    </form>
-
-                    <div id="form-success" class="form-message success-message" style="display: none;">
-                        ✓ Thank you! Your message has been sent successfully. We'll get back to you soon.
-                    </div>
-                </div>
-
-                <!-- Contact Information -->
-                <div class="contact-info-wrapper">
-                    <h2><strong>Contact Information</strong></h2>
-                    <p style="color: #666; margin-bottom: 2rem;"><strong>You can also reach us through the following channels:</strong></p>
-
-                    <div class="contact-info">
-                        <div class="info-item">
-                            <div class="info-icon">
-                                <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="Location">
-                            </div>
-                            <div class="info-content">
-                                <h3>Visit Our Store</h3>
-                                <p>Blantyre, Malawi<br> Nandos, CBD</p>
-                            </div>
-                        </div>
-
-                        <div class="info-item">
-                            <div class="info-icon">
-                                <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="Email">
-                            </div>
-                            <div class="info-content">
-                                <h3>Email Us</h3>
-                                <p><a href="mailto:machpelah@gmail.com">machpelah@gmail.com</a><br>
-                                <a href="mailto:support@machpelah.com">support@machpelah.com</a></p>
-                            </div>
-                        </div>
-
-                        <div class="info-item">
-                            <div class="info-icon">
-                                <img src="images/icons/whatsapp_phone icon.png" alt="Phone" onerror="this.src='https://cdn-icons-png.flaticon.com/512/733/733585.png'">
-                            </div>
-                            <div class="info-content">
-                                <h3>Call or WhatsApp</h3>
-                                <p><a href="tel:+265991765645">+265 991 765 645</a><br>
-                                <a href="https://wa.me/265991765645" target="_blank">WhatsApp Business</a></p>
-                            </div>
-                        </div>
-
-                        <div class="info-item">
-                            <div class="info-icon">
-                                <img src="https://cdn-icons-png.flaticon.com/512/2838/2838779.png" alt="Clock">
-                            </div>
-                            <div class="info-content">
-                                <h3>Business Hours</h3>
-                                <p>Monday - Friday: 8:00 AM - 6:00 PM<br>
-                                Saturday: 9:00 AM - 5:00 PM<br>
-                                Sunday: Closed</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Social Links -->
-                    <div class="social-section">
-                        <h3>Follow Us</h3>
-                        <div class="social-links">
-                            <a href="#" class="social-link">Facebook</a>
-                            <a href="#" class="social-link">Instagram</a>
-                            <a href="#" class="social-link">Twitter</a>
-                            <a href="#" class="social-link">LinkedIn</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FAQ Section -->
-            <div class="faq-section">
-                <h2><strong>Frequently Asked Questions</strong></h2>
-                <div class="faq-grid">
-                    <div class="faq-item">
-                        <h3>Do you offer delivery services?</h3>
-                        <p>Yes! We offer fast and reliable delivery services throughout Blantyre and surrounding areas. Delivery fees vary based on location.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h3>What payment methods do you accept?</h3>
-                        <p>We accept cash, mobile money (Airtel Money, TNM Mpamba), bank transfers, and card payments at our physical store.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h3>Do your products come with warranty?</h3>
-                        <p>Yes, all our products come with manufacturer warranties. Warranty periods vary by product - please ask our staff for specific details.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h3>Can I return or exchange a product?</h3>
-                        <p>Yes, we offer returns and exchanges within 7 days of purchase for unused products in original packaging. Terms and conditions apply.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h3>Do you offer installation services?</h3>
-                        <p>Yes, we provide installation and setup services for computers and certain appliances. Additional charges may apply.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h3>How can I track my order?</h3>
-                        <p>Once your order is placed, you'll receive updates via WhatsApp or SMS. You can also call us for real-time order status.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Map Section -->
-            <div class="map-container">
-                <h2><strong>Find Us</strong></h2>
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15357.225418100667!2d34.98661105098589!3d-15.787792273100562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18d845a8131adb6b%3A0x67a9cd5cef325f5b!2sVictoria%20Ave%2C%20Blantyre!5e0!3m2!1sen!2smw!4v1766416390430!5m2!1sen!2smw"
-                    width="100%" 
-                    height="400" 
-                    style="border:0; border-radius: 8px;" 
-                    allowfullscreen="" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
-                <div class="map-overlay">
-                    <p>
-                        <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="Location">
-                        Machpelah Electronics, Blantyre Town, Blantyre
-                    </p>
+        <section class="announcements-section">
+            <div id="loading-state" style="text-align: center; padding: 4rem;"><p style="font-size: 1.5rem; color: #FFD700; font-weight: 700;">Loading announcements...</p></div>
+            <div id="announcements-list"></div>
+            <div class="subscription-box">
+                <h3><img src="https://cdn-icons-png.flaticon.com/512/2549/2549900.png" alt="Subscribe" class="icon-large" style="filter: brightness(0) invert(1);">Subscribe for Instant Updates</h3>
+                <p>Never miss a promotion! Get notifications via WhatsApp or Email</p>
+                <form class="subscription-form" id="subscription-form">
+                    <input type="text" id="sub-name" required placeholder="Your Name">
+                    <input type="email" id="sub-email" placeholder="Email (optional)">
+                    <input type="tel" id="sub-whatsapp" placeholder="WhatsApp (optional)">
+                    <button type="submit" class="subscribe-btn">Subscribe</button>
+                </form>
+                <div class="success-message" id="sub-success">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5610/5610944.png" alt="Success" class="icon-small" style="filter: brightness(0) invert(1);">Successfully subscribed! You'll receive updates soon.
                 </div>
             </div>
         </section>
     </main>
-
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Machpelah Electronics</h3>
-                    <p>Your trusted source for quality home appliances</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="announcements.html">Announcements</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                        <li><a href="admin/index.html">Admin</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <p>Email: machpelah@gmail.com</p>
-                    <p>WhatsApp: +265 991765645</p>
-                </div>
+                <div class="footer-section"><h3>Machpelah Electronics</h3><p>Your trusted source for quality home appliances</p></div>
+                <div class="footer-section"><h3>Quick Links</h3><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="announcements.html">Announcements</a></li><li><a href="contact.html">Contact</a></li><li><a href="admin/index.html">Admin</a></li></ul></div>
+                <div class="footer-section"><h3>Contact Us</h3><p>Email: machpelah@gmail.com</p><p>WhatsApp: +265 991765645</p></div>
             </div>
-            <p style="text-align: center;">&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
+            <div class="footer-bottom"><p>&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p></div>
         </div>
     </footer>
-
-    <script src="js/products.js"></script>
-    <script src="js/cart.js"></script>
     <script>
-        // Hamburger Menu Toggle
+        const ICONS = {
+            star: 'https://cdn-icons-png.flaticon.com/512/1828/1828884.png',
+            thumbsUp: 'https://cdn-icons-png.flaticon.com/512/456/456115.png',
+            thumbsDown: 'https://cdn-icons-png.flaticon.com/512/456/456116.png',
+            comment: 'https://cdn-icons-png.flaticon.com/512/2593/2593491.png',
+            announcement: 'https://cdn-icons-png.flaticon.com/512/3687/3687412.png',
+            noContent: 'https://cdn-icons-png.flaticon.com/512/7486/7486754.png'
+        };
         const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('nav-menu');
-
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-
-        // Close menu when clicking on a link
-        document.querySelectorAll('.nav-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-            });
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
+        const navMenu = document.getElementById('navMenu');
+        hamburger.addEventListener('click', () => { hamburger.classList.toggle('active'); navMenu.classList.toggle('active'); });
+        document.addEventListener('click', (e) => { if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) { hamburger.classList.remove('active'); navMenu.classList.remove('active'); } });
+        navMenu.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { hamburger.classList.remove('active'); navMenu.classList.remove('active'); }); });
+        const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let storedAnnouncements = [];
+        async function loadAnnouncementsFromDB() {
+            try {
+                const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                if (data && data.length > 0) {
+                    storedAnnouncements = data.map(a => ({ id: a.id, type: a.type || 'general', title: a.text || 'Announcement', content: a.text || '', date: a.created_at || new Date().toISOString(), likes: a.likes || 0, dislikes: a.dislikes || 0, comments: a.comments || [], featured: a.featured || false }));
+                } else { storedAnnouncements = []; }
+                return storedAnnouncements;
+            } catch (error) { console.error('Error:', error); storedAnnouncements = []; return storedAnnouncements; }
+        }
+        function formatDate(dateString) { return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); }
+        function displayComments(comments) {
+            if (!comments || comments.length === 0) return '<p style="color: #9ca3af; text-align: center; font-style: italic; font-size: 15px;">No comments yet. Be the first to comment!</p>';
+            return comments.map(c => `<div class="comment-item"><div class="comment-author">${escapeHtml(c.author)}</div><div class="comment-text">${escapeHtml(c.text)}</div><div class="comment-date">${formatDate(c.date)}</div></div>`).join('');
+        }
+        function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        function displayAnnouncements() {
+            const container = document.getElementById('announcements-list');
+            const loadingState = document.getElementById('loading-state');
+            if (loadingState) loadingState.style.display = 'none';
+            if (!storedAnnouncements || storedAnnouncements.length === 0) {
+                container.innerHTML = `<div class="no-announcements"><h2><img src="${ICONS.announcement}" alt="No" class="icon-large">No Announcements Yet</h2><p>Check back soon for updates!</p></div>`;
+                return;
             }
-        });
-
-        // Handle form submission
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            const html = storedAnnouncements.map(a => `<div class="announcement-card ${a.featured ? 'featured-announcement' : ''}" data-id="${a.id}">${a.featured ? `<div class="featured-badge"><img src="${ICONS.star}" alt="Featured" class="icon-small"> FEATURED</div>` : ''}<div class="announcement-header"><span class="announcement-type type-${a.type}">${a.type.replace('-', ' ')}</span><span class="announcement-date">${formatDate(a.date)}</span></div><h2 class="announcement-title">${escapeHtml(a.title)}</h2><div class="announcement-content">${escapeHtml(a.content)}</div><div class="announcement-actions"><button class="action-btn like-btn" onclick="toggleLike(${a.id})"><img src="${ICONS.thumbsUp}" alt="Like" class="icon-small"><span id="like-count-${a.id}">${a.likes || 0}</span></button><button class="action-btn dislike-btn" onclick="toggleDislike(${a.id})"><img src="${ICONS.thumbsDown}" alt="Dislike" class="icon-small"><span id="dislike-count-${a.id}">${a.dislikes || 0}</span></button><button class="action-btn comment-btn" onclick="toggleComments(${a.id})"><img src="${ICONS.comment}" alt="Comment" class="icon-small"><span id="comment-count-${a.id}">${(a.comments || []).length}</span> Comments</button></div><div class="comments-section" id="comments-${a.id}" style="display: none;"><form class="comment-form" onsubmit="addComment(event, ${a.id})"><textarea class="comment-input" placeholder="Share your thoughts..." required></textarea><button type="submit" class="submit-comment-btn">Post Comment</button></form><div id="comment-list-${a.id}">${displayComments(a.comments || [])}</div></div></div>`).join('');
+            container.innerHTML = html;
+            loadUserReactions();
+        }
+        async function updateAnnouncementInDB(id, updates) { try { await supabase.from('announcements').update(updates).eq('id', id); } catch (error) { console.error('Error:', error); } }
+        function toggleLike(id) {
+            const a = storedAnnouncements.find(x => x.id === id);
+            if (!a) return;
+            const userReactions = JSON.parse(localStorage.getItem('userReactions')) || {};
+            const key = `announcement-${id}`;
+            if (!a.likes) a.likes = 0;
+            if (!a.dislikes) a.dislikes = 0;
+            if (userReactions[key] === 'like') { a.likes--; delete userReactions[key]; } else { if (userReactions[key] === 'dislike') a.dislikes--; a.likes++; userReactions[key] = 'like'; }
+            localStorage.setItem('userReactions', JSON.stringify(userReactions));
+            updateAnnouncementInDB(id, { likes: a.likes, dislikes: a.dislikes });
+            displayAnnouncements();
+        }
+        function toggleDislike(id) {
+            const a = storedAnnouncements.find(x => x.id === id);
+            if (!a) return;
+            const userReactions = JSON.parse(localStorage.getItem('userReactions')) || {};
+            const key = `announcement-${id}`;
+            if (!a.likes) a.likes = 0;
+            if (!a.dislikes) a.dislikes = 0;
+            if (userReactions[key] === 'dislike') { a.dislikes--; delete userReactions[key]; } else { if (userReactions[key] === 'like') a.likes--; a.dislikes++; userReactions[key] = 'dislike'; }
+            localStorage.setItem('userReactions', JSON.stringify(userReactions));
+            updateAnnouncementInDB(id, { likes: a.likes, dislikes: a.dislikes });
+            displayAnnouncements();
+        }
+        function loadUserReactions() {
+            const userReactions = JSON.parse(localStorage.getItem('userReactions')) || {};
+            Object.keys(userReactions).forEach(key => {
+                const id = key.split('-')[1];
+                const reaction = userReactions[key];
+                const btn = document.querySelector(`[data-id="${id}"] .${reaction}-btn`);
+                if (btn) btn.classList.add('active');
+            });
+        }
+        function toggleComments(id) {
+            const commentsSection = document.getElementById(`comments-${id}`);
+            if (commentsSection) commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+        }
+        async function addComment(event, id) {
+            event.preventDefault();
+            const textarea = event.target.querySelector('.comment-input');
+            const commentText = textarea.value.trim();
+            if (!commentText) return;
+            const a = storedAnnouncements.find(x => x.id === id);
+            if (!a) return;
+            const userName = prompt('Enter your name:') || 'Anonymous';
+            if (!a.comments) a.comments = [];
+            const newComment = { author: userName, text: commentText, date: new Date().toISOString().split('T')[0] };
+            a.comments.push(newComment);
+            await updateAnnouncementInDB(id, { comments: a.comments });
+            textarea.value = '';
+            displayAnnouncements();
+            setTimeout(() => { const commentsSection = document.getElementById(`comments-${id}`); if (commentsSection) commentsSection.style.display = 'block'; }, 100);
+        }
+        document.getElementById('subscription-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            // Get form data
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value,
-                timestamp: new Date().toISOString()
-            };
-
-            // Save to localStorage (in real app, send to server)
-            const messages = JSON.parse(localStorage.getItem('contactMessages')) || [];
-            messages.push(formData);
-            localStorage.setItem('contactMessages', JSON.stringify(messages));
-
-            // Show success message
-            document.getElementById('contact-form').style.display = 'none';
-            document.getElementById('form-success').style.display = 'block';
-
-            // Reset form after 3 seconds
-            setTimeout(() => {
-                document.getElementById('contact-form').reset();
-                document.getElementById('contact-form').style.display = 'block';
-                document.getElementById('form-success').style.display = 'none';
-            }, 3000);
+            const name = document.getElementById('sub-name').value;
+            const email = document.getElementById('sub-email').value;
+            const whatsapp = document.getElementById('sub-whatsapp').value;
+            if (!email && !whatsapp) { alert('Please provide at least an email or WhatsApp'); return; }
+            const subscription = { name: name, email: email, whatsapp: whatsapp, date: new Date().toISOString() };
+            const subscriptions = JSON.parse(localStorage.getItem('subscriptions')) || [];
+            subscriptions.push(subscription);
+            localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
+            const successMsg = document.getElementById('sub-success');
+            successMsg.style.display = 'flex';
+            this.reset();
+            setTimeout(() => { successMsg.style.display = 'none'; }, 5000);
         });
-
+        async function initializePage() { await loadAnnouncementsFromDB(); displayAnnouncements(); }
         document.getElementById('current-year').textContent = new Date().getFullYear();
+        initializePage();
     </script>
 </body>
 </html>

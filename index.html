@@ -521,6 +521,113 @@
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             console.log('Supabase initialized');
 
+                        // Add this script right after your Supabase initialization in the DOMContentLoaded event
+
+            // Website View Counter
+            async function trackPageView() {
+                try {
+                    console.log('Tracking page view...');
+                    
+                    // Get visitor information
+                    const visitorInfo = {
+                        page_url: window.location.href,
+                        page_title: document.title,
+                        referrer: document.referrer || 'Direct',
+                        user_agent: navigator.userAgent,
+                        screen_resolution: `${window.screen.width}x${window.screen.height}`,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    // Insert view record into database
+                    const { data, error } = await supabase
+                        .from('page_views')
+                        .insert([visitorInfo]);
+                    
+                    if (error) {
+                        console.error('Error tracking view:', error);
+                    } else {
+                        console.log('Page view tracked successfully');
+                    }
+                    
+                    // Also update total views counter
+                    await updateTotalViews();
+                    
+                } catch (error) {
+                    console.error('Error in trackPageView:', error);
+                }
+            }
+
+            // Update total views counter
+            async function updateTotalViews() {
+                try {
+                    // Get current count
+                    const { data, error } = await supabase
+                        .from('site_stats')
+                        .select('total_views')
+                        .eq('id', 1)
+                        .single();
+                    
+                    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+                        console.error('Error fetching stats:', error);
+                        return;
+                    }
+                    
+                    // Update or insert
+                    if (data) {
+                        // Increment existing count
+                        const { error: updateError } = await supabase
+                            .from('site_stats')
+                            .update({ 
+                                total_views: data.total_views + 1,
+                                last_updated: new Date().toISOString()
+                            })
+                            .eq('id', 1);
+                        
+                        if (updateError) {
+                            console.error('Error updating stats:', updateError);
+                        }
+                    } else {
+                        // Create initial record
+                        const { error: insertError } = await supabase
+                            .from('site_stats')
+                            .insert([{ 
+                                id: 1, 
+                                total_views: 1,
+                                last_updated: new Date().toISOString()
+                            }]);
+                        
+                        if (insertError) {
+                            console.error('Error creating stats:', insertError);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error in updateTotalViews:', error);
+                }
+            }
+
+            // Track view when page loads (runs automatically in background)
+            trackPageView();
+
+            // Optional: Track how long users stay on the page
+            let startTime = Date.now();
+
+            window.addEventListener('beforeunload', async function() {
+                const timeSpent = Math.round((Date.now() - startTime) / 1000); // in seconds
+                
+                // Log time spent (optional)
+                try {
+                    await supabase
+                        .from('page_views')
+                        .insert([{
+                            page_url: window.location.href,
+                            time_spent_seconds: timeSpent,
+                            timestamp: new Date().toISOString()
+                        }]);
+                } catch (error) {
+                    console.error('Error logging time spent:', error);
+                }
+            });
+
             let allProducts = [];
             window.allProducts = allProducts;
 

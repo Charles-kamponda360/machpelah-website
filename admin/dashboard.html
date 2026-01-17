@@ -6,17 +6,205 @@
     <title>Admin Dashboard - Machpelah Electronics</title>
     <link rel="stylesheet" href="../css/admin.css">
     
-    <!-- Supabase CDN - Using latest version for new API key support -->
+    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1"></script>
+    
+    <style>
+        .form-control {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            color: #1a1a1a;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Icon styling */
+        .stat-icon img, .tab-icon img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .stat-card .stat-icon img {
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #FFD700;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Mobile & Tablet Responsiveness */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 1rem !important;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap !important;
+            }
+
+            .tab {
+                white-space: nowrap;
+                min-width: fit-content;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Show hamburger on mobile */
+            .hamburger {
+                display: flex !important;
+            }
+
+            .admin-header .header-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .admin-header .logo-section {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            /* Hide tabs by default on mobile */
+            .tabs-container .tabs {
+                position: fixed !important;
+                top: 70px !important;
+                left: 0 !important;
+                right: 0 !important;
+                background: #1f2937 !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                max-height: 0 !important;
+                overflow: hidden !important;
+                transition: max-height 0.3s ease !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+                z-index: 999 !important;
+                padding: 0 !important;
+            }
+            
+            .tabs-container .tabs.active {
+                max-height: 400px !important;
+                padding: 1rem 0 !important;
+            }
+
+            .tab {
+                width: 100% !important;
+                text-align: left !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+                justify-content: flex-start !important;
+                padding: 1rem 1.5rem !important;
+            }
+
+            .tab:last-child {
+                border-bottom: none !important;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+
+            .form-row {
+                flex-direction: column !important;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .products-table {
+                font-size: 0.85rem;
+            }
+
+            .products-table th,
+            .products-table td {
+                padding: 0.5rem !important;
+            }
+
+            #daily-chart {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-header h1 {
+                font-size: 1.2rem;
+            }
+
+            .btn {
+                font-size: 0.85rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.8rem;
+            }
+
+            .stat-label {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="admin-header">
         <div class="header-content">
             <div class="logo-section">
-                <img src="../images/icons/Logoicon.png" alt="Machpelah Electronics Logo" class="logo">
+                <img src="../images/icons/Logoicon.png" alt="Logo" class="logo" onerror="this.style.display='none'">
                 <div class="brand-title">Machpelah Admin</div>
             </div>
-            <a href="login.html" class="logout-btn">Logout</a>
+            
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <!-- Hamburger Menu Button (Mobile/Tablet Only) -->
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                
+                <a href="login.html" class="logout-btn">Logout</a>
+            </div>
         </div>
     </div>
 
@@ -25,15 +213,15 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
-                    <img src="../images/icons/product_icon.png" alt="Products">
+                    <img src="../images/icons/product_icon.png" alt="Products" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23667eea%22><text y=%2220%22 font-size=%2220%22>📦</text></svg>'">
                 </div>
-                 <div class="stat-value" id="total-products">0</div>
+                <div class="stat-value" id="total-products">0</div>
                 <div class="stat-label">Total Products</div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-icon">
-                    <img src="../images/icons/instock_icon.png" alt="in-stock">
+                    <img src="../images/icons/instock_icon.png" alt="In Stock" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%2310b981%22><text y=%2220%22 font-size=%2220%22>✅</text></svg>'">
                 </div>
                 <div class="stat-value" id="in-stock">0</div>
                 <div class="stat-label">In Stock</div>
@@ -41,7 +229,7 @@
 
             <div class="stat-card">
                 <div class="stat-icon">
-                    <img src="../images/icons/stock alert icon.png" alt="in-stock">
+                    <img src="../images/icons/stock alert icon.png" alt="Low Stock" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23f59e0b%22><text y=%2220%22 font-size=%2220%22>⚠️</text></svg>'">
                 </div>
                 <div class="stat-value" id="low-stock">0</div>
                 <div class="stat-label">Low Stock</div>
@@ -50,18 +238,30 @@
 
         <!-- Tabs -->
         <div class="tabs-container">
-            <div class="tabs">
+            <div class="tabs" id="tabs-menu">
                 <button class="tab active" data-tab="announcements">
-                    <img src="../images/icons/announcement icon.png" alt="Announcements" class="tab-icon">
+                    <span class="tab-icon">
+                        <img src="../images/icons/announcement icon.png" alt="Announcements" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2218%22>📢</text></svg>'">
+                    </span>
                     Announcements
                 </button>
                 <button class="tab" data-tab="products">
-                    <img src="../images/icons/product icon.png" alt="Products" class="tab-icon">
+                    <span class="tab-icon">
+                        <img src="../images/icons/product icon.png" alt="Products" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2218%22>📦</text></svg>'">
+                    </span>
                     Products
                 </button>
                 <button class="tab" data-tab="add-product">
-                    <img src="../images/icons/add product icon.png" alt="Add Product" class="tab-icon">
+                    <span class="tab-icon">
+                        <img src="../images/icons/add product icon.png" alt="Add Product" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2218%22>➕</text></svg>'">
+                    </span>
                     Add Product
+                </button>
+                <button class="tab" data-tab="analytics">
+                    <span class="tab-icon">
+                        <img src="../images/icons/analytics_icon.png" alt="Analytics" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2218%22>📊</text></svg>'">
+                    </span>
+                    Analytics
                 </button>
             </div>
         </div>
@@ -74,7 +274,7 @@
                 
                 <div class="form-group">
                     <label for="announcement-text">Announcement Message</label>
-                    <textarea id="announcement-text" placeholder="Enter announcement text (e.g., 🎉 20% OFF on all Smart Watches this week!)"></textarea>
+                    <textarea id="announcement-text" placeholder="Enter announcement text (e.g., 20% OFF on all Smart Watches this week!)"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -82,24 +282,20 @@
                     <div style="display: flex; gap: 1rem;">
                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
                             <input type="radio" name="announcement-type" value="positive" checked>
-                            <img src="../images/icons/good news icon.png" alt="Good News" style="width: 20px; height: 20px; object-fit: contain;">
-                            <span style="color: var(--success); font-weight: 600;">Positive (Green)</span>
+                            <img src="../images/icons/good news icon.png" alt="Positive" style="width: 24px; height: 24px;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2220%22>✅</text></svg>'">
+                            <span style="color: #10b981; font-weight: 600;">Positive (Green)</span>
                         </label>
                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
                             <input type="radio" name="announcement-type" value="negative">
-                            <img src="../images/icons/bad news icon.png" alt="Bad News" style="width: 20px; height: 20px; object-fit: contain;">
-                            <span style="color: var(--danger); font-weight: 600;">Negative (Red)</span>
+                            <img src="../images/icons/bad news icon.png" alt="Negative" style="width: 24px; height: 24px;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2220%22>⚠️</text></svg>'">
+                            <span style="color: #ef4444; font-weight: 600;">Negative (Red)</span>
                         </label>
                     </div>
                 </div>
 
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                    <button class="btn btn-primary" id="update-announcement-btn">
-                        Update Announcement
-                    </button>
-                    <button class="btn btn-danger" id="clear-announcement-btn">
-                        Clear Announcement
-                    </button>
+                    <button class="btn btn-primary" id="update-announcement-btn">Update Announcement</button>
+                    <button class="btn btn-danger" id="clear-announcement-btn">Clear Announcement</button>
                 </div>
 
                 <div class="alert alert-info" style="margin-top: 1.5rem;">
@@ -128,7 +324,7 @@
                             </tr>
                         </thead>
                         <tbody id="products-list">
-                            <!-- Products will be loaded here -->
+                            <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading products...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -186,252 +382,356 @@
                 </form>
             </div>
         </div>
-    </div>
 
-    <!-- Footer -->
-    <footer class="admin-footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Machpelah Electronics</h3>
-                <p>Your trusted partner for quality electronics and home appliances in Malawi.</p>
-                <div class="social-links">
-                    <a href="#" title="Facebook">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                        </svg>
-                    </a>
-                    <a href="#" title="Instagram">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                        </svg>
-                    </a>
-                    <a href="#" title="WhatsApp">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                        </svg>
-                    </a>
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="admin-section">
+                <h2>Website Analytics</h2>
+                
+                <!-- Summary Cards -->
+                <div class="stats-grid" style="margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <img src="../images/icons/total_viewers_icon.png" alt="Views" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2220%22>👁️</text></svg>'">
+                        </div>
+                        <div class="stat-value" id="total-views">0</div>
+                        <div class="stat-label">Total Views</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <img src="../images/icons/today_views_icon.png" alt="Today" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2220%22>📅</text></svg>'">
+                        </div>
+                        <div class="stat-value" id="today-views">0</div>
+                        <div class="stat-label">Today's Views</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <img src="../images/icons/time_icon.png" alt="Time" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2220%22>⏱️</text></svg>'">
+                        </div>
+                        <div class="stat-value" id="avg-time">0s</div>
+                        <div class="stat-label">Avg. Time on Page</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <img src="../images/icons/vistors_data_icon.png" alt="Visitors" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2220%22>👥</text></svg>'">
+                        </div>
+                        <div class="stat-value" id="unique-visitors">0</div>
+                        <div class="stat-label">Unique Visitors (7d)</div>
+                    </div>
+                </div>
+
+                <!-- Filter Options -->
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="refresh-analytics">
+                        <img src="../images/icons/refresh_data_icon.png" alt="Refresh" style="width: 40px; height: 40px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;" onerror="this.style.display='none'">
+                        Refresh Data
+                    </button>
+                    <select id="time-filter" class="form-control" style="width: auto;">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30">Last 30 Days</option>
+                        <option value="90">Last 90 Days</option>
+                    </select>
+                </div>
+
+                <!-- Daily Views Chart -->
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 1rem; color: #1a1a1a;">
+                        <img src="../images/icons/daily_views_icon.png" alt="Chart" style="width: 60px; height: 60px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;" onerror="this.style.display='none'">
+                        Daily Views
+                    </h3>
+                    <div id="daily-chart" style="height: 300px; display: flex; align-items: flex-end; gap: 0.5rem; overflow-x: auto; padding: 1rem;">
+                        <p style="color: #666;">Loading chart...</p>
+                    </div>
+                </div>
+
+                <!-- Recent Visitors Table -->
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 1rem; color: #1a1a1a;">
+                        <img src="../images/icons/vistors_icon.png" alt="Visitors" style="width: 60px; height: 60px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;" onerror="this.style.display='none'">
+                        Recent Visitors
+                    </h3>
+                    <div class="table-container">
+                        <table class="products-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Page</th>
+                                    <th>Referrer</th>
+                                    <th>Device</th>
+                                    <th>Screen</th>
+                                    <th>Time Spent</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visitors-list">
+                                <tr><td colspan="6" style="text-align: center; padding: 2rem;">Loading visitors...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Top Pages -->
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-top: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 1rem; color: #1a1a1a;">
+                        <img src="../images/icons/fire_icon.png" alt="Top" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;" onerror="this.style.display='none'">
+                        Top Pages
+                    </h3>
+                    <div id="top-pages-list">
+                        <p style="color: #666;">Loading...</p>
+                    </div>
                 </div>
             </div>
-
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <a href="../index.html">Home</a>
-                <a href="../pages/products.html">Products</a>
-                <a href="../pages/about.html">About Us</a>
-                <a href="../pages/contact.html">Contact</a>
-            </div>
-
-            <div class="footer-section">
-                <h3>Admin Tools</h3>
-                <a href="#announcements" data-tab-link="announcements">Announcements</a>
-                <a href="#products" data-tab-link="products">Manage Products</a>
-                <a href="#add-product" data-tab-link="add-product">Add Product</a>
-            </div>
-
-            <div class="footer-section">
-                <h3>Contact Info</h3>
-                <p>
-                    <img src="../images/icons/location_icon.png" alt="Location" style="width: 16px; height: 16px; object-fit: contain; vertical-align: middle; margin-right: 0.5rem;">
-                    Blantyre, Malawi
-                </p>
-                <p>
-                    <img src="../images/icons/phone_icon.png" alt="Phone" style="width: 16px; height: 16px; object-fit: contain; vertical-align: middle; margin-right: 0.5rem;">
-                    +265 XXX XXX XXX
-                </p>
-                <p>
-                    <img src="../images/icons/email_icon.png" alt="Email" style="width: 16px; height: 16px; object-fit: contain; vertical-align: middle; margin-right: 0.5rem;">
-                    admin@machpelah.mw
-                </p>
-            </div>
         </div>
+    </div>
 
-        <div class="footer-bottom">
-            <p>&copy; 2024 Machpelah Electronics. All rights reserved. | Admin Dashboard</p>
-        </div>
-    </footer>
-
-    <!-- Supabase Database Configuration -->
     <script>
-        // Wrap everything in DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin dashboard loaded');
 
-            // Supabase Configuration
             const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';
-            // Using new publishable key
             const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
-
-            console.log('Supabase URL:', SUPABASE_URL);
-            console.log('API Key (first 20 chars):', SUPABASE_ANON_KEY.substring(0, 20) + '...');
-
-            // Initialize Supabase client
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            // Products Database Functions
+            // Hamburger menu functionality
+            const hamburger = document.getElementById('hamburger');
+            const tabsMenu = document.getElementById('tabs-menu');
+            
+            hamburger.addEventListener('click', function() {
+                this.classList.toggle('active');
+                tabsMenu.classList.toggle('active');
+            });
+
+            // Close menu when clicking a tab
+            document.querySelectorAll('.tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    hamburger.classList.remove('active');
+                    tabsMenu.classList.remove('active');
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!hamburger.contains(e.target) && !tabsMenu.contains(e.target)) {
+                    hamburger.classList.remove('active');
+                    tabsMenu.classList.remove('active');
+                }
+            });
+
             const ProductsDB = {
                 async getAll() {
                     try {
-                        console.log('Fetching all products...');
-                        const { data, error } = await supabase
-                            .from('products')
-                            .select('*')
-                            .order('id', { ascending: false });
-                        
+                        const { data, error } = await supabase.from('products').select('*').order('id', { ascending: false });
                         if (error) throw error;
-                        console.log('Products fetched:', data?.length);
                         return data || [];
                     } catch (error) {
-                        console.error('Error fetching products:', error);
+                        console.error('Error:', error);
                         return [];
                     }
                 },
-
                 async add(product) {
                     try {
-                        console.log('Adding product:', product);
-                        const { data, error } = await supabase
-                            .from('products')
-                            .insert([{
-                                name: product.name,
-                                category: product.category,
-                                price: product.price,
-                                stock: product.stock,
-                                image: product.image,
-                                description: product.description
-                            }])
-                            .select();
-                        
+                        const { data, error } = await supabase.from('products').insert([product]).select();
                         if (error) throw error;
-                        console.log('Product added:', data[0]);
                         return { success: true, data: data[0] };
                     } catch (error) {
-                        console.error('Error adding product:', error);
                         return { success: false, error: error.message };
                     }
                 },
-
                 async update(id, updates) {
                     try {
-                        console.log('Updating product:', id, updates);
-                        const { data, error } = await supabase
-                            .from('products')
-                            .update(updates)
-                            .eq('id', id)
-                            .select();
-                        
+                        const { data, error } = await supabase.from('products').update(updates).eq('id', id).select();
                         if (error) throw error;
-                        console.log('Product updated:', data[0]);
                         return { success: true, data: data[0] };
                     } catch (error) {
-                        console.error('Error updating product:', error);
                         return { success: false, error: error.message };
                     }
                 },
-
                 async delete(id) {
                     try {
-                        console.log('Deleting product:', id);
-                        const { error } = await supabase
-                            .from('products')
-                            .delete()
-                            .eq('id', id);
-                        
+                        const { error } = await supabase.from('products').delete().eq('id', id);
                         if (error) throw error;
-                        console.log('Product deleted');
                         return { success: true };
                     } catch (error) {
-                        console.error('Error deleting product:', error);
                         return { success: false, error: error.message };
                     }
                 }
             };
 
-            // Announcements Database Functions
             const AnnouncementsDB = {
                 async get() {
                     try {
-                        console.log('Fetching announcement...');
-                        const { data, error } = await supabase
-                            .from('announcements')
-                            .select('*')
-                            .order('created_at', { ascending: false })
-                            .limit(1)
-                            .single();
-                        
+                        const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(1).single();
                         if (error && error.code !== 'PGRST116') throw error;
-                        console.log('Announcement fetched:', data);
                         return data || null;
                     } catch (error) {
-                        console.error('Error fetching announcement:', error);
                         return null;
                     }
                 },
-
                 async set(text, type) {
                     try {
-                        console.log('Setting announcement:', text, type);
-                        const { data: existing } = await supabase
-                            .from('announcements')
-                            .select('id')
-                            .limit(1)
-                            .single();
-
+                        const { data: existing } = await supabase.from('announcements').select('id').limit(1).single();
                         if (existing) {
-                            const { data, error } = await supabase
-                                .from('announcements')
-                                .update({
-                                    text: text,
-                                    type: type,
-                                    updated_at: new Date().toISOString()
-                                })
-                                .eq('id', existing.id)
-                                .select();
-                            
+                            const { data, error } = await supabase.from('announcements').update({ text, type, updated_at: new Date().toISOString() }).eq('id', existing.id).select();
                             if (error) throw error;
-                            console.log('Announcement updated');
                             return { success: true, data: data[0] };
                         } else {
-                            const { data, error } = await supabase
-                                .from('announcements')
-                                .insert([{
-                                    text: text,
-                                    type: type
-                                }])
-                                .select();
-                            
+                            const { data, error } = await supabase.from('announcements').insert([{ text, type }]).select();
                             if (error) throw error;
-                            console.log('Announcement created');
                             return { success: true, data: data[0] };
                         }
                     } catch (error) {
-                        console.error('Error setting announcement:', error);
                         return { success: false, error: error.message };
                     }
                 },
-
                 async clear() {
                     try {
-                        console.log('Clearing announcement...');
-                        const { error } = await supabase
-                            .from('announcements')
-                            .delete()
-                            .neq('id', 0);
-                        
+                        const { error } = await supabase.from('announcements').delete().neq('id', 0);
                         if (error) throw error;
-                        console.log('Announcement cleared');
                         return { success: true };
                     } catch (error) {
-                        console.error('Error clearing announcement:', error);
                         return { success: false, error: error.message };
                     }
                 }
             };
 
-            // Load current announcement from Supabase
+            const AnalyticsDB = {
+                async getTotalViews() {
+                    try {
+                        const { data, error } = await supabase.from('site_stats').select('total_views').eq('id', 1).single();
+                        if (error && error.code !== 'PGRST116') throw error;
+                        return data?.total_views || 0;
+                    } catch (error) {
+                        return 0;
+                    }
+                },
+                async getPageViews(daysLimit = null) {
+                    try {
+                        let query = supabase.from('page_views').select('*').order('timestamp', { ascending: false });
+                        if (daysLimit) {
+                            const cutoffDate = new Date();
+                            cutoffDate.setDate(cutoffDate.getDate() - daysLimit);
+                            query = query.gte('timestamp', cutoffDate.toISOString());
+                        }
+                        const { data, error } = await query.limit(100);
+                        if (error) throw error;
+                        return data || [];
+                    } catch (error) {
+                        return [];
+                    }
+                },
+                async getDailyStats(days = 7) {
+                    try {
+                        const cutoffDate = new Date();
+                        cutoffDate.setDate(cutoffDate.getDate() - days);
+                        const { data, error } = await supabase.from('page_views').select('timestamp').gte('timestamp', cutoffDate.toISOString()).order('timestamp', { ascending: true });
+                        if (error) throw error;
+                        const dailyStats = {};
+                        (data || []).forEach(view => {
+                            const date = new Date(view.timestamp).toLocaleDateString();
+                            dailyStats[date] = (dailyStats[date] || 0) + 1;
+                        });
+                        return dailyStats;
+                    } catch (error) {
+                        return {};
+                    }
+                },
+                async getTopPages(days = 7) {
+                    try {
+                        const cutoffDate = new Date();
+                        cutoffDate.setDate(cutoffDate.getDate() - days);
+                        const { data, error } = await supabase.from('page_views').select('page_url, page_title').gte('timestamp', cutoffDate.toISOString());
+                        if (error) throw error;
+                        const pageCounts = {};
+                        (data || []).forEach(view => {
+                            const url = view.page_url || 'Unknown';
+                            const title = view.page_title || 'Unknown Page';
+                            const key = `${title}|${url}`;
+                            pageCounts[key] = (pageCounts[key] || 0) + 1;
+                        });
+                        return Object.entries(pageCounts).map(([key, count]) => {
+                            const [title, url] = key.split('|');
+                            return { title, url, count };
+                        }).sort((a, b) => b.count - a.count).slice(0, 10);
+                    } catch (error) {
+                        return [];
+                    }
+                }
+            };
+
+            async function loadAnalytics() {
+                const days = parseInt(document.getElementById('time-filter').value);
+                const totalViews = await AnalyticsDB.getTotalViews();
+                document.getElementById('total-views').textContent = totalViews.toLocaleString();
+                const pageViews = await AnalyticsDB.getPageViews(days);
+                const today = new Date().toDateString();
+                const todayViews = pageViews.filter(v => new Date(v.timestamp).toDateString() === today).length;
+                document.getElementById('today-views').textContent = todayViews;
+                const validTimes = pageViews.filter(v => v.time_spent_seconds && v.time_spent_seconds > 0).map(v => v.time_spent_seconds);
+                const avgTime = validTimes.length > 0 ? Math.round(validTimes.reduce((a, b) => a + b, 0) / validTimes.length) : 0;
+                document.getElementById('avg-time').textContent = avgTime + 's';
+                const uniqueAgents = new Set(pageViews.filter(v => {
+                    const viewDate = new Date(v.timestamp);
+                    const weekAgo = new Date();
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    return viewDate >= weekAgo;
+                }).map(v => v.user_agent));
+                document.getElementById('unique-visitors').textContent = uniqueAgents.size;
+                await loadDailyChart(days);
+                loadVisitorsTable(pageViews);
+                loadTopPages(days);
+            }
+
+            async function loadDailyChart(days) {
+                const dailyStats = await AnalyticsDB.getDailyStats(days);
+                const chartContainer = document.getElementById('daily-chart');
+                if (Object.keys(dailyStats).length === 0) {
+                    chartContainer.innerHTML = '<p style="color: #666;">No data available</p>';
+                    return;
+                }
+                const maxViews = Math.max(...Object.values(dailyStats));
+                chartContainer.innerHTML = Object.entries(dailyStats).map(([date, views]) => {
+                    const height = maxViews > 0 ? (views / maxViews) * 100 : 0;
+                    return `<div style="flex: 1; min-width: 60px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;"><div style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 4px 4px 0 0; height: ${height}%; min-height: 20px; display: flex; align-items: flex-start; justify-content: center; padding-top: 0.25rem; color: white; font-size: 0.75rem; font-weight: bold;">${views}</div><div style="font-size: 0.7rem; color: #666; text-align: center; transform: rotate(-45deg); white-space: nowrap;">${date.split('/').slice(0, 2).join('/')}</div></div>`;
+                }).join('');
+            }
+
+            function loadVisitorsTable(pageViews) {
+                const tbody = document.getElementById('visitors-list');
+                if (pageViews.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No visitors yet</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = pageViews.slice(0, 50).map(view => {
+                    const date = new Date(view.timestamp);
+                    const pageUrl = view.page_url ? new URL(view.page_url) : null;
+                    const pageName = pageUrl && (pageUrl.pathname === '/' || pageUrl.pathname === '/index.html') ? 'Home' : (pageUrl ? pageUrl.pathname.split('/').pop().replace('.html', '') : 'Unknown');
+                    const deviceInfo = parseUserAgent(view.user_agent);
+                    const timeSpent = view.time_spent_seconds ? `${view.time_spent_seconds}s` : '-';
+                    return `<tr><td style="white-space: nowrap;">${date.toLocaleDateString()}<br><small style="color: #666;">${date.toLocaleTimeString()}</small></td><td><strong>${view.page_title || pageName}</strong></td><td>${view.referrer || 'Direct'}</td><td>${deviceInfo}</td><td>${view.screen_resolution || '-'}</td><td>${timeSpent}</td></tr>`;
+                }).join('');
+            }
+
+            async function loadTopPages(days) {
+                const topPages = await AnalyticsDB.getTopPages(days);
+                const container = document.getElementById('top-pages-list');
+                if (topPages.length === 0) {
+                    container.innerHTML = '<p style="color: #666;">No data available</p>';
+                    return;
+                }
+                container.innerHTML = topPages.map((page, index) => `<div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: ${index % 2 === 0 ? '#f9fafb' : 'white'}; border-radius: 6px; margin-bottom: 0.5rem;"><div style="font-size: 1.5rem; font-weight: bold; color: ${index < 3 ? '#FFD700' : '#999'}; min-width: 30px;">${index + 1}</div><div style="flex: 1;"><div style="font-weight: 600; color: #1a1a1a;">${page.title}</div><div style="font-size: 0.85rem; color: #666;">${page.url}</div></div><div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold;">${page.count} views</div></div>`).join('');
+            }
+
+            function parseUserAgent(userAgent) {
+                if (!userAgent) return 'Unknown';
+                if (userAgent.includes('Mobile') || userAgent.includes('Android')) return 'Mobile';
+                if (userAgent.includes('Tablet') || userAgent.includes('iPad')) return 'Tablet';
+                return 'Desktop';
+            }
+
             async function loadCurrentAnnouncement() {
-                console.log('Loading current announcement...');
                 const announcement = await AnnouncementsDB.get();
-                
                 if (announcement) {
                     displayAnnouncementPreview(announcement.text, announcement.type);
                     document.getElementById('announcement-text').value = announcement.text;
@@ -441,114 +741,60 @@
                 }
             }
 
-            // Update announcement in Supabase
             async function updateAnnouncement() {
-                console.log('Updating announcement...');
                 const text = document.getElementById('announcement-text').value.trim();
                 const type = document.querySelector('input[name="announcement-type"]:checked').value;
-                
                 if (!text) {
-                    showAlert('announcement-alert', '⚠️ Please enter an announcement message', 'info');
+                    showAlert('announcement-alert', 'Please enter message', 'info');
                     return;
                 }
-
                 const result = await AnnouncementsDB.set(text, type);
-                
                 if (result.success) {
                     displayAnnouncementPreview(text, type);
-                    showAlert('announcement-alert', '✅ Announcement updated successfully!', 'success');
+                    showAlert('announcement-alert', 'Updated successfully!', 'success');
                 } else {
-                    showAlert('announcement-alert', '❌ Error: ' + result.error, 'info');
+                    showAlert('announcement-alert', 'Error: ' + result.error, 'info');
                 }
             }
 
-            // Clear announcement from Supabase
             async function clearAnnouncement() {
-                console.log('Clearing announcement...');
                 const result = await AnnouncementsDB.clear();
-                
                 if (result.success) {
                     document.getElementById('announcement-text').value = '';
                     document.getElementById('current-announcement-preview').textContent = 'No announcement set';
                     document.querySelector('input[name="announcement-type"][value="positive"]').checked = true;
-                    showAlert('announcement-alert', '✅ Announcement cleared!', 'success');
+                    showAlert('announcement-alert', 'Cleared successfully!', 'success');
                 } else {
-                    showAlert('announcement-alert', '❌ Error: ' + result.error, 'info');
+                    showAlert('announcement-alert', 'Error occurred', 'info');
                 }
             }
 
             function displayAnnouncementPreview(text, type) {
-                const iconSrc = type === 'positive' ? '../images/icons/good news icon.png' : '../images/icons/bad news icon.png';
                 const color = type === 'positive' ? '#10b981' : '#ef4444';
                 const bgColor = type === 'positive' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
-                
-                document.getElementById('current-announcement-preview').innerHTML = `
-                    <div style="
-                        display: flex; 
-                        align-items: center; 
-                        gap: 0.75rem; 
-                        padding: 1rem; 
-                        background: ${bgColor}; 
-                        border-left: 4px solid ${color}; 
-                        border-radius: 6px;
-                    ">
-                        <span style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            width: 30px;
-                            height: 30px;
-                            border-radius: 50%;
-                            background: ${color};
-                            padding: 5px;
-                        ">
-                            <img src="${iconSrc}" alt="${type}" style="width: 20px; height: 20px; object-fit: contain; filter: brightness(0) invert(1);">
-                        </span>
-                        <span style="flex: 1; color: #1a1a1a;">${text}</span>
-                    </div>
-                `;
+                const iconSrc = type === 'positive' ? '../images/icons/good news icon.png' : '../images/icons/bad news icon.png';
+                document.getElementById('current-announcement-preview').innerHTML = `<div style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: ${bgColor}; border-left: 4px solid ${color}; border-radius: 6px;"><img src="${iconSrc}" alt="${type}" style="width: 24px; height: 24px;" onerror="this.textContent='${type === 'positive' ? '✅' : '⚠️'}'"><span style="flex: 1; color: #1a1a1a;">${text}</span></div>`;
             }
 
-            // Load products from Supabase
             async function loadProducts() {
-                console.log('Loading products...');
                 const products = await ProductsDB.getAll();
                 const tbody = document.getElementById('products-list');
-                
                 if (products.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No products yet. Add your first product!</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No products yet</td></tr>';
                 } else {
-                    tbody.innerHTML = products.map(product => `
-                        <tr>
-                            <td><img src="${product.image}" class="product-image-small" alt="${product.name}"></td>
-                            <td><strong>${product.name}</strong></td>
-                            <td>${product.category}</td>
-                            <td><strong>${product.price.toLocaleString()}</strong></td>
-                            <td>${product.stock}</td>
-                            <td class="action-buttons">
-                                <button class="btn btn-warning" onclick="window.editProduct(${product.id})">Edit</button>
-                                <button class="btn btn-danger" onclick="window.deleteProduct(${product.id})">Delete</button>
-                            </td>
-                        </tr>
-                    `).join('');
+                    tbody.innerHTML = products.map(p => `<tr><td><img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/50'" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td><td><strong>${p.name}</strong></td><td>${p.category}</td><td><strong>${p.price.toLocaleString()}</strong></td><td>${p.stock}</td><td><button class="btn btn-warning" onclick="window.editProduct(${p.id})">Edit</button> <button class="btn btn-danger" onclick="window.deleteProduct(${p.id})">Delete</button></td></tr>`).join('');
                 }
-
                 updateStatistics(products);
             }
 
             function updateStatistics(products) {
                 document.getElementById('total-products').textContent = products.length;
-                document.getElementById('in-stock').textContent = 
-                    products.filter(p => p.stock > 0).length;
-                document.getElementById('low-stock').textContent = 
-                    products.filter(p => p.stock > 0 && p.stock < 10).length;
+                document.getElementById('in-stock').textContent = products.filter(p => p.stock > 0).length;
+                document.getElementById('low-stock').textContent = products.filter(p => p.stock > 0 && p.stock < 10).length;
             }
 
-            // Add product to Supabase
             async function addProduct(event) {
                 event.preventDefault();
-                console.log('Adding new product...');
-
                 const newProduct = {
                     name: document.getElementById('product-name').value,
                     category: document.getElementById('product-category').value,
@@ -557,127 +803,70 @@
                     image: document.getElementById('product-image').value,
                     description: document.getElementById('product-description').value
                 };
-
                 const result = await ProductsDB.add(newProduct);
-
                 if (result.success) {
-                    showAlert('add-product-alert', '✅ Product added successfully!', 'success');
+                    showAlert('add-product-alert', 'Product added successfully!', 'success');
                     document.getElementById('add-product-form').reset();
                     await loadProducts();
                 } else {
-                    showAlert('add-product-alert', '❌ Error: ' + result.error, 'info');
+                    showAlert('add-product-alert', 'Error: ' + result.error, 'info');
                 }
             }
 
-            // Make functions globally accessible for inline onclick handlers
             window.editProduct = async function(id) {
-                console.log('Edit product:', id);
                 const products = await ProductsDB.getAll();
                 const product = products.find(p => p.id === id);
-
                 if (!product) return;
-
                 const newPrice = prompt('Enter new price:', product.price);
                 const newStock = prompt('Enter new stock:', product.stock);
-
                 const updates = {};
                 if (newPrice !== null && newPrice !== '') updates.price = parseInt(newPrice);
                 if (newStock !== null && newStock !== '') updates.stock = parseInt(newStock);
-
                 if (Object.keys(updates).length > 0) {
                     const result = await ProductsDB.update(id, updates);
-                    
                     if (result.success) {
                         await loadProducts();
-                        showAlert('products-alert', '✅ Product updated successfully!', 'success');
+                        showAlert('products-alert', 'Product updated successfully!', 'success');
                     } else {
-                        showAlert('products-alert', '❌ Error: ' + result.error, 'info');
+                        showAlert('products-alert', 'Error occurred', 'info');
                     }
                 }
             };
 
-            // Delete product
             window.deleteProduct = async function(id) {
-                console.log('Delete product:', id);
-                if (!confirm('Are you sure you want to delete this product?')) return;
-
+                if (!confirm('Are you sure?')) return;
                 const result = await ProductsDB.delete(id);
-                
                 if (result.success) {
                     await loadProducts();
-                    showAlert('products-alert', '✅ Product deleted successfully!', 'success');
+                    showAlert('products-alert', 'Product deleted successfully!', 'success');
                 } else {
-                    showAlert('products-alert', '❌ Error: ' + result.error, 'info');
+                    showAlert('products-alert', 'Error occurred', 'info');
                 }
             };
 
             function showAlert(elementId, message, type) {
                 const alertDiv = document.getElementById(elementId);
                 alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-                setTimeout(() => {
-                    alertDiv.innerHTML = '';
-                }, 4000);
+                setTimeout(() => { alertDiv.innerHTML = ''; }, 4000);
             }
 
-            // Tab switching with event delegation
-            const tabsContainer = document.querySelector('.tabs');
-            tabsContainer.addEventListener('click', function(e) {
+            document.querySelector('.tabs').addEventListener('click', function(e) {
                 const tabButton = e.target.closest('.tab');
                 if (!tabButton) return;
-
                 const tabName = tabButton.getAttribute('data-tab');
-                console.log('Switching to tab:', tabName);
-
-                // Hide all tab contents
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-
-                // Remove active class from all tabs
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.classList.remove('active');
-                });
-
-                // Show selected tab content
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.getElementById(tabName).classList.add('active');
                 tabButton.classList.add('active');
+                if (tabName === 'analytics') setTimeout(loadAnalytics, 100);
             });
 
-            // Footer tab links
-            document.querySelectorAll('[data-tab-link]').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const tabName = this.getAttribute('data-tab-link');
-                    console.log('Footer link clicked:', tabName);
-
-                    // Hide all tab contents
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('active');
-                    });
-
-                    // Remove active class from all tabs
-                    document.querySelectorAll('.tab').forEach(tab => {
-                        tab.classList.remove('active');
-                    });
-
-                    // Show selected tab content
-                    document.getElementById(tabName).classList.add('active');
-                    
-                    // Add active class to corresponding tab button
-                    document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
-
-                    // Scroll to top
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            });
-
-            // Add event listeners for buttons
             document.getElementById('update-announcement-btn').addEventListener('click', updateAnnouncement);
             document.getElementById('clear-announcement-btn').addEventListener('click', clearAnnouncement);
             document.getElementById('add-product-form').addEventListener('submit', addProduct);
+            document.getElementById('refresh-analytics').addEventListener('click', loadAnalytics);
+            document.getElementById('time-filter').addEventListener('change', loadAnalytics);
 
-            // Initialize on page load
-            console.log('Initializing dashboard...');
             loadCurrentAnnouncement();
             loadProducts();
         });

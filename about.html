@@ -2,24 +2,442 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>About Us - Machpelah Electronics</title>
     <link rel="stylesheet" href="css/style.css">
    
+    <style>
+        /* Keep content visible initially, allow animations */
+        .footer {
+            opacity: 1 !important;
+            animation: none !important;
+        }
+        
+        /* Fixed Navigation Bar */
+        .navbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 1000 !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+        }
+        
+        /* Add padding to body to prevent content from hiding under fixed navbar */
+        body {
+            padding-top: 70px !important;
+        }
+        
+        /* Hamburger Menu Styles */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #FFD700;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        
+        /* Enhanced Mobile & Tablet Responsiveness */
+        @media (max-width: 1024px) {
+            /* Tablet styles */
+            body {
+                font-size: 16px;
+                padding-top: 75px !important;
+            }
+            
+            .hero h2 {
+                font-size: 2rem !important;
+            }
+            
+            .hero p {
+                font-size: 1rem !important;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .values-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile styles */
+            body {
+                font-size: 16px;
+                padding-top: 65px !important;
+            }
+            
+            .container {
+                padding: 0 1rem !important;
+            }
+            
+            .navbar {
+                padding: 0.75rem 0 !important;
+            }
+            
+            .navbar .container {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 0 1rem !important;
+            }
+            
+            .nav-brand img {
+                height: 40px !important;
+            }
+            
+            /* Show hamburger on mobile */
+            .hamburger {
+                display: flex !important;
+            }
+            
+            /* Hide menu by default on mobile */
+            .nav-menu {
+                position: fixed !important;
+                top: 65px !important;
+                left: 0 !important;
+                right: 0 !important;
+                background: #111827 !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                max-height: 0 !important;
+                overflow: hidden !important;
+                transition: max-height 0.3s ease !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+                z-index: 999 !important;
+                padding: 0 !important;
+                display: flex !important;
+            }
+            
+            .nav-menu.active {
+                max-height: 400px !important;
+                padding: 1rem 0 !important;
+            }
+            
+            .nav-menu li {
+                width: 100% !important;
+                text-align: center !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+                display: block !important;
+                list-style: none !important;
+            }
+            
+            .nav-menu li:last-child {
+                border-bottom: none !important;
+            }
+            
+            .nav-menu a {
+                display: block !important;
+                font-size: 1rem !important;
+                padding: 1rem 1.5rem !important;
+                width: 100% !important;
+                color: #ffffff !important;
+                text-decoration: none !important;
+            }
+            
+            .nav-menu a:hover,
+            .nav-menu a.active {
+                background: rgba(255, 215, 0, 0.1) !important;
+                color: #FFD700 !important;
+            }
+            
+            .cart-badge {
+                font-size: 0.7rem !important;
+                padding: 0.15rem 0.4rem !important;
+            }
+            
+            .hero {
+                padding: 2rem 0 !important;
+            }
+            
+            .hero h2 {
+                font-size: 1.75rem !important;
+                margin-bottom: 0.75rem !important;
+            }
+            
+            .hero p {
+                font-size: 0.95rem !important;
+            }
+            
+            .about-section {
+                padding: 2rem 0 !important;
+            }
+            
+            .about-section h2 {
+                font-size: 1.5rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+            }
+            
+            .about-text h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .about-text h3 {
+                font-size: 1.2rem !important;
+            }
+            
+            .about-text p {
+                font-size: 0.95rem !important;
+            }
+            
+            .values-section h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .values-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            .value-card {
+                padding: 1.25rem !important;
+            }
+            
+            .value-icon {
+                font-size: 2rem !important;
+            }
+            
+            .value-card h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            .value-card p {
+                font-size: 0.9rem !important;
+            }
+            
+            .categories-section h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            .category-item {
+                padding: 1rem !important;
+            }
+            
+            .category-item img {
+                height: 150px !important;
+            }
+            
+            .category-item h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            .category-item p {
+                font-size: 0.9rem !important;
+            }
+            
+            .why-choose-section h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .reasons-list {
+                gap: 1rem !important;
+            }
+            
+            .reason-item {
+                padding: 1rem !important;
+            }
+            
+            .reason-number {
+                font-size: 1.5rem !important;
+                width: 40px !important;
+                height: 40px !important;
+                min-width: 40px !important;
+            }
+            
+            .reason-content h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            .reason-content p {
+                font-size: 0.9rem !important;
+            }
+            
+            .cta-section {
+                padding: 2rem 1.5rem !important;
+            }
+            
+            .cta-section h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .cta-section p {
+                font-size: 0.95rem !important;
+            }
+            
+            .cta-buttons {
+                flex-direction: column !important;
+                gap: 1rem !important;
+            }
+            
+            .cta-buttons .btn {
+                width: 100% !important;
+                padding: 1rem !important;
+            }
+            
+            .footer {
+                padding: 2rem 0 1rem !important;
+                margin-top: 2rem !important;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+                text-align: center !important;
+            }
+            
+            .footer-section h3 {
+                font-size: 1rem !important;
+            }
+            
+            .footer-section p,
+            .footer-section a {
+                font-size: 0.85rem !important;
+            }
+            
+            .contact-item {
+                justify-content: center !important;
+            }
+            
+            .footer-bottom {
+                font-size: 0.8rem !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Small mobile styles */
+            .hero h2 {
+                font-size: 1.4rem !important;
+            }
+            
+            .hero p {
+                font-size: 0.9rem !important;
+            }
+            
+            .about-section h2,
+            .values-section h2,
+            .categories-section h2,
+            .why-choose-section h2,
+            .cta-section h2 {
+                font-size: 1.3rem !important;
+            }
+            
+            .about-text h2 {
+                font-size: 1.3rem !important;
+            }
+            
+            .about-text h3 {
+                font-size: 1.1rem !important;
+            }
+            
+            .about-text p {
+                font-size: 0.9rem !important;
+            }
+            
+            .value-card,
+            .reason-item {
+                padding: 1rem !important;
+            }
+            
+            .value-card h3,
+            .reason-content h3,
+            .category-item h3 {
+                font-size: 1rem !important;
+            }
+            
+            .value-card p,
+            .reason-content p,
+            .category-item p {
+                font-size: 0.85rem !important;
+            }
+            
+            .nav-menu a {
+                font-size: 0.95rem !important;
+                padding: 0.9rem 1.2rem !important;
+            }
+            
+            .cta-section h2 {
+                font-size: 1.3rem !important;
+            }
+            
+            .cta-section p {
+                font-size: 0.9rem !important;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            /* For touchscreen devices */
+            .nav-menu a,
+            .btn {
+                min-height: 44px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            
+            .value-card:hover,
+            .category-item:hover,
+            .reason-item:hover {
+                transform: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Announcement Banner -->
-    <div id="announcement-banner" class="announcement-banner">
-        🎉 New Stock Alert! Check out our latest Smart Watches - Limited Time Offer!
-    </div>
-
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <img src="images/icons/Machpelahtshirt.png" alt="Machpelah Electronics Logo" onerror="this.src='https://via.placeholder.com/50x50/667eea/ffffff?text=ME'">
+                <img src="images/icons/Machpelahtshirt.png" alt="Machpelah Electronics Logo" onerror="this.src='https://via.placeholder.com/50x50/FFD700/000000?text=ME'">
             </div>
-            <ul class="nav-menu">
+            
+            <!-- Hamburger Menu Button (Mobile Only) -->
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu" id="nav-menu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="announcements.html">Announcements</a></li>
                 <li><a href="contact.html">Contact</a></li>
@@ -34,8 +452,8 @@
     <!-- Hero Section -->
     <header class="hero">
         <div class="container">
-            <h2>About Machpelah Electronics</h2>
-            <p>Your Trusted Partner in Quality Electronics</p>
+            <h2 style="color: #000000;">About Machpelah Electronics</h2>
+            <p style="color: #ffffff;">Your Trusted Partner in Quality Electronics</p>
         </div>
     </header>
 
@@ -44,127 +462,127 @@
         <section class="about-section">
             <div class="about-content">
                 <div class="about-text">
-                    <h2>Who We Are</h2>
-                    <p>Welcome to Machpelah Electronics, your premier destination for quality home appliances and electronics in Malawi. Since our establishment, we have been committed to providing our customers with the best products at competitive prices.</p>
+                    <h2 style="color: #000000;">Who We Are</h2>
+                    <p style="color: #000000;">Welcome to Machpelah Electronics, your premier destination for quality home appliances and electronics in Malawi. Since our establishment, we have been committed to providing our customers with the best products at competitive prices.</p>
                     
-                    <p>We specialize in a wide range of products including high-performance PCs, cutting-edge smart watches, kitchen appliances, and more. Our mission is to make quality electronics accessible to every household.</p>
+                    <p style="color: #000000;">We specialize in a wide range of products including high-performance PCs, cutting-edge smart watches, kitchen appliances, and more. Our mission is to make quality electronics accessible to every household.</p>
 
-                    <h3>Our Mission</h3>
-                    <p>To provide reliable, affordable, and high-quality electronic products that enhance the daily lives of our customers while delivering exceptional customer service.</p>
+                    <h3 style="color: #000000;">Our Mission</h3>
+                    <p style="color: #000000;">To provide reliable, affordable, and high-quality electronic products that enhance the daily lives of our customers while delivering exceptional customer service.</p>
 
-                    <h3>Our Vision</h3>
-                    <p>To become the leading electronics retailer in Malawi, known for quality products, competitive pricing, and outstanding customer satisfaction.</p>
+                    <h3 style="color: #000000;">Our Vision</h3>
+                    <p style="color: #000000;">To become the leading electronics retailer in Malawi, known for quality products, competitive pricing, and outstanding customer satisfaction.</p>
                 </div>
 
                 <div class="about-image">
-                    <img src="images/banners/about_us2.jpg" alt="Electronics Store" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <img src="images/banners/about_us2.jpg" alt="Electronics Store" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" onerror="this.src='https://images.unsplash.com/photo-1601524909162-ae8725290836?w=600&h=400&fit=crop'">
                 </div>
             </div>
 
             <!-- Values Section -->
             <div class="values-section">
-                <h2 style="text-align: center; margin-bottom: 2rem;">Our Core Values</h2>
+                <h2 style="text-align: center; margin-bottom: 2rem; color: #000000;">Our Core Values</h2>
                 <div class="values-grid">
                     <div class="value-card">
                         <div class="value-icon">🏆</div>
-                        <h3>Quality First</h3>
-                        <p>We only stock products from trusted brands that meet our high standards for quality and durability.</p>
+                        <h3 style="color: #000000;">Quality First</h3>
+                        <p style="color: #000000;">We only stock products from trusted brands that meet our high standards for quality and durability.</p>
                     </div>
                     <div class="value-card">
                         <div class="value-icon">💰</div>
-                        <h3>Competitive Prices</h3>
-                        <p>We offer the best prices in the market without compromising on product quality.</p>
+                        <h3 style="color: #000000;">Competitive Prices</h3>
+                        <p style="color: #000000;">We offer the best prices in the market without compromising on product quality.</p>
                     </div>
                     <div class="value-card">
                         <div class="value-icon">🤝</div>
-                        <h3>Customer Satisfaction</h3>
-                        <p>Your satisfaction is our priority. We provide excellent after-sales support and service.</p>
+                        <h3 style="color: #000000;">Customer Satisfaction</h3>
+                        <p style="color: #000000;">Your satisfaction is our priority. We provide excellent after-sales support and service.</p>
                     </div>
                     <div class="value-card">
                         <div class="value-icon">⚡</div>
-                        <h3>Fast Delivery</h3>
-                        <p>Quick and reliable delivery service to ensure you get your products when you need them.</p>
+                        <h3 style="color: #000000;">Fast Delivery</h3>
+                        <p style="color: #000000;">Quick and reliable delivery service to ensure you get your products when you need them.</p>
                     </div>
                     <div class="value-card">
                         <div class="value-icon">✓</div>
-                        <h3>Authentic Products</h3>
-                        <p>All our products are 100% genuine and come with manufacturer warranties.</p>
+                        <h3 style="color: #000000;">Authentic Products</h3>
+                        <p style="color: #000000;">All our products are 100% genuine and come with manufacturer warranties.</p>
                     </div>
                     <div class="value-card">
                         <div class="value-icon">💡</div>
-                        <h3>Expert Advice</h3>
-                        <p>Our knowledgeable team is always ready to help you choose the right product.</p>
+                        <h3 style="color: #000000;">Expert Advice</h3>
+                        <p style="color: #000000;">Our knowledgeable team is always ready to help you choose the right product.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Product Categories -->
             <div class="categories-section">
-                <h2 style="text-align: center; margin-bottom: 2rem;">What We Offer</h2>
+                <h2 style="text-align: center; margin-bottom: 2rem; color: #000000;">What We Offer</h2>
                 <div class="categories-grid">
                     <div class="category-item">
                         <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=300&h=200&fit=crop" alt="PCs">
-                        <h3>Desktop & Laptop Computers</h3>
-                        <p>High-performance PCs for gaming, office work, and everyday computing needs.</p>
+                        <h3 style="color: #000000;">Desktop & Laptop Computers</h3>
+                        <p style="color: #000000;">High-performance PCs for gaming, office work, and everyday computing needs.</p>
                     </div>
                     <div class="category-item">
                         <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=300&h=200&fit=crop" alt="Smart Watches">
-                        <h3>Smart Watches</h3>
-                        <p>Advanced fitness tracking and smart features to keep you connected on the go.</p>
+                        <h3 style="color: #000000;">Smart Watches</h3>
+                        <p style="color: #000000;">Advanced fitness tracking and smart features to keep you connected on the go.</p>
                     </div>
                     <div class="category-item">
                         <img src="https://images.unsplash.com/photo-1563299796-17596ed6b017?w=300&h=200&fit=crop" alt="Kettles">
-                        <h3>Electric Kettles</h3>
-                        <p>Fast-boiling, energy-efficient kettles in various sizes and designs.</p>
+                        <h3 style="color: #000000;">Electric Kettles</h3>
+                        <p style="color: #000000;">Fast-boiling, energy-efficient kettles in various sizes and designs.</p>
                     </div>
                     <div class="category-item">
                         <img src="https://images.unsplash.com/photo-1585659722983-3a675dabf23d?w=300&h=200&fit=crop" alt="Hotplates">
-                        <h3>Hotplates</h3>
-                        <p>Portable and efficient cooking solutions for your kitchen.</p>
+                        <h3 style="color: #000000;">Hotplates</h3>
+                        <p style="color: #000000;">Portable and efficient cooking solutions for your kitchen.</p>
                     </div>
                     <div class="category-item">
                         <img src="https://images.unsplash.com/photo-1612837017391-4e5d76c0d93f?w=300&h=200&fit=crop" alt="Rice Cookers">
-                        <h3>Rice Cookers</h3>
-                        <p>Multi-function rice cookers for perfect rice every time.</p>
+                        <h3 style="color: #000000;">Rice Cookers</h3>
+                        <p style="color: #000000;">Multi-function rice cookers for perfect rice every time.</p>
                     </div>
                     <div class="category-item">
                         <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop" alt="More Products">
-                        <h3>And More...</h3>
-                        <p>Constantly expanding our product range to serve you better.</p>
+                        <h3 style="color: #000000;">And More...</h3>
+                        <p style="color: #000000;">Constantly expanding our product range to serve you better.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Why Choose Us - ANIMATED SECTION -->
+            <!-- Why Choose Us -->
             <div class="why-choose-section">
-                <h2 style="text-align: center; margin-bottom: 2rem;">Why Choose Mach-Pelah Electronics?</h2>
+                <h2 style="text-align: center; margin-bottom: 2rem; color: #000000;">Why Choose Machpelah Electronics?</h2>
                 <div class="reasons-list">
                     <div class="reason-item">
-                        <span class="reason-number">1</span>
+                        <span class="reason-number" style="background: #FFD700; color: #000000;">1</span>
                         <div class="reason-content">
-                            <h3>Wide Product Selection</h3>
-                            <p>From computers to kitchen appliances, we have everything you need under one roof.</p>
+                            <h3 style="color: #000000;">Wide Product Selection</h3>
+                            <p style="color: #000000;">From computers to kitchen appliances, we have everything you need under one roof.</p>
                         </div>
                     </div>
                     <div class="reason-item">
-                        <span class="reason-number">2</span>
+                        <span class="reason-number" style="background: #FFD700; color: #000000;">2</span>
                         <div class="reason-content">
-                            <h3>Quality Assurance</h3>
-                            <p>Every product is carefully inspected before it reaches you.</p>
+                            <h3 style="color: #000000;">Quality Assurance</h3>
+                            <p style="color: #000000;">Every product is carefully inspected before it reaches you.</p>
                         </div>
                     </div>
                     <div class="reason-item">
-                        <span class="reason-number">3</span>
+                        <span class="reason-number" style="background: #FFD700; color: #000000;">3</span>
                         <div class="reason-content">
-                            <h3>Local Support</h3>
-                            <p>Based in Malawi, we understand local needs and provide personalized service.</p>
+                            <h3 style="color: #000000;">Local Support</h3>
+                            <p style="color: #000000;">Based in Malawi, we understand local needs and provide personalized service.</p>
                         </div>
                     </div>
                     <div class="reason-item">
-                        <span class="reason-number">4</span>
+                        <span class="reason-number" style="background: #FFD700; color: #000000;">4</span>
                         <div class="reason-content">
-                            <h3>Easy Returns & Warranty</h3>
-                            <p>Hassle-free returns and comprehensive warranty coverage on all products.</p>
+                            <h3 style="color: #000000;">Easy Returns & Warranty</h3>
+                            <p style="color: #000000;">Hassle-free returns and comprehensive warranty coverage on all products.</p>
                         </div>
                     </div>
                 </div>
@@ -172,8 +590,8 @@
 
             <!-- CTA Section -->
             <div class="cta-section">
-                <h2>Ready to Shop?</h2>
-                <p>Explore our wide range of quality electronics and find the perfect products for your needs.</p>
+                <h2 style="color: #000000;">Ready to Shop?</h2>
+                <p style="color: #000000;">Explore our wide range of quality electronics and find the perfect products for your needs.</p>
                 <div class="cta-buttons">
                     <a href="index.html" class="btn btn-success">Browse Products</a>
                     <a href="contact.html" class="btn btn-primary">Contact Us</a>
@@ -187,62 +605,100 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Machpeelah Electronics</h3>
-                    <p>Your trusted source for quality home appliances</p>
+                    <h3 style="color: #FFD700;">Machpelah Electronics</h3>
+                    <p style="color: #ffffff;">Your trusted source for quality home appliances</p>
                 </div>
                 <div class="footer-section">
-                    <h3>Quick Links</h3>
+                    <h3 style="color: #FFD700;">Quick Links</h3>
                     <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="announcements.html">Announcements</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                        <li><a href="admin/index.html">Admin</a></li>
+                        <li><a href="index.html" style="color: #ffffff;">Home</a></li>
+                        <li><a href="about.html" style="color: #ffffff;">About Us</a></li>
+                        <li><a href="announcements.html" style="color: #ffffff;">Announcements</a></li>
+                        <li><a href="contact.html" style="color: #ffffff;">Contact</a></li>
+                        <li><a href="admin/index.html" style="color: #ffffff;">Admin</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <p>Email: machpelah@gmail.com</p>
-                    <p>WhatsApp: +265 991765645</p>
+                    <h3 style="color: #FFD700;">Contact Us</h3>
+                    <div class="contact-item">
+                        <svg class="contact-icon" viewBox="0 0 20 20" style="fill: #FFD700;">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                        </svg>
+                        <a href="mailto:machpelah@gmail.com" style="color: #ffffff;">machpelah@gmail.com</a>
+                    </div>
+                    <div class="contact-item">
+                        <svg class="contact-icon" viewBox="0 0 20 20" style="fill: #FFD700;">
+                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                        </svg>
+                        <a href="https://wa.me/265991765645" target="_blank" style="color: #ffffff;">+265 991 765 645</a>
+                    </div>
                 </div>
             </div>
-            <p class="footer-bottom">&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
+            <p class="footer-bottom" style="color: #ffffff;">&copy; <span id="current-year"></span> Machpelah Electronics. All rights reserved.</p>
         </div>
     </footer>
 
     <script src="js/products.js"></script>
     <script src="js/cart.js"></script>
     <script>
-        // Intersection Observer for scroll animations
-        const observerOptions = {
-            threshold: 0.2,
-            rootMargin: '0px 0px -100px 0px'
-        };
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
+            document.getElementById('current-year').textContent = new Date().getFullYear();
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
-                    
-                    // Animate reason items with stagger
-                    if (entry.target.classList.contains('why-choose-section')) {
-                        const reasonItems = entry.target.querySelectorAll('.reason-item');
-                        reasonItems.forEach((item, index) => {
-                            setTimeout(() => {
-                                item.classList.add('animate-in');
-                            }, index * 100);
-                        });
-                    }
+            // Hamburger menu toggle
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+            
+            hamburger.addEventListener('click', function() {
+                this.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+            
+            // Close menu when clicking a link
+            document.querySelectorAll('.nav-menu a').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
                 }
             });
-        }, observerOptions);
 
-        // Observe the why-choose-section
-        const whyChooseSection = document.querySelector('.why-choose-section');
-        if (whyChooseSection) {
-            observer.observe(whyChooseSection);
-        }
-        document.getElementById('current-year').textContent = new Date().getFullYear();
+            // Intersection Observer for scroll animations
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        
+                        // Animate reason items with stagger
+                        if (entry.target.classList.contains('why-choose-section')) {
+                            const reasonItems = entry.target.querySelectorAll('.reason-item');
+                            reasonItems.forEach((item, index) => {
+                                setTimeout(() => {
+                                    item.classList.add('animate-in');
+                                }, index * 100);
+                            });
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // Observe sections for animation
+            const sections = document.querySelectorAll('.values-section, .categories-section, .why-choose-section, .about-content, .cta-section');
+            sections.forEach(section => observer.observe(section));
+        });
     </script>
 </body>
 </html>

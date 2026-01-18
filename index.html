@@ -7,6 +7,151 @@
     <link rel="stylesheet" href="css/style.css">
     
     <style>
+            /* Location Welcome Banner */
+            .location-banner {
+                background: linear-gradient(135deg, #010006 0%, #020005 100%);
+                color: white;
+                padding: 1.5rem;
+                text-align: center;
+                margin-bottom: 2rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+                animation: slideDown 0.5s ease-out;
+                position: relative;
+            }
+            
+            .location-banner.fade-out {
+                animation: fadeOut 0.5s ease-out forwards;
+            }
+            
+            .location-banner h3 {
+                margin: 0 0 0.5rem 0;
+                font-size: 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .location-banner p {
+                margin: 0;
+                font-size: 1.1rem;
+                line-height: 1.6;
+            }
+            
+            .location-icon {
+                display: inline-block;
+                font-size: 1.8rem;
+            }
+            
+            .delivery-badge {
+                display: inline-block;
+                background: #10b981;
+                padding: 0.3rem 0.8rem;
+                border-radius: 20px;
+                font-weight: bold;
+                margin-top: 0.5rem;
+                font-size: 0.95rem;
+            }
+            
+            .delivery-badge.low-cost {
+                background: #f59e0b;
+            }
+            
+            .close-banner-btn {
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                background: rgba(255, 255, 255, 0.2);
+                border: none;
+                color: white;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.3s ease;
+            }
+            
+            .close-banner-btn:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+            
+            .countdown-timer {
+                display: inline-block;
+                background: rgba(255, 255, 255, 0.3);
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                line-height: 28px;
+                font-weight: bold;
+                font-size: 1rem;
+                margin-left: 0.5rem;
+                animation: pulse 1s ease-in-out infinite;
+            }
+            
+            @keyframes pulse {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.1);
+                }
+            }
+            
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .location-banner {
+                    padding: 1rem;
+                    padding-right: 2.5rem;
+                    margin-bottom: 1.5rem;
+                }
+                
+                .location-banner h3 {
+                    font-size: 1.2rem;
+                }
+                
+                .location-banner p {
+                    font-size: 0.95rem;
+                }
+                
+                .close-banner-btn {
+                    width: 25px;
+                    height: 25px;
+                    font-size: 1rem;
+                }
+                
+                .countdown-timer {
+                    width: 24px;
+                    height: 24px;
+                    line-height: 24px;
+                    font-size: 0.9rem;
+                }
+            }
             
             /* Override CSS animations that hide products */
             .product-card {
@@ -234,7 +379,7 @@
                 }
                 
                 .product-image {
-                    height: 140px !important;
+                    height: 180px !important;
                     padding: 0.75rem !important;
                     
                 }
@@ -326,8 +471,8 @@
                 }
                 
                 .product-image {
-                    height: 120px !important;
-                    padding: 0.5rem !important;
+                    height: 160px !important;
+                    padding: 0.75rem !important;
                 }
                 
                 .product-info {
@@ -336,10 +481,22 @@
                 
                 .product-name {
                     font-size: 0.85rem !important;
+                    min-height: auto !important;
+                    line-height: 1.2 !important;
                 }
                 
                 .product-price {
                     font-size: 1rem !important;
+                    margin-bottom: 0.5rem !important;
+                }
+                
+                .product-description {
+                    display: none !important;
+                }
+                
+                .product-stock {
+                    font-size: 0.75rem !important;
+                    margin-bottom: 0.5rem !important;
                 }
                 
                 .add-to-cart-btn {
@@ -409,6 +566,9 @@
     <!-- Hero Section -->
     <header class="hero">
         <div class="container">
+            <!-- Location Welcome Banner -->
+            <div id="location-banner" style="display: none;"></div>
+            
             <h2>Quality Electronics for Your Home</h2>
             <p>PCs, Smart Watches, Kettles, Hotplates, Rice Cookers & More</p>
         </div>
@@ -523,8 +683,6 @@
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             console.log('Supabase initialized');
 
-                        // Add this script right after your Supabase initialization in the DOMContentLoaded event
-
             // Website View Counter
             async function trackPageView() {
                 try {
@@ -609,6 +767,234 @@
 
             // Track view when page loads (runs automatically in background)
             trackPageView();
+
+            // Location Detection and Delivery Message
+            async function detectLocationAndShowMessage() {
+                try {
+                    console.log('Detecting location...');
+                    
+                    // Try to get user's location using Geolocation API
+                    if ('geolocation' in navigator) {
+                        navigator.geolocation.getCurrentPosition(
+                            async function(position) {
+                                const lat = position.coords.latitude;
+                                const lon = position.coords.longitude;
+                                
+                                console.log('Coordinates:', lat, lon);
+                                
+                                // Use reverse geocoding to get location name
+                                await getLocationDetails(lat, lon);
+                            },
+                            async function(error) {
+                                console.log('Geolocation error:', error.message);
+                                // Fallback to IP-based location
+                                await getLocationByIP();
+                            },
+                            {
+                                enableHighAccuracy: false,
+                                timeout: 10000,
+                                maximumAge: 300000
+                            }
+                        );
+                    } else {
+                        // Browser doesn't support geolocation, use IP
+                        await getLocationByIP();
+                    }
+                } catch (error) {
+                    console.error('Error detecting location:', error);
+                }
+            }
+
+            // Get location details from coordinates
+            async function getLocationDetails(lat, lon) {
+                try {
+                    // Use OpenStreetMap Nominatim for reverse geocoding with higher zoom for specific areas
+                    const response = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=16&addressdetails=1`,
+                        {
+                            headers: {
+                                'User-Agent': 'MachpelahElectronics/1.0'
+                            }
+                        }
+                    );
+                    
+                    const data = await response.json();
+                    console.log('Location data:', data);
+                    
+                    // Extract specific location information
+                    const address = data.address || {};
+                    
+                    // Get most specific location available
+                    const specificLocation = 
+                        address.suburb || 
+                        address.neighbourhood || 
+                        address.village || 
+                        address.hamlet || 
+                        address.residential ||
+                        address.quarter ||
+                        '';
+                    
+                    const city = address.city || address.town || address.county || '';
+                    const district = address.state || address.region || '';
+                    const country = address.country || '';
+                    
+                    console.log('Detected location:', {
+                        specific: specificLocation,
+                        city: city,
+                        district: district,
+                        country: country
+                    });
+                    
+                    // Determine location and show message
+                    displayDeliveryMessage(specificLocation, city, district, country);
+                    
+                } catch (error) {
+                    console.error('Error getting location details:', error);
+                    // Fallback to IP-based location
+                    await getLocationByIP();
+                }
+            }
+
+            // Fallback: Get location by IP address
+            async function getLocationByIP() {
+                try {
+                    const response = await fetch('https://ipapi.co/json/');
+                    const data = await response.json();
+                    
+                    console.log('IP Location data:', data);
+                    
+                    const city = data.city || '';
+                    const region = data.region || '';
+                    const country = data.country_name || '';
+                    
+                    displayDeliveryMessage('', city, region, country);
+                    
+                } catch (error) {
+                    console.error('Error getting IP location:', error);
+                    // Show generic message if all fails
+                    displayDeliveryMessage('', '', '', 'Malawi');
+                }
+            }
+
+            // Display personalized delivery message
+            function displayDeliveryMessage(specificLocation, city, district, country) {
+                const banner = document.getElementById('location-banner');
+                
+                // Normalize location names for comparison
+                const locationLower = specificLocation.toLowerCase();
+                const cityLower = city.toLowerCase();
+                const districtLower = district.toLowerCase();
+                const countryLower = country.toLowerCase();
+                
+                // Determine the best location name to display
+                let displayLocation = specificLocation || city || district || 'your area';
+                let deliveryMessage = '';
+                let deliveryType = '';
+                
+                // Free delivery areas - check for specific suburbs/neighborhoods
+                const freeDeliveryAreas = [
+                    'chitawira', 'chitawira township',
+                    'chichiri', 'chichiri shopping centre', 'chichiri mall',
+                    'naperi', 'new naperi', 'naperi estate'
+                ];
+                
+                const isFreeDelivery = freeDeliveryAreas.some(area => 
+                    locationLower.includes(area) || cityLower.includes(area)
+                );
+                
+                // Check if in other Blantyre areas
+                const isBlantyre = 
+                    cityLower.includes('blantyre') || 
+                    districtLower.includes('blantyre') ||
+                    locationLower.includes('blantyre');
+                
+                // Check if in Malawi
+                const isMalawi = countryLower.includes('malawi');
+                
+                // Generate appropriate message
+                if (isFreeDelivery) {
+                    deliveryMessage = `👋 Hello Dear Customer from <strong>${displayLocation}</strong>!<br>Do you know we can deliver to ${displayLocation}? <span class="delivery-badge">FREE DELIVERY</span> to your area!`;
+                    deliveryType = 'free';
+                } else if (isBlantyre) {
+                    deliveryMessage = `👋 Hello Dear Customer from <strong>${displayLocation}</strong>!<br>Do you know we can deliver to ${displayLocation}? We offer delivery at a <span class="delivery-badge low-cost">LOW COST</span>!`;
+                    deliveryType = 'low-cost';
+                } else if (isMalawi) {
+                    deliveryMessage = `👋 Hello Dear Customer from <strong>${displayLocation}</strong>!<br>Do you know we can deliver to ${displayLocation}? We offer delivery at a <span class="delivery-badge low-cost">LOW COST</span>!`;
+                    deliveryType = 'low-cost';
+                } else {
+                    deliveryMessage = `👋 Hello Dear Customer! Welcome to Machpelah Electronics.<br>We deliver across Malawi at competitive rates!`;
+                    deliveryType = 'standard';
+                }
+                
+                // Create banner with close button and countdown
+                banner.innerHTML = `
+                    <div class="location-banner" id="location-banner-content">
+                        <button class="close-banner-btn" onclick="closeBanner()" aria-label="Close">×</button>
+                        <p>${deliveryMessage} <span class="countdown-timer" id="countdown">3</span></p>
+                    </div>
+                `;
+                
+                banner.style.display = 'block';
+                
+                // Start countdown timer
+                let countdown = 3;
+                const countdownElement = document.getElementById('countdown');
+                
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    if (countdownElement) {
+                        countdownElement.textContent = countdown;
+                    }
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        closeBanner();
+                    }
+                }, 1000); // Update every 1 second
+                
+                // Store interval ID so it can be cleared when manually closed
+                window.bannerCountdownInterval = countdownInterval;
+                
+                // Log delivery info to database (optional)
+                logDeliveryInfo(displayLocation, city, district, country, deliveryType);
+            }
+
+            // Close banner function
+            window.closeBanner = function() {
+                const banner = document.getElementById('location-banner');
+                const bannerContent = document.getElementById('location-banner-content');
+                
+                // Clear countdown interval if it exists
+                if (window.bannerCountdownInterval) {
+                    clearInterval(window.bannerCountdownInterval);
+                }
+                
+                if (bannerContent) {
+                    bannerContent.classList.add('fade-out');
+                    setTimeout(() => {
+                        banner.style.display = 'none';
+                    }, 500);
+                }
+            };
+
+            // Log delivery information to database
+            async function logDeliveryInfo(location, city, district, country, deliveryType) {
+                try {
+                    await supabase
+                        .from('page_views')
+                        .insert([{
+                            page_url: window.location.href,
+                            location_detected: `${location}, ${city}, ${district}, ${country}`,
+                            delivery_type: deliveryType,
+                            timestamp: new Date().toISOString()
+                        }]);
+                } catch (error) {
+                    console.error('Error logging delivery info:', error);
+                }
+            }
+
+            // Start location detection
+            detectLocationAndShowMessage();
 
             // Optional: Track how long users stay on the page
             let startTime = Date.now();

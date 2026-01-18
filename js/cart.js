@@ -105,6 +105,16 @@ class ShoppingCart {
         return 'MWK ' + price.toLocaleString();
     }
 
+    toggleDescription(productId) {
+        const descElement = document.getElementById(`desc-${productId}`);
+        const nameElement = document.getElementById(`name-${productId}`);
+        
+        if (descElement && nameElement) {
+            descElement.classList.toggle('active');
+            nameElement.classList.toggle('active');
+        }
+    }
+
     displayCart() {
         const cartItemsContainer = document.getElementById('cart-items');
         const cartSummary = document.getElementById('cart-summary');
@@ -128,17 +138,24 @@ class ShoppingCart {
                 <img src="${item.image}" alt="${item.name}" class="cart-item-image"
                      onerror="this.src='https://via.placeholder.com/120x120/f5f5f5/666?text=Product'">
                 <div class="cart-item-details">
-                    <h3 class="cart-item-name">${item.name}</h3>
+                    <h3 class="cart-item-name" id="name-${item.id}" onclick="cart.toggleDescription(${item.id})">
+                        ${item.name}
+                    </h3>
+                    ${item.description ? `
+                        <p class="cart-item-description" id="desc-${item.id}">
+                            ${item.description}
+                        </p>
+                    ` : ''}
                     <p class="cart-item-price">${this.formatPrice(item.price)}</p>
                     ${item.category ? `<p style="font-size: 0.85rem; color: #6b7280;">Category: ${item.category}</p>` : ''}
-                </div>
-                <div class="cart-item-actions">
-                    <div class="quantity-control">
-                        <button class="quantity-btn" onclick="cart.updateQuantity(${item.id}, ${item.quantity - 1})">-</button>
-                        <span>${item.quantity}</span>
-                        <button class="quantity-btn" onclick="cart.updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+                    <div class="cart-item-actions">
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="cart.updateQuantity(${item.id}, ${item.quantity - 1})">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="quantity-btn" onclick="cart.updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+                        </div>
+                        <button class="remove-btn" onclick="cart.removeItem(${item.id})">Remove</button>
                     </div>
-                    <button class="remove-btn" onclick="cart.removeItem(${item.id})">Remove</button>
                 </div>
             </div>
         `).join('');
@@ -146,53 +163,85 @@ class ShoppingCart {
         if (cartSummary) {
             cartSummary.style.display = 'block';
             document.getElementById('cart-total').textContent = this.formatPrice(this.getTotal());
+            document.getElementById('cart-total-final').textContent = this.formatPrice(this.getTotal());
         }
     }
 
     generateEmailBody() {
         let body = 'New Order from Machpelah Electronics Website\n\n';
         body += 'ORDER DETAILS:\n';
-        body += '=' .repeat(50) + '\n\n';
+        body += '=' .repeat(70) + '\n\n';
         
-        this.items.forEach(item => {
-            body += `Product: ${item.name}\n`;
+        this.items.forEach((item, index) => {
+            body += `PRODUCT ${index + 1}:\n`;
+            body += `Name: ${item.name}\n`;
             body += `Price: ${this.formatPrice(item.price)}\n`;
             body += `Quantity: ${item.quantity}\n`;
             body += `Subtotal: ${this.formatPrice(item.price * item.quantity)}\n`;
-            body += '-'.repeat(50) + '\n';
+            if (item.description) {
+                body += `Description: ${item.description}\n`;
+            }
+            if (item.category) {
+                body += `Category: ${item.category}\n`;
+            }
+            body += `Product Image: ${item.image}\n`;
+            body += '-'.repeat(70) + '\n';
         });
         
-        body += `\nTOTAL: ${this.formatPrice(this.getTotal())}\n\n`;
-        body += 'Please contact the customer to confirm the order.';
+        body += `\nTOTAL AMOUNT: ${this.formatPrice(this.getTotal())}\n`;
+        body += `TOTAL ITEMS: ${this.getItemCount()}\n\n`;
+        body += 'Please contact the customer to confirm the order and arrange delivery.\n';
         
         return encodeURIComponent(body);
     }
 
     generateWhatsAppMessage() {
-        let message = '*New Order - Machpelah Electronics*\n\n';
+        let message = '*🛒 NEW ORDER - MACHPELAH ELECTRONICS*\n\n';
+        message += '📋 *ORDER DETAILS:*\n';
+        message += '━━━━━━━━━━━━━━━━━━━━━━\n\n';
         
-        this.items.forEach(item => {
-            message += `📦 *${item.name}*\n`;
-            message += `   Price: ${this.formatPrice(item.price)}\n`;
-            message += `   Qty: ${item.quantity}\n`;
-            message += `   Subtotal: ${this.formatPrice(item.price * item.quantity)}\n\n`;
+        this.items.forEach((item, index) => {
+            message += `*${index + 1}. ${item.name}*\n`;
+            message += `💰 Price: ${this.formatPrice(item.price)}\n`;
+            message += `📦 Quantity: ${item.quantity}\n`;
+            message += `💵 Subtotal: ${this.formatPrice(item.price * item.quantity)}\n`;
+            if (item.description) {
+                message += `📝 Description: ${item.description}\n`;
+            }
+            if (item.category) {
+                message += `🏷️ Category: ${item.category}\n`;
+            }
+            message += `🖼️ Image: ${item.image}\n`;
+            message += '\n';
         });
         
-        message += `*TOTAL: ${this.formatPrice(this.getTotal())}*\n\n`;
-        message += 'I would like to place this order. Please confirm availability.';
+        message += '━━━━━━━━━━━━━━━━━━━━━━\n';
+        message += `*💰 TOTAL: ${this.formatPrice(this.getTotal())}*\n`;
+        message += `*📦 Total Items: ${this.getItemCount()}*\n\n`;
+        message += '✅ _I would like to place this order. Please confirm availability and delivery details._';
         
         return encodeURIComponent(message);
     }
 
     sendToEmail() {
-        const email = 'machpelah@gmail.com';
-        const subject = 'New Order from Website';
+        if (this.items.length === 0) {
+            alert('Your cart is empty! Add some items first.');
+            return;
+        }
+        
+        const email = 'machpelahelectronics@gmail.com';
+        const subject = encodeURIComponent('New Order from Website - ' + new Date().toLocaleDateString());
         const body = this.generateEmailBody();
         
         window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
     }
 
     sendToWhatsApp() {
+        if (this.items.length === 0) {
+            alert('Your cart is empty! Add some items first.');
+            return;
+        }
+        
         const phone = '265991765645'; // Your WhatsApp number
         const message = this.generateWhatsAppMessage();
         
@@ -225,6 +274,11 @@ class ShoppingCart {
     }
 
     clearCart() {
+        if (this.items.length === 0) {
+            alert('Your cart is already empty!');
+            return;
+        }
+        
         if (confirm('Are you sure you want to clear your cart?')) {
             this.items = [];
             this.saveCart();

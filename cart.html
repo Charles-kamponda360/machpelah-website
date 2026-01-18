@@ -203,10 +203,44 @@
         color: var(--black);
         font-weight: 600;
         transition: color 0.3s ease;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .cart-item-name:hover {
+        color: var(--blue);
+    }
+    
+    .cart-item-name::after {
+        content: '▼';
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+        transition: transform 0.3s ease;
+        display: inline-block;
+    }
+    
+    .cart-item-name.active::after {
+        transform: rotate(180deg);
     }
 
     .cart-item:hover .cart-item-name {
         color: var(--blue);
+    }
+    
+    .cart-item-description {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, margin 0.3s ease;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+    
+    .cart-item-description.active {
+        max-height: 200px;
+        margin-top: 0.5rem;
+        margin-bottom: 0.75rem;
     }
 
     .cart-item-price {

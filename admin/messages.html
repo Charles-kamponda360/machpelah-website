@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Messages - Machpelah Electronics Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            padding: 2rem;
+        }
+
+        .header {
+            max-width: 1400px;
+            margin: 0 auto 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            padding: 0.75rem 1.5rem;
+            background: #000;
+            color: #FFD700;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: #FFD700;
+            color: #000;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            color: #111;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: #f9fafb;
+        }
+
+        .tab-btn.active {
+            background: #000;
+            color: #FFD700;
+            border-color: #000;
+        }
+
+        .messages-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .message-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .message-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        }
+
+        .message-card.unread {
+            border-left: 4px solid #FFD700;
+            background: #fffbeb;
+        }
+
+        .message-card.read {
+            border-left: 4px solid #10b981;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .message-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            color: #111;
+        }
+
+        .message-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message-subject {
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .message-body {
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-mark-read {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-mark-read:hover {
+            background: #059669;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        .btn-reply {
+            background: #FFD700;
+            color: #000;
+        }
+
+        .btn-reply:hover {
+            background: #fbbf24;
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background: #20ba5a;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-unread {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-read {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .empty-state h2 {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #999;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .message-header {
+                flex-direction: column;
+            }
+
+            .message-actions {
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+                min-width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-btn">← Back to Dashboard</a>
+    </div>
+
+    <div class="container">
+        <h1>
+            📧 Contact Messages
+            <span id="message-count" style="font-size: 0.8em; color: #666;"></span>
+        </h1>
+
+        <div class="filter-tabs">
+            <button class="tab-btn active" data-filter="all">All Messages</button>
+            <button class="tab-btn" data-filter="unread">Unread</button>
+            <button class="tab-btn" data-filter="read">Read</button>
+        </div>
+
+        <div id="loading" class="loading">Loading messages...</div>
+        <div id="messages-container" class="messages-grid" style="display: none;"></div>
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <h2>No messages yet</h2>
+            <p>Customer messages will appear here</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let allMessages = [];
+        let currentFilter = 'all';
+
+        // Load messages
+        async function loadMessages() {
+            try {
+                const { data, error } = await supabase
+                    .from('contact_messages')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allMessages = data || [];
+                displayMessages();
+                updateCount();
+
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                document.getElementById('loading').textContent = 'Error loading messages. Please check database setup.';
+            }
+        }
+
+        // Display messages
+        function displayMessages() {
+            const container = document.getElementById('messages-container');
+            const loading = document.getElementById('loading');
+            const emptyState = document.getElementById('empty-state');
+
+            // Filter messages
+            let filteredMessages = allMessages;
+            if (currentFilter !== 'all') {
+                filteredMessages = allMessages.filter(m => m.status === currentFilter);
+            }
+
+            loading.style.display = 'none';
+
+            if (filteredMessages.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            container.style.display = 'grid';
+
+            container.innerHTML = filteredMessages.map(msg => `
+                <div class="message-card ${msg.status}">
+                    <div class="message-header">
+                        <div class="message-info">
+                            <h3>${escapeHtml(msg.name)}</h3>
+                            <div class="message-meta">
+                                <span class="meta-item">📧 ${escapeHtml(msg.email)}</span>
+                                ${msg.phone ? `<span class="meta-item">📱 ${escapeHtml(msg.phone)}</span>` : ''}
+                                <span class="meta-item">🕐 ${new Date(msg.created_at).toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <span class="status-badge status-${msg.status}">
+                            ${msg.status === 'unread' ? '🔔 Unread' : '✓ Read'}
+                        </span>
+                    </div>
+                    <div class="message-subject">Subject: ${escapeHtml(msg.subject)}</div>
+                    <div class="message-body">${escapeHtml(msg.message)}</div>
+                    <div class="message-actions">
+                        ${msg.status === 'unread' ? 
+                            `<button class="btn btn-mark-read" onclick="markAsRead(${msg.id})">Mark as Read</button>` : 
+                            ''}
+                        <button class="btn btn-reply" onclick="replyToMessage('${escapeHtml(msg.email)}', '${escapeHtml(msg.subject)}')">📧 Reply via Email</button>
+                        ${msg.phone ? 
+                            `<button class="btn btn-whatsapp" onclick="replyViaWhatsApp('${escapeHtml(msg.phone)}', '${escapeHtml(msg.name)}')">💬 WhatsApp</button>` : 
+                            ''}
+                        <button class="btn btn-delete" onclick="deleteMessage(${msg.id})">🗑️ Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Update message count
+        function updateCount() {
+            const unreadCount = allMessages.filter(m => m.status === 'unread').length;
+            document.getElementById('message-count').textContent = 
+                `(${allMessages.length} total, ${unreadCount} unread)`;
+        }
+
+        // Mark as read
+        window.markAsRead = async function(id) {
+            try {
+                const { error } = await supabase
+                    .from('contact_messages')
+                    .update({ status: 'read' })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                await loadMessages();
+            } catch (error) {
+                console.error('Error marking as read:', error);
+                alert('Error updating message');
+            }
+        };
+
+        // Delete message
+        window.deleteMessage = async function(id) {
+            if (!confirm('Are you sure you want to delete this message?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('contact_messages')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                await loadMessages();
+            } catch (error) {
+                console.error('Error deleting message:', error);
+                alert('Error deleting message');
+            }
+        };
+
+        // Reply to message via email
+        window.replyToMessage = function(email, subject) {
+            window.location.href = `mailto:${email}?subject=Re: ${subject}`;
+        };
+
+        // Reply via WhatsApp
+        window.replyViaWhatsApp = function(phone, name) {
+            // Clean phone number
+            const cleanPhone = phone.replace(/[^0-9+]/g, '');
+            const message = encodeURIComponent(`Hello ${name}, Thank you for contacting Machpelah Electronics. `);
+            window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+        };
+
+        // Filter tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                displayMessages();
+            });
+        });
+
+        // Load messages on page load
+        loadMessages();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadMessages, 30000);
+    </script>
+</body>
+</html>

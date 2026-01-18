@@ -25,7 +25,6 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        /* Icon styling */
         .stat-icon img, .tab-icon img {
             width: 24px;
             height: 24px;
@@ -37,7 +36,16 @@
             height: 40px;
         }
 
-        /* Hamburger Menu Styles */
+        .messages-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 10px;
+            margin-left: 0.5rem;
+            font-weight: bold;
+        }
+
         .hamburger {
             display: none;
             flex-direction: column;
@@ -69,7 +77,6 @@
             transform: rotate(-45deg) translate(6px, -6px);
         }
 
-        /* Mobile & Tablet Responsiveness */
         @media (max-width: 1024px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
@@ -88,7 +95,6 @@
         }
 
         @media (max-width: 768px) {
-            /* Show hamburger on mobile */
             .hamburger {
                 display: flex !important;
             }
@@ -105,7 +111,6 @@
                 gap: 0.5rem;
             }
 
-            /* Hide tabs by default on mobile */
             .tabs-container .tabs {
                 position: fixed !important;
                 top: 70px !important;
@@ -123,7 +128,7 @@
             }
             
             .tabs-container .tabs.active {
-                max-height: 400px !important;
+                max-height: 500px !important;
                 padding: 1rem 0 !important;
             }
 
@@ -196,7 +201,6 @@
             </div>
             
             <div style="display: flex; align-items: center; gap: 1rem;">
-                <!-- Hamburger Menu Button (Mobile/Tablet Only) -->
                 <button class="hamburger" id="hamburger" aria-label="Menu">
                     <span></span>
                     <span></span>
@@ -209,7 +213,6 @@
     </div>
 
     <div class="admin-container">
-        <!-- Statistics -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -236,7 +239,6 @@
             </div>
         </div>
 
-        <!-- Tabs -->
         <div class="tabs-container">
             <div class="tabs" id="tabs-menu">
                 <button class="tab active" data-tab="announcements">
@@ -257,6 +259,13 @@
                     </span>
                     Add Product
                 </button>
+                <button class="tab" id="messages-tab">
+                    <span class="tab-icon">
+                        <img src="../images/icons/message_icon.png" alt="Messages" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2218%22>📧</text></svg>'">
+                    </span>
+                    Messages
+                    <span class="messages-badge" id="unread-count" style="display: none;">0</span>
+                </button>
                 <button class="tab" data-tab="analytics">
                     <span class="tab-icon">
                         <img src="../images/icons/analytics_icon.png" alt="Analytics" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2218%22>📊</text></svg>'">
@@ -266,7 +275,6 @@
             </div>
         </div>
 
-        <!-- Announcements Tab -->
         <div id="announcements" class="tab-content active">
             <div class="admin-section">
                 <h2>Manage Announcements</h2>
@@ -305,7 +313,6 @@
             </div>
         </div>
 
-        <!-- Products Tab -->
         <div id="products" class="tab-content">
             <div class="admin-section">
                 <h2>Manage Products</h2>
@@ -331,7 +338,6 @@
             </div>
         </div>
 
-        <!-- Add Product Tab -->
         <div id="add-product" class="tab-content">
             <div class="admin-section">
                 <h2>Add New Product</h2>
@@ -383,12 +389,10 @@
             </div>
         </div>
 
-        <!-- Analytics Tab -->
         <div id="analytics" class="tab-content">
             <div class="admin-section">
                 <h2>Website Analytics</h2>
                 
-                <!-- Summary Cards -->
                 <div class="stats-grid" style="margin-bottom: 2rem;">
                     <div class="stat-card">
                         <div class="stat-icon">
@@ -423,7 +427,6 @@
                     </div>
                 </div>
 
-                <!-- Filter Options -->
                 <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
                     <button class="btn btn-primary" id="refresh-analytics">
                         <img src="../images/icons/refresh_data_icon.png" alt="Refresh" style="width: 40px; height: 40px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;" onerror="this.style.display='none'">
@@ -436,7 +439,6 @@
                     </select>
                 </div>
 
-                <!-- Daily Views Chart -->
                 <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                     <h3 style="margin-bottom: 1rem; color: #1a1a1a;">
                         <img src="../images/icons/daily_views_icon.png" alt="Chart" style="width: 60px; height: 60px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;" onerror="this.style.display='none'">
@@ -447,7 +449,6 @@
                     </div>
                 </div>
 
-                <!-- Recent Visitors Table -->
                 <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                     <h3 style="margin-bottom: 1rem; color: #1a1a1a;">
                         <img src="../images/icons/vistors_icon.png" alt="Visitors" style="width: 60px; height: 60px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;" onerror="this.style.display='none'">
@@ -472,7 +473,6 @@
                     </div>
                 </div>
 
-                <!-- Top Pages -->
                 <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-top: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                     <h3 style="margin-bottom: 1rem; color: #1a1a1a;">
                         <img src="../images/icons/fire_icon.png" alt="Top" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;" onerror="this.style.display='none'">
@@ -488,13 +488,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Admin dashboard loaded');
-
             const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';
             const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            // Hamburger menu functionality
             const hamburger = document.getElementById('hamburger');
             const tabsMenu = document.getElementById('tabs-menu');
             
@@ -503,7 +500,6 @@
                 tabsMenu.classList.toggle('active');
             });
 
-            // Close menu when clicking a tab
             document.querySelectorAll('.tab').forEach(function(tab) {
                 tab.addEventListener('click', function() {
                     hamburger.classList.remove('active');
@@ -511,13 +507,33 @@
                 });
             });
 
-            // Close menu when clicking outside
             document.addEventListener('click', function(e) {
                 if (!hamburger.contains(e.target) && !tabsMenu.contains(e.target)) {
                     hamburger.classList.remove('active');
                     tabsMenu.classList.remove('active');
                 }
             });
+
+            document.getElementById('messages-tab').addEventListener('click', function() {
+                window.location.href = 'messages.html';
+            });
+
+            async function loadUnreadCount() {
+                try {
+                    const { data, error } = await supabase.from('contact_messages').select('id', { count: 'exact' }).eq('status', 'unread');
+                    if (error) throw error;
+                    const count = data?.length || 0;
+                    const badge = document.getElementById('unread-count');
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error loading unread count:', error);
+                }
+            }
 
             const ProductsDB = {
                 async getAll() {
@@ -854,6 +870,7 @@
                 const tabButton = e.target.closest('.tab');
                 if (!tabButton) return;
                 const tabName = tabButton.getAttribute('data-tab');
+                if (!tabName) return;
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.getElementById(tabName).classList.add('active');
@@ -869,6 +886,8 @@
 
             loadCurrentAnnouncement();
             loadProducts();
+            loadUnreadCount();
+            setInterval(loadUnreadCount, 30000);
         });
     </script>
 </body>

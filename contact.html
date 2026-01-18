@@ -246,7 +246,7 @@
             font-size: 16px;
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             background: var(--gold);
             color: var(--black) !important;
             transform: translateY(-2px);
@@ -257,12 +257,30 @@
             transform: translateY(0);
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .success-message {
             background: #10b981;
             color: white;
             padding: 1.5rem;
             border-radius: 12px;
             border: 2px solid #059669;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .error-message {
+            background: #ef4444;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #dc2626;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -683,7 +701,7 @@
 
             .form-group input,
             .form-group textarea {
-                font-size: 16px; /* Prevents zoom on iOS */
+                font-size: 16px;
             }
 
             .info-icon img {
@@ -786,11 +804,15 @@
                             <textarea id="message" name="message" required placeholder="Tell us how we can help you..."></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-success">Send Message</button>
+                        <button type="submit" class="btn btn-success" id="submit-btn">Send Message</button>
                     </form>
 
                     <div id="form-success" class="form-message success-message" style="display: none;">
                         ✓ Thank you! Your message has been sent successfully. We'll get back to you soon.
+                    </div>
+
+                    <div id="form-error" class="form-message error-message" style="display: none;">
+                        ✗ There was an error sending your message. Please try again or contact us directly.
                     </div>
                 </div>
 
@@ -941,8 +963,24 @@
         </div>
     </footer>
 
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
-        // Hamburger Menu Toggle
+        // ===================================
+        // SUPABASE CONFIGURATION
+        // ===================================
+        // Replace these with your actual Supabase credentials
+        const SUPABASE_URL = 'https://ycpaoqlcqziszlkbmtys.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
+        
+        // Initialize Supabase client (check if already exists)
+        const supabaseClient = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.supabaseClient = supabaseClient;
+
+        // ===================================
+        // NAVIGATION
+        // ===================================
         const hamburger = document.getElementById('hamburger');
         const navMenu = document.getElementById('nav-menu');
 
@@ -967,38 +1005,80 @@
             }
         });
 
-        // Handle form submission
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
+        // ===================================
+        // CONTACT FORM SUBMISSION
+        // ===================================
+        document.getElementById('contact-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const submitBtn = document.getElementById('submit-btn');
+            const formSuccess = document.getElementById('form-success');
+            const formError = document.getElementById('form-error');
+            const form = document.getElementById('contact-form');
+
+            // Disable submit button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            
+            // Hide any previous messages
+            formSuccess.style.display = 'none';
+            formError.style.display = 'none';
+
             // Get form data
             const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value,
-                timestamp: new Date().toISOString()
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim() || null,
+                subject: document.getElementById('subject').value.trim(),
+                message: document.getElementById('message').value.trim(),
+                status: 'unread'
             };
 
-            // Save to localStorage (in real app, send to server)
-            const messages = JSON.parse(localStorage.getItem('contactMessages')) || [];
-            messages.push(formData);
-            localStorage.setItem('contactMessages', JSON.stringify(messages));
+            try {
+                // Insert data into Supabase
+                const { data, error } = await supabaseClient
+                    .from('contact_messages')
+                    .insert([formData])
+                    .select();
 
-            // Show success message
-            document.getElementById('contact-form').style.display = 'none';
-            document.getElementById('form-success').style.display = 'flex';
+                if (error) {
+                    throw error;
+                }
 
-            // Reset form after 3 seconds
-            setTimeout(() => {
-                document.getElementById('contact-form').reset();
-                document.getElementById('contact-form').style.display = 'block';
-                document.getElementById('form-success').style.display = 'none';
-            }, 3000);
+                // Success - show success message
+                form.style.display = 'none';
+                formSuccess.style.display = 'flex';
+
+                // Reset form after 5 seconds
+                setTimeout(() => {
+                    form.reset();
+                    form.style.display = 'block';
+                    formSuccess.style.display = 'none';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Message';
+                }, 5000);
+
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                
+                // Show error message
+                formError.style.display = 'flex';
+                formError.textContent = '✗ ' + (error.message || 'There was an error sending your message. Please try again or contact us directly.');
+                
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message';
+
+                // Hide error message after 5 seconds
+                setTimeout(() => {
+                    formError.style.display = 'none';
+                }, 5000);
+            }
         });
 
-        // Set current year
+        // ===================================
+        // SET CURRENT YEAR
+        // ===================================
         document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
 </body>

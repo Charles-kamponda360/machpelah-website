@@ -63,6 +63,8 @@
             overflow: hidden !important;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
             position: relative !important;
+            display: flex !important;
+            flex-direction: column !important;
         }
         
         .category-item:hover {
@@ -71,11 +73,23 @@
             border-color: rgba(255, 215, 0, 0.5) !important;
         }
         
-        .category-item img {
+        .category-image-wrapper {
             width: 100% !important;
-            height: 250px !important;
-            object-fit: cover !important;
+            overflow: hidden !important;
+            position: relative !important;
+            padding-top: 75% !important; /* 4:3 Aspect Ratio */
+        }
+        
+        .category-item img {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            object-position: center !important;
             transition: transform 0.4s ease !important;
+            padding: 1rem !important;
         }
         
         .category-item:hover img {
@@ -85,6 +99,7 @@
         .category-content {
             padding: 1.5rem !important;
             position: relative !important;
+            flex-grow: 1 !important;
         }
         
         .category-item h3 {
@@ -351,7 +366,8 @@
             }
             
             .category-item img {
-                height: 200px !important;
+                height: auto !important;
+                padding: 0.75rem !important;
             }
             
             .category-content {
@@ -629,48 +645,60 @@
                 <h2 style="text-align: center; margin-bottom: 2rem; color: #000000;"><strong>What We Offer</strong></h2>
                 <div class="categories-grid">
                     <div class="category-item">
-                        <!-- PRODUCT IMAGE 1: Desktop & Laptop Computers - Replace link below -->
-                        <img src="images/products/laptops.webp" alt="PCs" onerror="this.src='https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=300&h=250&fit=crop'">
+                        <div class="category-image-wrapper">
+                            <!-- PRODUCT IMAGE 1: Desktop & Laptop Computers -->
+                            <img src="images/products/laptops.webp" alt="PCs" onerror="this.src='https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=600&h=600&fit=crop'">
+                        </div>
                         <div class="category-content">
                             <h3><strong>Desktop & Laptop Computers</strong></h3>
                             <p>High-performance PCs for gaming, office work, and everyday computing needs.</p>
                         </div>
                     </div>
                     <div class="category-item">
-                        <!-- PRODUCT IMAGE 2: Smart Watches - Replace link below -->
-                        <img src="images/products/smart watch.webp" alt="Smart Watches" onerror="this.src='https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=300&h=250&fit=crop'">
+                        <div class="category-image-wrapper">
+                            <!-- PRODUCT IMAGE 2: Smart Watches -->
+                            <img src="images/products/smart watch.webp" alt="Smart Watches" onerror="this.src='https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=600&h=600&fit=crop'">
+                        </div>
                         <div class="category-content">
                             <h3><strong>Smart Watches</strong></h3>
                             <p>Advanced fitness tracking and smart features to keep you connected on the go.</p>
                         </div>
                     </div>
                     <div class="category-item">
-                        <!-- PRODUCT IMAGE 3: Electric Kettles - Replace link below -->
-                        <img src="images/products/homart kettle.webp" alt="Kettles" onerror="this.src='https://images.unsplash.com/photo-1563299796-17596ed6b017?w=300&h=250&fit=crop'">
+                        <div class="category-image-wrapper">
+                            <!-- PRODUCT IMAGE 3: Electric Kettles -->
+                            <img src="images/products/homart kettle.webp" alt="Kettles" onerror="this.src='https://images.unsplash.com/photo-1563299796-17596ed6b017?w=600&h=600&fit=crop'">
+                        </div>
                         <div class="category-content">
                             <h3><strong>Electric Kettles</strong></h3>
                             <p>Fast-boiling, energy-efficient kettles in various sizes and designs.</p>
                         </div>
                     </div>
                     <div class="category-item">
-                        <!-- PRODUCT IMAGE 4: Hotplates - Replace link below -->
-                        <img src="images/products/godbagstar_hotplate.png" alt="Hotplates" onerror="this.src='https://images.unsplash.com/photo-1585659722983-3a675dabf23d?w=300&h=250&fit=crop'">
+                        <div class="category-image-wrapper">
+                            <!-- PRODUCT IMAGE 4: Hotplates -->
+                            <img src="images/products/godbagstar_hotplate.png" alt="Hotplates" onerror="this.src='https://images.unsplash.com/photo-1585659722983-3a675dabf23d?w=600&h=600&fit=crop'">
+                        </div>
                         <div class="category-content">
                             <h3><strong>Hotplates</strong></h3>
                             <p>Portable and efficient cooking solutions for your kitchen.</p>
                         </div>
                     </div>
                     <div class="category-item">
-                        <!-- PRODUCT IMAGE 5: Rice Cookers - Replace link below -->
-                        <img src="images/products/rice cooker.webp" alt="Rice Cookers" onerror="this.src='https://images.unsplash.com/photo-1612837017391-4e5d76c0d93f?w=300&h=250&fit=crop'">
+                        <div class="category-image-wrapper">
+                            <!-- PRODUCT IMAGE 5: Rice Cookers -->
+                            <img src="images/products/rice cooker.webp" alt="Rice Cookers" onerror="this.src='https://images.unsplash.com/photo-1612837017391-4e5d76c0d93f?w=600&h=600&fit=crop'">
+                        </div>
                         <div class="category-content">
                             <h3><strong>Rice Cookers</strong></h3>
                             <p>Multi-function rice cookers for perfect rice every time.</p>
                         </div>
                     </div>
                     <div class="category-item">
-                        <!-- PRODUCT IMAGE 6: More Products - Replace link below -->
-                        <img src="images/products/more products photo.jpg" alt="More Products" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=250&fit=crop'">
+                        <div class="category-image-wrapper">
+                            <!-- PRODUCT IMAGE 6: More Products -->
+                            <img src="images/products/more products photo.jpg" alt="More Products" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop'">
+                        </div>
                         <div class="category-content">
                             <h3><strong>And More...</strong></h3>
                             <p>Constantly expanding our product range to serve you better.</p>

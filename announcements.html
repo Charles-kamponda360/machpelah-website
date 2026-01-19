@@ -190,6 +190,16 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_pY3O8k5g8yki-zGXAMdlXQ_ugRNoL60';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let storedAnnouncements = [];
+        
+        // Generate or get user identifier for tracking reactions
+        function getUserIdentifier() {
+            let userId = localStorage.getItem('user_identifier');
+            if (!userId) {
+                userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+                localStorage.setItem('user_identifier', userId);
+            }
+            return userId;
+        }
 
         async function loadAnnouncementsFromDB() {
             try {
@@ -201,17 +211,25 @@
                 if (error) throw error;
                 
                 if (data && data.length > 0) {
-                    storedAnnouncements = data.map(a => ({
-                        id: a.id,
-                        type: a.type || 'general',
-                        title: a.text || 'Announcement',
-                        content: a.text || '',
-                        date: a.created_at || new Date().toISOString(),
-                        likes: a.likes || 0,
-                        dislikes: a.dislikes || 0,
-                        comments: a.comments || [],
-                        featured: a.featured || false
+                    // Load announcements with their interaction stats
+                    const announcementsWithStats = await Promise.all(data.map(async (a) => {
+                        const stats = await getAnnouncementStats(a.id);
+                        const comments = await getAnnouncementComments(a.id);
+                        
+                        return {
+                            id: a.id,
+                            type: a.type || 'general',
+                            title: a.text || 'Announcement',
+                            content: a.text || '',
+                            date: a.created_at || new Date().toISOString(),
+                            likes: stats.likes,
+                            dislikes: stats.dislikes,
+                            comments: comments,
+                            featured: a.featured || false
+                        };
                     }));
+                    
+                    storedAnnouncements = announcementsWithStats;
                 } else {
                     storedAnnouncements = [];
                 }
@@ -220,6 +238,70 @@
                 console.error('Error loading announcements:', error);
                 storedAnnouncements = [];
                 return storedAnnouncements;
+            }
+        }
+        
+        // Get interaction statistics for an announcement
+        async function getAnnouncementStats(announcementId) {
+            try {
+                const { data, error } = await supabase
+                    .from('announcement_interactions')
+                    .select('interaction_type')
+                    .eq('announcement_id', announcementId);
+                
+                if (error) throw error;
+                
+                const likes = data.filter(i => i.interaction_type === 'like').length;
+                const dislikes = data.filter(i => i.interaction_type === 'dislike').length;
+                
+                return { likes, dislikes };
+            } catch (error) {
+                console.error('Error getting stats:', error);
+                return { likes: 0, dislikes: 0 };
+            }
+        }
+        
+        // Get comments for an announcement
+        async function getAnnouncementComments(announcementId) {
+            try {
+                const { data, error } = await supabase
+                    .from('announcement_interactions')
+                    .select('comment_author, comment_text, created_at')
+                    .eq('announcement_id', announcementId)
+                    .eq('interaction_type', 'comment')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                return data.map(c => ({
+                    author: c.comment_author,
+                    text: c.comment_text,
+                    date: c.created_at
+                }));
+            } catch (error) {
+                console.error('Error getting comments:', error);
+                return [];
+            }
+        }
+        
+        // Check if user has already reacted to an announcement
+        async function getUserReaction(announcementId) {
+            const userId = getUserIdentifier();
+            try {
+                const { data, error } = await supabase
+                    .from('announcement_interactions')
+                    .select('interaction_type')
+                    .eq('announcement_id', announcementId)
+                    .eq('user_identifier', userId)
+                    .in('interaction_type', ['like', 'dislike'])
+                    .single();
+                
+                if (error && error.code !== 'PGRST116') throw error;
+                
+                return data ? data.interaction_type : null;
+            } catch (error) {
+                console.error('Error checking reaction:', error);
+                return null;
             }
         }
 
@@ -308,62 +390,123 @@
             }
         }
 
-        function toggleLike(id) {
+        async function toggleLike(id) {
+            const userId = getUserIdentifier();
             const a = storedAnnouncements.find(x => x.id === id);
             if (!a) return;
             
-            const userReactions = JSON.parse(localStorage.getItem('userReactions')) || {};
-            const key = `announcement-${id}`;
-            
-            if (!a.likes) a.likes = 0;
-            if (!a.dislikes) a.dislikes = 0;
-            
-            if (userReactions[key] === 'like') {
-                a.likes--;
-                delete userReactions[key];
-            } else {
-                if (userReactions[key] === 'dislike') a.dislikes--;
-                a.likes++;
-                userReactions[key] = 'like';
+            try {
+                // Check current reaction
+                const currentReaction = await getUserReaction(id);
+                
+                if (currentReaction === 'like') {
+                    // Remove like
+                    await supabase
+                        .from('announcement_interactions')
+                        .delete()
+                        .eq('announcement_id', id)
+                        .eq('user_identifier', userId)
+                        .eq('interaction_type', 'like');
+                    
+                    a.likes--;
+                } else {
+                    // Remove dislike if exists
+                    if (currentReaction === 'dislike') {
+                        await supabase
+                            .from('announcement_interactions')
+                            .delete()
+                            .eq('announcement_id', id)
+                            .eq('user_identifier', userId)
+                            .eq('interaction_type', 'dislike');
+                        a.dislikes--;
+                    }
+                    
+                    // Add like
+                    await supabase
+                        .from('announcement_interactions')
+                        .insert([{
+                            announcement_id: id,
+                            interaction_type: 'like',
+                            user_identifier: userId
+                        }]);
+                    
+                    a.likes++;
+                }
+                
+                displayAnnouncements();
+            } catch (error) {
+                console.error('Error toggling like:', error);
             }
-            
-            localStorage.setItem('userReactions', JSON.stringify(userReactions));
-            updateAnnouncementInDB(id, { likes: a.likes, dislikes: a.dislikes });
-            displayAnnouncements();
         }
 
-        function toggleDislike(id) {
+        async function toggleDislike(id) {
+            const userId = getUserIdentifier();
             const a = storedAnnouncements.find(x => x.id === id);
             if (!a) return;
             
-            const userReactions = JSON.parse(localStorage.getItem('userReactions')) || {};
-            const key = `announcement-${id}`;
-            
-            if (!a.likes) a.likes = 0;
-            if (!a.dislikes) a.dislikes = 0;
-            
-            if (userReactions[key] === 'dislike') {
-                a.dislikes--;
-                delete userReactions[key];
-            } else {
-                if (userReactions[key] === 'like') a.likes--;
-                a.dislikes++;
-                userReactions[key] = 'dislike';
+            try {
+                // Check current reaction
+                const currentReaction = await getUserReaction(id);
+                
+                if (currentReaction === 'dislike') {
+                    // Remove dislike
+                    await supabase
+                        .from('announcement_interactions')
+                        .delete()
+                        .eq('announcement_id', id)
+                        .eq('user_identifier', userId)
+                        .eq('interaction_type', 'dislike');
+                    
+                    a.dislikes--;
+                } else {
+                    // Remove like if exists
+                    if (currentReaction === 'like') {
+                        await supabase
+                            .from('announcement_interactions')
+                            .delete()
+                            .eq('announcement_id', id)
+                            .eq('user_identifier', userId)
+                            .eq('interaction_type', 'like');
+                        a.likes--;
+                    }
+                    
+                    // Add dislike
+                    await supabase
+                        .from('announcement_interactions')
+                        .insert([{
+                            announcement_id: id,
+                            interaction_type: 'dislike',
+                            user_identifier: userId
+                        }]);
+                    
+                    a.dislikes++;
+                }
+                
+                displayAnnouncements();
+            } catch (error) {
+                console.error('Error toggling dislike:', error);
             }
-            
-            localStorage.setItem('userReactions', JSON.stringify(userReactions));
-            updateAnnouncementInDB(id, { likes: a.likes, dislikes: a.dislikes });
-            displayAnnouncements();
         }
 
-        function loadUserReactions() {
-            const userReactions = JSON.parse(localStorage.getItem('userReactions')) || {};
-            Object.keys(userReactions).forEach(key => {
-                const id = key.split('-')[1];
-                const reaction = userReactions[key];
-                const btn = document.querySelector(`[data-id="${id}"] .${reaction}-btn`);
-                if (btn) btn.classList.add('active');
-            });
+        async function loadUserReactions() {
+            const userId = getUserIdentifier();
+            
+            try {
+                const { data, error } = await supabase
+                    .from('announcement_interactions')
+                    .select('announcement_id, interaction_type')
+                    .eq('user_identifier', userId)
+                    .in('interaction_type', ['like', 'dislike']);
+                
+                if (error) throw error;
+                
+                data.forEach(reaction => {
+                    const btn = document.querySelector(`[data-id="${reaction.announcement_id}"] .${reaction.interaction_type}-btn`);
+                    if (btn) btn.classList.add('active');
+                });
+            } catch (error) {
+                console.error('Error loading reactions:', error);
+            }
         }
 
         function toggleComments(id) {
@@ -384,24 +527,42 @@
             if (!a) return;
             
             const userName = prompt('Enter your name:') || 'Anonymous';
+            const userId = getUserIdentifier();
             
-            if (!a.comments) a.comments = [];
-            const newComment = {
-                author: userName,
-                text: commentText,
-                date: new Date().toISOString()
-            };
-            a.comments.push(newComment);
-            
-            await updateAnnouncementInDB(id, { comments: a.comments });
-            
-            textarea.value = '';
-            displayAnnouncements();
-            
-            setTimeout(() => {
-                const commentsSection = document.getElementById(`comments-${id}`);
-                if (commentsSection) commentsSection.style.display = 'block';
-            }, 100);
+            try {
+                // Add comment to database
+                const { data, error } = await supabase
+                    .from('announcement_interactions')
+                    .insert([{
+                        announcement_id: id,
+                        interaction_type: 'comment',
+                        user_identifier: userId,
+                        comment_author: userName,
+                        comment_text: commentText
+                    }])
+                    .select();
+                
+                if (error) throw error;
+                
+                // Add comment to local array
+                if (!a.comments) a.comments = [];
+                a.comments.unshift({
+                    author: userName,
+                    text: commentText,
+                    date: new Date().toISOString()
+                });
+                
+                textarea.value = '';
+                displayAnnouncements();
+                
+                setTimeout(() => {
+                    const commentsSection = document.getElementById(`comments-${id}`);
+                    if (commentsSection) commentsSection.style.display = 'block';
+                }, 100);
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert('Failed to add comment. Please try again.');
+            }
         }
 
         document.getElementById('subscription-form').addEventListener('submit', async function(e) {
@@ -415,29 +576,46 @@
                 return;
             }
             
-            const subscription = {
-                name: name,
-                email: email,
-                whatsapp: whatsapp,
-                date: new Date().toISOString()
-            };
-            
-            const subscriptions = JSON.parse(localStorage.getItem('subscriptions')) || [];
-            subscriptions.push(subscription);
-            localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
-            
-            const successMsg = document.getElementById('sub-success');
-            successMsg.style.display = 'flex';
-            this.reset();
-            
-            setTimeout(() => {
-                successMsg.style.display = 'none';
-            }, 5000);
+            try {
+                // Save subscription to Supabase
+                const { data, error } = await supabase
+                    .from('subscribers')
+                    .insert([
+                        {
+                            name: name,
+                            email: email || null,
+                            whatsapp: whatsapp || null,
+                            subscribed_at: new Date().toISOString()
+                        }
+                    ]);
+                
+                if (error) {
+                    // Check if it's a duplicate email/whatsapp error
+                    if (error.code === '23505') {
+                        alert('You are already subscribed with this email or WhatsApp number!');
+                    } else {
+                        throw error;
+                    }
+                    return;
+                }
+                
+                const successMsg = document.getElementById('sub-success');
+                successMsg.style.display = 'flex';
+                this.reset();
+                
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 5000);
+            } catch (error) {
+                console.error('Error subscribing:', error);
+                alert('Failed to subscribe. Please try again.');
+            }
         });
 
         async function initializePage() {
             await loadAnnouncementsFromDB();
             displayAnnouncements();
+            await loadUserReactions();
         }
 
         document.getElementById('current-year').textContent = new Date().getFullYear();

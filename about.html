@@ -35,6 +35,80 @@
             margin-bottom: 1rem;
         }
         
+        /* Glassmorphism effect for value cards */
+        .value-card {
+            background: rgba(255, 255, 255, 0.25) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37) !important;
+            border-radius: 15px !important;
+            padding: 2rem !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .value-card:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45) !important;
+        }
+        
+        /* Enhanced category items with glassmorphism */
+        .category-item {
+            background: rgba(255, 255, 255, 0.25) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.37) !important;
+            border-radius: 20px !important;
+            overflow: hidden !important;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            position: relative !important;
+        }
+        
+        .category-item:hover {
+            transform: translateY(-10px) scale(1.02) !important;
+            box-shadow: 0 12px 40px 0 rgba(255, 255, 255, 0.45) !important;
+            border-color: rgba(255, 215, 0, 0.5) !important;
+        }
+        
+        .category-item img {
+            width: 100% !important;
+            height: 250px !important;
+            object-fit: cover !important;
+            transition: transform 0.4s ease !important;
+        }
+        
+        .category-item:hover img {
+            transform: scale(1.05) !important;
+        }
+        
+        .category-content {
+            padding: 1.5rem !important;
+            position: relative !important;
+        }
+        
+        .category-item h3 {
+            margin-bottom: 0.75rem !important;
+            font-size: 1.3rem !important;
+            color: #000000 !important;
+            transition: color 0.3s ease !important;
+        }
+        
+        .category-item p {
+            color: #000000 !important;
+            line-height: 1.6 !important;
+            max-height: 0 !important;
+            overflow: hidden !important;
+            opacity: 0 !important;
+            transition: all 0.4s ease !important;
+        }
+        
+        .category-item:hover p {
+            max-height: 200px !important;
+            opacity: 1 !important;
+            margin-top: 0.5rem !important;
+        }
+        
         /* Bold button text */
         .btn {
             font-weight: bold !important;
@@ -42,14 +116,17 @@
         
         /* Gold browse products button */
         .btn-success {
-            background: #FFD700 !important;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
             color: #000000 !important;
             border: none !important;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4) !important;
         }
         
         .btn-success:hover {
-            background: #FFC700 !important;
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%) !important;
             color: #000000 !important;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6) !important;
+            transform: translateY(-2px) !important;
         }
         
         /* Hamburger Menu Styles */
@@ -273,12 +350,12 @@
                 gap: 1rem !important;
             }
             
-            .category-item {
-                padding: 1rem !important;
+            .category-item img {
+                height: 200px !important;
             }
             
-            .category-item img {
-                height: 150px !important;
+            .category-content {
+                padding: 1rem !important;
             }
             
             .category-item h3 {
@@ -552,34 +629,52 @@
                 <h2 style="text-align: center; margin-bottom: 2rem; color: #000000;"><strong>What We Offer</strong></h2>
                 <div class="categories-grid">
                     <div class="category-item">
-                        <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=300&h=200&fit=crop" alt="PCs">
-                        <h3 style="color: #000000;"><strong>Desktop & Laptop Computers</strong></h3>
-                        <p style="color: #000000;">High-performance PCs for gaming, office work, and everyday computing needs.</p>
+                        <!-- PRODUCT IMAGE 1: Desktop & Laptop Computers - Replace link below -->
+                        <img src="YOUR_PC_PRODUCT_IMAGE_LINK_HERE" alt="PCs" onerror="this.src='https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=300&h=250&fit=crop'">
+                        <div class="category-content">
+                            <h3><strong>Desktop & Laptop Computers</strong></h3>
+                            <p>High-performance PCs for gaming, office work, and everyday computing needs.</p>
+                        </div>
                     </div>
                     <div class="category-item">
-                        <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=300&h=200&fit=crop" alt="Smart Watches">
-                        <h3 style="color: #000000;"><strong>Smart Watches</strong></h3>
-                        <p style="color: #000000;">Advanced fitness tracking and smart features to keep you connected on the go.</p>
+                        <!-- PRODUCT IMAGE 2: Smart Watches - Replace link below -->
+                        <img src="YOUR_SMARTWATCH_PRODUCT_IMAGE_LINK_HERE" alt="Smart Watches" onerror="this.src='https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=300&h=250&fit=crop'">
+                        <div class="category-content">
+                            <h3><strong>Smart Watches</strong></h3>
+                            <p>Advanced fitness tracking and smart features to keep you connected on the go.</p>
+                        </div>
                     </div>
                     <div class="category-item">
-                        <img src="https://images.unsplash.com/photo-1563299796-17596ed6b017?w=300&h=200&fit=crop" alt="Kettles">
-                        <h3 style="color: #000000;"><strong>Electric Kettles</strong></h3>
-                        <p style="color: #000000;">Fast-boiling, energy-efficient kettles in various sizes and designs.</p>
+                        <!-- PRODUCT IMAGE 3: Electric Kettles - Replace link below -->
+                        <img src="YOUR_KETTLE_PRODUCT_IMAGE_LINK_HERE" alt="Kettles" onerror="this.src='https://images.unsplash.com/photo-1563299796-17596ed6b017?w=300&h=250&fit=crop'">
+                        <div class="category-content">
+                            <h3><strong>Electric Kettles</strong></h3>
+                            <p>Fast-boiling, energy-efficient kettles in various sizes and designs.</p>
+                        </div>
                     </div>
                     <div class="category-item">
-                        <img src="https://images.unsplash.com/photo-1585659722983-3a675dabf23d?w=300&h=200&fit=crop" alt="Hotplates">
-                        <h3 style="color: #000000;"><strong>Hotplates</strong></h3>
-                        <p style="color: #000000;">Portable and efficient cooking solutions for your kitchen.</p>
+                        <!-- PRODUCT IMAGE 4: Hotplates - Replace link below -->
+                        <img src="YOUR_HOTPLATE_PRODUCT_IMAGE_LINK_HERE" alt="Hotplates" onerror="this.src='https://images.unsplash.com/photo-1585659722983-3a675dabf23d?w=300&h=250&fit=crop'">
+                        <div class="category-content">
+                            <h3><strong>Hotplates</strong></h3>
+                            <p>Portable and efficient cooking solutions for your kitchen.</p>
+                        </div>
                     </div>
                     <div class="category-item">
-                        <img src="https://images.unsplash.com/photo-1612837017391-4e5d76c0d93f?w=300&h=200&fit=crop" alt="Rice Cookers">
-                        <h3 style="color: #000000;"><strong>Rice Cookers</strong></h3>
-                        <p style="color: #000000;">Multi-function rice cookers for perfect rice every time.</p>
+                        <!-- PRODUCT IMAGE 5: Rice Cookers - Replace link below -->
+                        <img src="YOUR_RICECOOKER_PRODUCT_IMAGE_LINK_HERE" alt="Rice Cookers" onerror="this.src='https://images.unsplash.com/photo-1612837017391-4e5d76c0d93f?w=300&h=250&fit=crop'">
+                        <div class="category-content">
+                            <h3><strong>Rice Cookers</strong></h3>
+                            <p>Multi-function rice cookers for perfect rice every time.</p>
+                        </div>
                     </div>
                     <div class="category-item">
-                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop" alt="More Products">
-                        <h3 style="color: #000000;"><strong>And More...</strong></h3>
-                        <p style="color: #000000;">Constantly expanding our product range to serve you better.</p>
+                        <!-- PRODUCT IMAGE 6: More Products - Replace link below -->
+                        <img src="YOUR_MORE_PRODUCTS_IMAGE_LINK_HERE" alt="More Products" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=250&fit=crop'">
+                        <div class="category-content">
+                            <h3><strong>And More...</strong></h3>
+                            <p>Constantly expanding our product range to serve you better.</p>
+                        </div>
                     </div>
                 </div>
             </div>

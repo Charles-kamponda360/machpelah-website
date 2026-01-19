@@ -262,6 +262,23 @@
                     padding: 0 1rem !important;
                 }
                 
+                #load-more-btn {
+                    padding: 0.85rem 2rem !important;
+                    font-size: 0.95rem !important;
+                    font-weight: 700 !important;
+                    background: #000000 !important;
+                }
+                
+                #load-more-btn:hover {
+                    background: #1a1a1a !important;
+                    transform: scale(1.02);
+                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6) !important;
+                }
+                
+                #products-info {
+                    font-size: 0.85rem !important;
+                }
+                
                 .navbar {
                     padding: 0.75rem 0 !important;
                 }
@@ -591,6 +608,14 @@
             <div id="products-grid" class="products-grid">
                 <!-- Products will be loaded here dynamically -->
             </div>
+            
+            <!-- Load More Button -->
+            <div id="load-more-container" style="display: none; text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
+                <button id="load-more-btn" style="background: #000000; color: white; padding: 1rem 2.5rem; font-size: 1rem; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);">
+                    Load More Products
+                </button>
+                <p id="products-info" style="margin-top: 0.75rem; color: #888; font-size: 0.9rem;"></p>
+            </div>
         </section>
     </main>
 
@@ -688,7 +713,6 @@
                 try {
                     console.log('Tracking page view...');
                     
-                    // Get visitor information
                     const visitorInfo = {
                         page_url: window.location.href,
                         page_title: document.title,
@@ -698,7 +722,6 @@
                         timestamp: new Date().toISOString()
                     };
                     
-                    // Insert view record into database
                     const { data, error } = await supabase
                         .from('page_views')
                         .insert([visitorInfo]);
@@ -709,7 +732,6 @@
                         console.log('Page view tracked successfully');
                     }
                     
-                    // Also update total views counter
                     await updateTotalViews();
                     
                 } catch (error) {
@@ -717,24 +739,20 @@
                 }
             }
 
-            // Update total views counter
             async function updateTotalViews() {
                 try {
-                    // Get current count
                     const { data, error } = await supabase
                         .from('site_stats')
                         .select('total_views')
                         .eq('id', 1)
                         .single();
                     
-                    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+                    if (error && error.code !== 'PGRST116') {
                         console.error('Error fetching stats:', error);
                         return;
                     }
                     
-                    // Update or insert
                     if (data) {
-                        // Increment existing count
                         const { error: updateError } = await supabase
                             .from('site_stats')
                             .update({ 
@@ -747,7 +765,6 @@
                             console.error('Error updating stats:', updateError);
                         }
                     } else {
-                        // Create initial record
                         const { error: insertError } = await supabase
                             .from('site_stats')
                             .insert([{ 
@@ -765,29 +782,23 @@
                 }
             }
 
-            // Track view when page loads (runs automatically in background)
             trackPageView();
 
-            // Location Detection and Delivery Message
+            // Location Detection
             async function detectLocationAndShowMessage() {
                 try {
                     console.log('Detecting location...');
                     
-                    // Try to get user's location using Geolocation API
                     if ('geolocation' in navigator) {
                         navigator.geolocation.getCurrentPosition(
                             async function(position) {
                                 const lat = position.coords.latitude;
                                 const lon = position.coords.longitude;
-                                
                                 console.log('Coordinates:', lat, lon);
-                                
-                                // Use reverse geocoding to get location name
                                 await getLocationDetails(lat, lon);
                             },
                             async function(error) {
                                 console.log('Geolocation error:', error.message);
-                                // Fallback to IP-based location
                                 await getLocationByIP();
                             },
                             {
@@ -797,7 +808,6 @@
                             }
                         );
                     } else {
-                        // Browser doesn't support geolocation, use IP
                         await getLocationByIP();
                     }
                 } catch (error) {
@@ -805,10 +815,8 @@
                 }
             }
 
-            // Get location details from coordinates
             async function getLocationDetails(lat, lon) {
                 try {
-                    // Use OpenStreetMap Nominatim for reverse geocoding with higher zoom for specific areas
                     const response = await fetch(
                         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=16&addressdetails=1`,
                         {
@@ -821,10 +829,7 @@
                     const data = await response.json();
                     console.log('Location data:', data);
                     
-                    // Extract specific location information
                     const address = data.address || {};
-                    
-                    // Get most specific location available
                     const specificLocation = 
                         address.suburb || 
                         address.neighbourhood || 
@@ -838,24 +843,14 @@
                     const district = address.state || address.region || '';
                     const country = address.country || '';
                     
-                    console.log('Detected location:', {
-                        specific: specificLocation,
-                        city: city,
-                        district: district,
-                        country: country
-                    });
-                    
-                    // Determine location and show message
                     displayDeliveryMessage(specificLocation, city, district, country);
                     
                 } catch (error) {
                     console.error('Error getting location details:', error);
-                    // Fallback to IP-based location
                     await getLocationByIP();
                 }
             }
 
-            // Fallback: Get location by IP address
             async function getLocationByIP() {
                 try {
                     const response = await fetch('https://ipapi.co/json/');
@@ -871,27 +866,22 @@
                     
                 } catch (error) {
                     console.error('Error getting IP location:', error);
-                    // Show generic message if all fails
                     displayDeliveryMessage('', '', '', 'Malawi');
                 }
             }
 
-            // Display personalized delivery message
             function displayDeliveryMessage(specificLocation, city, district, country) {
                 const banner = document.getElementById('location-banner');
                 
-                // Normalize location names for comparison
                 const locationLower = specificLocation.toLowerCase();
                 const cityLower = city.toLowerCase();
                 const districtLower = district.toLowerCase();
                 const countryLower = country.toLowerCase();
                 
-                // Determine the best location name to display
                 let displayLocation = specificLocation || city || district || 'your area';
                 let deliveryMessage = '';
                 let deliveryType = '';
                 
-                // Free delivery areas - check for specific suburbs/neighborhoods
                 const freeDeliveryAreas = [
                     'chitawira', 'chitawira township',
                     'chichiri', 'chichiri shopping centre', 'chichiri mall',
@@ -902,16 +892,13 @@
                     locationLower.includes(area) || cityLower.includes(area)
                 );
                 
-                // Check if in other Blantyre areas
                 const isBlantyre = 
                     cityLower.includes('blantyre') || 
                     districtLower.includes('blantyre') ||
                     locationLower.includes('blantyre');
                 
-                // Check if in Malawi
                 const isMalawi = countryLower.includes('malawi');
                 
-                // Generate appropriate message
                 if (isFreeDelivery) {
                     deliveryMessage = `👋 Hello Dear Customer from <strong>${displayLocation}</strong>!<br>Do you know we can deliver to ${displayLocation}? <span class="delivery-badge">FREE DELIVERY</span> to your area!`;
                     deliveryType = 'free';
@@ -926,7 +913,6 @@
                     deliveryType = 'standard';
                 }
                 
-                // Create banner with close button and countdown
                 banner.innerHTML = `
                     <div class="location-banner" id="location-banner-content">
                         <button class="close-banner-btn" onclick="closeBanner()" aria-label="Close">×</button>
@@ -936,7 +922,6 @@
                 
                 banner.style.display = 'block';
                 
-                // Start countdown timer
                 let countdown = 3;
                 const countdownElement = document.getElementById('countdown');
                 
@@ -950,21 +935,17 @@
                         clearInterval(countdownInterval);
                         closeBanner();
                     }
-                }, 1000); // Update every 1 second
+                }, 1000);
                 
-                // Store interval ID so it can be cleared when manually closed
                 window.bannerCountdownInterval = countdownInterval;
                 
-                // Log delivery info to database (optional)
                 logDeliveryInfo(displayLocation, city, district, country, deliveryType);
             }
 
-            // Close banner function
             window.closeBanner = function() {
                 const banner = document.getElementById('location-banner');
                 const bannerContent = document.getElementById('location-banner-content');
                 
-                // Clear countdown interval if it exists
                 if (window.bannerCountdownInterval) {
                     clearInterval(window.bannerCountdownInterval);
                 }
@@ -977,7 +958,6 @@
                 }
             };
 
-            // Log delivery information to database
             async function logDeliveryInfo(location, city, district, country, deliveryType) {
                 try {
                     await supabase
@@ -993,16 +973,12 @@
                 }
             }
 
-            // Start location detection
             detectLocationAndShowMessage();
 
-            // Optional: Track how long users stay on the page
             let startTime = Date.now();
-
             window.addEventListener('beforeunload', async function() {
-                const timeSpent = Math.round((Date.now() - startTime) / 1000); // in seconds
+                const timeSpent = Math.round((Date.now() - startTime) / 1000);
                 
-                // Log time spent (optional)
                 try {
                     await supabase
                         .from('page_views')
@@ -1016,66 +992,33 @@
                 }
             });
 
+            // PAGINATION VARIABLES
             let allProducts = [];
             window.allProducts = allProducts;
+            let currentFilter = 'all';
+            let displayedProducts = [];
+            const PRODUCTS_PER_PAGE = 8;
+            let currentPage = 1;
 
-            // Load products
-            async function loadProducts() {
-                try {
-                    console.log('Fetching products...');
-                    
-                    const { data, error } = await supabase
-                        .from('products')
-                        .select('*')
-                        .order('id', { ascending: false });
-                    
-                    if (error) {
-                        console.error('Database error:', error);
-                        throw error;
-                    }
-                    
-                    console.log('Products fetched:', data.length);
-                    allProducts = data || [];
-                    window.allProducts = allProducts;
-                    
-                    // Make products globally accessible for cart
-                    if (!window.productsData) {
-                        window.productsData = {};
-                    }
-                    allProducts.forEach(function(p) {
-                        window.productsData[p.id] = p;
-                    });
-                    console.log('Products stored globally:', Object.keys(window.productsData).length);
-                    
-                    // Log stock info
-                    console.log('Product stock check:');
-                    allProducts.forEach(function(p) {
-                        console.log(`- ${p.name}: Stock = ${p.stock}, ID = ${p.id}`);
-                    });
-                    
-                    // Hide loading
-                    document.getElementById('loading-state').style.display = 'none';
-                    
-                    if (allProducts.length === 0) {
-                        document.getElementById('products-grid').innerHTML = '<p style="text-align: center; padding: 2rem;">No products available</p>';
-                        return;
-                    }
-                    
-                    displayProducts(allProducts);
-                    updateFilterButtons();
-                    
-                } catch (error) {
-                    console.error('Error loading products:', error);
-                    document.getElementById('loading-state').innerHTML = '<p style="color: red; text-align: center;">Error loading products. Please refresh.</p>';
+            // Get filtered products based on current category
+            function getFilteredProducts() {
+                if (currentFilter === 'all') {
+                    return allProducts;
                 }
+                return allProducts.filter(p => p.category === currentFilter);
             }
 
-            // Display products
-            function displayProducts(products) {
-                const grid = document.getElementById('products-grid');
-                console.log('Displaying', products.length, 'products');
+            // Display products with pagination
+            function displayProducts() {
+                const filteredProducts = getFilteredProducts();
+                const totalProducts = filteredProducts.length;
+                const endIndex = currentPage * PRODUCTS_PER_PAGE;
                 
-                grid.innerHTML = products.map(function(p) {
+                const productsToShow = filteredProducts.slice(0, endIndex);
+                
+                const grid = document.getElementById('products-grid');
+                
+                grid.innerHTML = productsToShow.map(function(p) {
                     return `
                         <div class="product-card">
                             <img src="${p.image}" alt="${p.name}" class="product-image" onerror="this.src='https://via.placeholder.com/300x300/f5f5f5/666?text=Product'">
@@ -1095,9 +1038,35 @@
                     `;
                 }).join('');
                 
-                console.log('Products rendered');
+                displayedProducts = productsToShow;
+                updateLoadMoreButton(totalProducts);
+                attachCartButtons();
+            }
+
+            // Update Load More button
+            function updateLoadMoreButton(totalProducts) {
+                const container = document.getElementById('load-more-container');
+                const button = document.getElementById('load-more-btn');
+                const info = document.getElementById('products-info');
                 
-                // Add click handlers
+                const displayedCount = displayedProducts.length;
+                
+                if (displayedCount < totalProducts) {
+                    container.style.display = 'block';
+                    button.style.display = 'inline-block';
+                    const remaining = totalProducts - displayedCount;
+                    info.textContent = `Showing ${displayedCount} of ${totalProducts} products (${remaining} more available)`;
+                } else if (totalProducts > 0) {
+                    container.style.display = 'block';
+                    button.style.display = 'none';
+                    info.textContent = `Showing all ${totalProducts} products`;
+                } else {
+                    container.style.display = 'none';
+                }
+            }
+
+            // Attach cart button handlers
+            function attachCartButtons() {
                 document.querySelectorAll('.add-to-cart-btn').forEach(function(btn) {
                     btn.addEventListener('click', function(e) {
                         e.preventDefault();
@@ -1106,10 +1075,9 @@
                         
                         console.log('Button clicked - Product ID:', id);
                         console.log('Product found:', product);
-                        console.log('Product stock:', product ? product.stock : 'N/A');
                         
                         if (!product) {
-                            console.error('Product not found in allProducts array');
+                            console.error('Product not found');
                             alert('Error: Product not found');
                             return;
                         }
@@ -1119,19 +1087,15 @@
                             return;
                         }
                         
-                        // Check if cart is available
                         if (typeof cart === 'undefined') {
                             console.error('Cart not initialized');
                             alert('Cart system not ready. Please refresh the page.');
                             return;
                         }
                         
-                        // Add to cart
                         try {
-                            // Pass the complete product object
                             cart.addItem(id, product);
                             
-                            // Also store in a backup location
                             const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
                             const existingIndex = cartItems.findIndex(function(item) { return item.id === id; });
                             
@@ -1152,9 +1116,7 @@
                             
                             localStorage.setItem('cart', JSON.stringify(cartItems));
                             console.log('Product added to cart successfully');
-                            console.log('Cart items:', cartItems);
                             
-                            // Visual feedback
                             const originalText = this.textContent;
                             const originalBg = this.style.background;
                             
@@ -1173,6 +1135,70 @@
                 });
             }
 
+            // Load More button handler
+            document.getElementById('load-more-btn').addEventListener('click', function() {
+                currentPage++;
+                displayProducts();
+                
+                setTimeout(() => {
+                    const grid = document.getElementById('products-grid');
+                    const cards = grid.querySelectorAll('.product-card');
+                    const scrollTarget = cards[Math.max(0, (currentPage - 1) * PRODUCTS_PER_PAGE - 3)];
+                    
+                    if (scrollTarget) {
+                        scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 100);
+            });
+
+            // Load products from Supabase
+            async function loadProducts() {
+                try {
+                    console.log('Fetching products...');
+                    
+                    const { data, error } = await supabase
+                        .from('products')
+                        .select('*')
+                        .order('id', { ascending: false });
+                    
+                    if (error) {
+                        console.error('Database error:', error);
+                        throw error;
+                    }
+                    
+                    console.log('Products fetched:', data.length);
+                    allProducts = data || [];
+                    window.allProducts = allProducts;
+                    
+                    if (!window.productsData) {
+                        window.productsData = {};
+                    }
+                    allProducts.forEach(function(p) {
+                        window.productsData[p.id] = p;
+                    });
+                    console.log('Products stored globally:', Object.keys(window.productsData).length);
+                    
+                    console.log('Product stock check:');
+                    allProducts.forEach(function(p) {
+                        console.log(`- ${p.name}: Stock = ${p.stock}, ID = ${p.id}`);
+                    });
+                    
+                    document.getElementById('loading-state').style.display = 'none';
+                    
+                    if (allProducts.length === 0) {
+                        document.getElementById('products-grid').innerHTML = '<p style="text-align: center; padding: 2rem;">No products available</p>';
+                        return;
+                    }
+                    
+                    displayProducts();
+                    updateFilterButtons();
+                    
+                } catch (error) {
+                    console.error('Error loading products:', error);
+                    document.getElementById('loading-state').innerHTML = '<p style="color: red; text-align: center;">Error loading products. Please refresh.</p>';
+                }
+            }
+
             // Filter buttons
             function updateFilterButtons() {
                 const categories = ['all'].concat([...new Set(allProducts.map(p => p.category))].sort());
@@ -1186,20 +1212,18 @@
                 
                 container.style.display = 'flex';
                 
-                // Add filter click handlers
                 document.querySelectorAll('.filter-btn').forEach(function(btn) {
                     btn.addEventListener('click', function() {
                         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                         this.classList.add('active');
                         
-                        const cat = this.dataset.cat;
-                        const filtered = cat === 'all' ? allProducts : allProducts.filter(p => p.category === cat);
-                        displayProducts(filtered);
+                        currentFilter = this.dataset.cat;
+                        currentPage = 1;
+                        displayProducts();
                     });
                 });
             }
 
-            // Start loading
             loadProducts();
         });
     </script>
